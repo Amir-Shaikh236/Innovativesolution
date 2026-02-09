@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const FeaturedSolution = require('../models/FeaturedSolution');
-const adminAuth = require('../middleware/authMiddleware');
+const { adminAuth } = require('../middleware/authMiddleware');
 
 // Public route to get all featured solutions
 router.get('/', async (req, res) => {

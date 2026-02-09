@@ -19,25 +19,28 @@ const teamUpRoutes = require("./routes/teamUpRoutes");
 const contactRoutes = require("./routes/contact");
 const userRoutes = require('./routes/userRoutes');
 const subscriptionRoutes = require('./routes/subscriptions');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
+  // 'https://innovative-staffing.vercel.app',
+  // 'https://innovative-staffing-v7jj.vercel.app',
   origin: [
-    'https://innovative-staffing.vercel.app',
-    'https://innovative-staffing-v7jj.vercel.app'
+    'http://localhost:5173'
   ],
   credentials: true,
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 connectDB();
 
 // Public routes
-app.use('/api/users', userAuthRoutes);
+app.use('/api/auth', userAuthRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/subpages', subpageRoutes);
 app.use('/api/featuredSolutions', featuredSolutionsRoutes);

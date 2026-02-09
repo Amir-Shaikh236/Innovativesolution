@@ -1,34 +1,28 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); 
+const User = require('../models/User');
 
-const adminAuth = async (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer')) {
-        return res.status(401).json({ msg: 'Auth token missing or malformed' });
-    }
-
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ msg: 'Token missing' });
-    }
-
+// 1. Standard Protect (For Logged In Users)
+const protect = async (req, res, next) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
-        
-        if (!user) {
-            return res.status(401).json({ msg: 'User not found' });
-        }
-        
-        if (!user.isAdmin) {
-            return res.status(403).json({ msg: 'Admin access required' });
-        }
+        const token = req.cookies.token;
+        if (!token) return res.status(401).json({ msg: 'Not authorized' });
 
-        req.user = user;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.id); // or decoded._id
         next();
     } catch (err) {
-        res.status(401).json({ msg: 'Invalid token' });
+        res.status(401).json({ msg: 'Token failed' });
     }
 };
 
-module.exports = adminAuth;
+// 2. Admin Only (Checks Role)
+const adminAuth = (req, res, next) => {
+    // We assume 'protect' has already run and set req.user
+    if (req.user && (req.user.isAdmin)) {
+        next();
+    } else {
+        res.status(403).json({ msg: 'Not authorized as an admin' });
+    }
+};
+
+module.exports = { protect, adminAuth };

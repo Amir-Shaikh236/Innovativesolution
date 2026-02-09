@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Client = require('../models/Client');
-const adminAuth = require('../middleware/authMiddleware');
+const { adminAuth } = require('../middleware/authMiddleware');
 
 // Public route to get all clients
 router.get('/', async (req, res) => {

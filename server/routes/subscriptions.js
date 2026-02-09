@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { addSubscription, getSubscriptions } = require('../controllers/subscriptionController');
-const adminAuth = require('../middleware/authMiddleware');
+const { adminAuth } = require('../middleware/authMiddleware');
 
 // Public route for a user to subscribe
 router.post('/', addSubscription);

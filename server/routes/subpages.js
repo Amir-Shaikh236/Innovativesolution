@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const subpageController = require('../controllers/subpageController');
-const adminAuth = require('../middleware/authMiddleware');
+const { adminAuth } = require('../middleware/authMiddleware');
 
 // Public GET routes
 router.get('/', subpageController.getAllSubpages);
