@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import api from "./api";
+
 import Footer from './components/Footer';
 import Header from "./components/Header";
 import Homepage from "./pages/Homepage";
@@ -26,66 +29,87 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import FAQsPage from './pages/FAQsPage';
 import Chatbot from "./components/Chatbot";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [user, setUser] = useState(null); // Assuming you might use this later
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // This effect keeps the auth state in sync if localStorage is changed in another tab
   useEffect(() => {
-    const handleStorageChange = () => {
-      setToken(localStorage.getItem('token'));
+    const verifyUser = async () => {
+      try {
+        const { data } = await api.get('/auth/me');
+        setUser(data);
+        setIsLoggedIn(true);
+        localStorage.setItem('isLoggedIn', 'true');
+      } catch (error) {
+        setUser(null);
+        setIsLoggedIn(false);
+        localStorage.removeItem('isLoggedIn');
+      } finally {
+        setIsLoading(false);
+      }
     };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+
+    verifyUser();
   }, []);
 
-  const handleVerified = (jwtToken, userInfo) => {
-    localStorage.setItem('token', jwtToken);
-    setToken(jwtToken);
-    setUser(userInfo);
+  const handleVerified = (userData) => {
+    setUser(userData);
+    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true');
     navigate('/');
   };
 
-  // 1. CREATE THE LOGOUT FUNCTION IN THE PARENT COMPONENT
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
-    setUser(null);
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      setUser(null);
+      setIsLoggedIn(false);
+      localStorage.removeItem('isLoggedIn');
+      navigate('/');
+    }
   };
 
   const RequireAuth = ({ children }) => {
-    // This now correctly uses the up-to-date state variable `token`
-    if (!token) {
+    if (isLoading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
+
+    if (!isLoggedIn) {
       return <Navigate to="/login" replace />;
     }
     return children;
   };
 
   const RedirectIfAuth = ({ children }) => {
-    if (token) {
+    if (isLoading) return null;
+
+    if (isLoggedIn) {
       return <Navigate to="/" replace />;
     }
     return children;
   };
 
   const startAuthFlow = () => {
-    if (token) {
+    if (isLoggedIn) {
       navigate('/join-as-talent');
     } else {
       navigate('/login');
     }
   };
 
+  // Global Loading State (Blocks the whole app until we know if user is logged in)
+  if (isLoading) {
+    return <div className="h-screen w-full flex items-center justify-center"><Loader2 className="animate-spin h-8 w-8 text-blue-600" /></div>;
+  }
+
   return (
     <>
-      {/* 2. PASS STATE AND LOGOUT FUNCTION DOWN AS PROPS */}
-      <Header isLoggedIn={!!token} onLogout={handleLogout} />
+      <Header isLoggedIn={isLoggedIn} user={user} onLogout={handleLogout} />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Homepage onJoinAsTalent={startAuthFlow} />} />
@@ -104,11 +128,18 @@ function App() {
         <Route path="/terms-of-service" element={<TermsPage />} />
         <Route path="/faqs" element={<FAQsPage />} />
         <Route path="/category/:slug" element={<CategoryOverviewPage />} />
+
+        {/* Auth Routes Wrapped in RedirectIfAuth */}
         <Route path="/login" element={<RedirectIfAuth><Login onVerified={handleVerified} /></RedirectIfAuth>} />
         <Route path="/signup" element={<RedirectIfAuth><Signup /></RedirectIfAuth>} />
-        <Route path="/verify-otp" element={<RedirectIfAuth><OtpVerify onVerified={handleVerified} /></RedirectIfAuth>} />
-        <Route path="/passwordreset" element={<RedirectIfAuth><PasswordReset /></RedirectIfAuth>} />
+        <Route path="/verify-email" element={<RedirectIfAuth><OtpVerify onVerified={handleVerified} /></RedirectIfAuth>} />
+
+        <Route path="/forgot-password" element={<RedirectIfAuth><ForgotPassword /></RedirectIfAuth>} />
+        <Route path="/passwordreset/:resetToken" element={<RedirectIfAuth><PasswordReset /></RedirectIfAuth>} />
+
+        {/* Protected Routes Wrapped in RequireAuth */}
         <Route path="/join-as-talent" element={<RequireAuth><JoinAsTalent /></RequireAuth>} />
+
         <Route path="/team-up-request" element={<TeamUpRequest />} />
       </Routes>
       <Chatbot />

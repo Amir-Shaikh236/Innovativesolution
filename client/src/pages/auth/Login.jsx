@@ -24,12 +24,8 @@ export default function Login({ onVerified }) {
     setLoading(true);
 
     try {
-      const { data } = await api.post('/api/users/login', formData);
-
-
+      const { data } = await api.post('/auth/login', formData);
       onVerified(data.token, data.user);
-
-   
       setMessage('Login successful');
 
     } catch (err) {
@@ -77,11 +73,10 @@ export default function Login({ onVerified }) {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg font-semibold text-black transition ${
-            loading
-              ? 'bg-teal-400 cursor-not-allowed'
-              : 'bg-teal-400 hover:bg-green-700 hover:text-white'
-          }`}
+          className={`w-full py-3 rounded-lg font-semibold text-black transition ${loading
+            ? 'bg-teal-400 cursor-not-allowed'
+            : 'bg-teal-400 hover:bg-green-700 hover:text-white'
+            }`}
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
@@ -106,7 +101,7 @@ export default function Login({ onVerified }) {
           |{' '}
           <button
             type="button"
-            onClick={() => navigate('/passwordreset')}
+            onClick={() => navigate('/forgot-password')}
             className="text-teal-400 hover:text-teal-200 font-semibold"
             disabled={loading}
           >
