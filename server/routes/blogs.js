@@ -1,7 +1,7 @@
 // routes/blogs.js
 const express = require("express");
 const Blog = require("../models/Blog");
-const adminAuth = require('../middleware/authMiddleware'); // <-- IMPORT MIDDLEWARE
+const { adminAuth } = require('../middleware/authMiddleware'); // <-- IMPORT MIDDLEWARE
 const router = express.Router();
 
 // --- PUBLIC ROUTES ---
@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const { category, searchTerm, page = 1, limit = 9 } = req.query;
-    
+
     // Base filter always includes published posts
     const filter = { published: true };
 
@@ -26,15 +26,15 @@ router.get("/", async (req, res) => {
         { summary: { $regex: searchTerm, $options: 'i' } }
       ];
     }
-    
+
     const blogs = await Blog.find(filter)
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
       .skip((parseInt(page) - 1) * parseInt(limit));
-      
+
     // Get the total count of documents matching the filter for pagination
     const totalCount = await Blog.countDocuments(filter);
-    
+
     res.json({
       blogs,
       currentPage: parseInt(page),

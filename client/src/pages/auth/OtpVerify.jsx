@@ -15,7 +15,7 @@ export default function OtpVerify() {
     const storedData = JSON.parse(localStorage.getItem('signupData'));
     if (!storedData) {
       setMessage('Signup data missing.');
-      navigate('/signup');
+      navigate('/register');
     } else {
       setFormData(storedData);
     }
@@ -27,7 +27,7 @@ export default function OtpVerify() {
     setError('');
     setVerifying(true);
     try {
-      const res = await api.post('/api/users/signup/verify-otp', {
+      const res = await api.post('/auth/verify-email', {
         ...formData,
         otp,
       });
@@ -60,7 +60,7 @@ export default function OtpVerify() {
 
   if (!formData) return <p>Loading...</p>;
 
-return (
+  return (
     <div className="min-h-screen bg-black flex items-center justify-center">
       <div className="max-w-md w-full p-8 bg-black rounded-2xl shadow-lg font-sans border border-teal-700">
         <h2 className="text-2xl font-extrabold text-teal-600 mb-6 text-center">
@@ -79,11 +79,10 @@ return (
             <button
               type="submit"
               disabled={verifying}
-              className={`flex-grow py-3 rounded-lg font-semibold text-black transition ${
-                verifying
-                  ? 'bg-teal-400 cursor-not-allowed'
-                  : 'bg-teal-400 hover:bg-green-700 hover:text-white'
-              }`}
+              className={`flex-grow py-3 rounded-lg font-semibold text-black transition ${verifying
+                ? 'bg-teal-400 cursor-not-allowed'
+                : 'bg-teal-400 hover:bg-green-700 hover:text-white'
+                }`}
             >
               {verifying ? 'Verifying...' : 'Verify'}
             </button>
@@ -91,11 +90,10 @@ return (
               type="button"
               disabled={resending}
               onClick={handleResend}
-              className={`flex-grow py-3 rounded-lg font-semibold text-black transition ${
-                resending
-                  ? 'bg-teal-400 cursor-not-allowed'
-                  : 'bg-teal-400 hover:bg-green-700 hover:text-white'
-              }`}
+              className={`flex-grow py-3 rounded-lg font-semibold text-black transition ${resending
+                ? 'bg-teal-400 cursor-not-allowed'
+                : 'bg-teal-400 hover:bg-green-700 hover:text-white'
+                }`}
             >
               {resending ? 'Resending...' : 'Resend OTP'}
             </button>

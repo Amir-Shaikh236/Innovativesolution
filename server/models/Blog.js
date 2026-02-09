@@ -5,11 +5,11 @@ const blogSchema = new mongoose.Schema({
   title: String,
   summary: String,
   body: String,
-// The Corrected Schema
-image: {
-  type: String,
-  required: [true, 'A cover image is required for all blog posts.']
-},
+  // The Corrected Schema
+  image: {
+    type: String,
+    required: [true, 'A cover image is required for all blog posts.']
+  },
   slug: { type: String, unique: true },
   published: { type: Boolean, default: true },
   category: String, // <<--- New field for category

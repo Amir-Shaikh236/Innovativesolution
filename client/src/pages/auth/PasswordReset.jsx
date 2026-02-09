@@ -1,71 +1,118 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 
-export default function PasswordReset({ onBack }) {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+const PasswordReset = () => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
 
-  const handlePasswordResetRequest = async (e) => {
+  const { resetToken } = useParams();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
+    setMessage(null);
+    setError(null);
+
+    // Basic Validation
+    if (password !== confirmPassword) {
+      return setError("Passwords do not match.");
+    }
+    if (password.length < 6) {
+      return setError("Password must be at least 6 characters long.");
+    }
+
     setLoading(true);
+
     try {
-      await api.post('/api/users/password-reset/request', { email });
-      setMessage('Password reset instructions sent to your email.');
+      // Make the API call
+      await api.put(`/auth/resetpassword/${resetToken}`, { password });
+
+      setMessage("Password reset successful! Redirecting to login...");
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+
     } catch (err) {
-      setError(err.response?.data?.msg || 'Failed to request password reset');
+      setError(err.response?.data?.message || "Invalid or Expired Token.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handlePasswordResetRequest}
-      className="max-w-md mx-auto mt-16 p-8 bg-black rounded-2xl shadow-lg font-sans border border-teal-700"
-    >
-      <h2 className="text-2xl font-extrabold text-teal-600 mb-6 text-center">
-        Password Reset
-      </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">Reset Password</h2>
+          <p className="text-sm text-gray-500 mt-2">
+            Please enter your new password below.
+          </p>
+        </div>
 
-      <input
-        type="email"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className="w-full mb-5 px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-      />
+        {/* Feedback Messages */}
+        {message && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm border border-green-200">
+            {message}
+          </div>
+        )}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm border border-red-200">
+            {error}
+          </div>
+        )}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className={`w-full py-3 rounded-lg font-semibold text-black transition ${
-          loading
-            ? 'bg-teal-400 cursor-not-allowed'
-            : 'bg-teal-400 hover:bg-green-700 hover:text-white'
-        }`}
-      >
-        {loading ? 'Requesting...' : 'Request Password Reset'}
-      </button>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              New Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            />
+          </div>
 
-      {message && (
-        <p className="mt-4 text-green-500 font-medium text-center">{message}</p>
-      )}
-      {error && (
-        <p className="mt-4 text-red-500 font-medium text-center">{error}</p>
-      )}
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <input
+              id="confirmPassword"
+              type="password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            />
+          </div>
 
-      <button
-        type="button"
-        onClick={onBack}
-        className="mt-6 block mx-auto text-center text-teal-400 font-semibold hover:text-teal-200"
-      >
-        Back
-      </button>
-    </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition-colors
+              ${loading
+                ? 'bg-blue-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              }`}
+          >
+            {loading ? 'Resetting...' : 'Reset Password'}
+          </button>
+        </form>
+      </div>
+    </div>
   );
-}
+};
+
+export default PasswordReset;

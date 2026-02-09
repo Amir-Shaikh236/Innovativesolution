@@ -7,11 +7,11 @@ import chatbotData from "../assets/chatbotData";
 // This function finds the best matching answer from the pre-filled data.
 const getAnswerFromData = (query) => {
   const normalizedQuery = query.toLowerCase().trim();
-  
+
   const inputWords = normalizedQuery.split(/\W+/).filter(Boolean);
   let maxScore = 0;
   let bestMatch = null;
-  
+
   for (const item of chatbotData) {
     const qText = item.q.toLowerCase();
     let score = 0;
@@ -26,11 +26,11 @@ const getAnswerFromData = (query) => {
       bestMatch = item;
     }
   }
-  
+
   if (bestMatch && maxScore > 0) {
     return bestMatch;
   }
-  
+
   return { a: "I'm sorry, I couldn't find an answer to that question. Could you please rephrase or contact our support team?" };
 };
 
@@ -66,34 +66,34 @@ const Chatbot = () => {
 
     setMessages(prev => [...prev, { sender: 'user', text: userMessage }]);
     if (!isQuickAction) {
-        setUserInput('');
+      setUserInput('');
     }
     setIsTyping(true);
 
     setTimeout(() => {
-        let response = {};
-        if (isQuickAction) {
-            // Hard-coded responses for quick actions
-            switch (userMessage) {
-                case "Website Guide":
-                    response = { a: "I can provide a step-by-step guided walkthrough on how to use the website and its core functions. Would you like to start?" };
-                    break;
-                case "FAQs":
-                    response = { a: "I can provide answers to common questions about our services for both clients and gig workers. What category are you interested in? (e.g., Verification, Payments, NDAs, etc.)" };
-                    break;
-                case "Customer Care":
-                    response = { a: "Our support team is available 24/7. Please provide your email address, and I will forward your request to a human representative." };
-                    break;
-                default:
-                    response = getAnswerFromData(userMessage);
-            }
-        } else {
-            // Use the keyword search for regular user input
+      let response = {};
+      if (isQuickAction) {
+        // Hard-coded responses for quick actions
+        switch (userMessage) {
+          case "Website Guide":
+            response = { a: "I can provide a step-by-step guided walkthrough on how to use the website and its core functions. Would you like to start?" };
+            break;
+          case "FAQs":
+            response = { a: "I can provide answers to common questions about our services for both clients and gig workers. What category are you interested in? (e.g., Verification, Payments, NDAs, etc.)" };
+            break;
+          case "Customer Care":
+            response = { a: "Our support team is available 24/7. Please provide your email address, and I will forward your request to a human representative." };
+            break;
+          default:
             response = getAnswerFromData(userMessage);
         }
-        
-        setMessages(prev => [...prev, { sender: 'bot', text: response.a, cta: response.cta }]);
-        setIsTyping(false);
+      } else {
+        // Use the keyword search for regular user input
+        response = getAnswerFromData(userMessage);
+      }
+
+      setMessages(prev => [...prev, { sender: 'bot', text: response.a, cta: response.cta }]);
+      setIsTyping(false);
     }, 1000);
   };
 
@@ -101,7 +101,7 @@ const Chatbot = () => {
     // Pass the label directly to handleSend
     const label = quickActions.find(qa => qa.action === action)?.label;
     if (label) {
-        handleSend(label, true);
+      handleSend(label, true);
     }
   };
 
@@ -111,7 +111,7 @@ const Chatbot = () => {
       handleSend();
     }
   };
-  
+
   const quickActions = [
     { label: "Website Guide", action: "tour" },
     { label: "Customer Care", action: "customer-care" },
@@ -162,16 +162,14 @@ const Chatbot = () => {
               {messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"
+                    }`}
                 >
                   <div
-                    className={`p-3 rounded-lg max-w-[80%] text-left ${
-                      msg.sender === "user"
+                    className={`p-3 rounded-lg max-w-[80%] text-left ${msg.sender === "user"
                         ? "bg-white text-black"
                         : "bg-gray-800/50 text-[#40E0D0] border border-[#060640]"
-                    }`}
+                      }`}
                   >
                     {msg.text}
                   </div>
@@ -215,9 +213,9 @@ const Chatbot = () => {
                 placeholder="Type your question..."
                 className="flex-1 bg-[#060009] border border-[#068330] rounded-lg px-4 py-2 mr-2 text-white focus:outline-none focus:ring-1 focus:ring-[#068330]"
               />
-              <button 
-                type="submit" 
-                className="bg-[#060640] p-3 rounded-lg text-white" 
+              <button
+                type="submit"
+                className="bg-[#060640] p-3 rounded-lg text-white"
                 style={{ boxShadow: "0 0 10px #068330" }}
                 disabled={isTyping || !userInput.trim()}
               >

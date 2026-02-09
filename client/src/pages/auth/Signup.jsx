@@ -19,7 +19,7 @@ export default function Signup() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleRequestOtp = async (e) => {
+  const OnSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
@@ -35,33 +35,22 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      await api.post('/api/users/signup/request-otp', { email: formData.email });
+      await api.post('/auth/register', formData);
 
-      localStorage.setItem(
-        'signupData',
-        JSON.stringify({
-          email: formData.email,
-          name: formData.name,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          age: parseInt(formData.age, 10),
-        })
-      );
-
-      setMessage('OTP sent to your email.');
-      navigate('/verify-otp');
+      setMessage(`Verification Email sent to your email: ${formData.email}`);
+      navigate('/verify-email');
     } catch (err) {
-      setError(err.response?.data?.msg || 'Failed to send OTP');
+      console.log(err)
+      setError(err.response?.data?.msg || 'Failed to send Email');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    // Added a container div with black background and top padding
     <div className="bg-black min-h-screen pt-32 pb-16 flex flex-col justify-center items-center font-sans">
       <form
-        onSubmit={handleRequestOtp}
+        onSubmit={OnSubmit}
         className="max-w-md w-full p-8 bg-black rounded-2xl shadow-lg border border-teal-700"
         noValidate
       >
@@ -125,13 +114,12 @@ export default function Signup() {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg font-semibold text-black transition ${
-            loading
-              ? 'bg-teal-400 cursor-not-allowed'
-              : 'bg-teal-400 hover:bg-green-700 hover:text-white'
-          }`}
+          className={`w-full py-3 rounded-lg font-semibold text-black transition ${loading
+            ? 'bg-teal-400 cursor-not-allowed'
+            : 'bg-teal-400 hover:bg-green-700 hover:text-white'
+            }`}
         >
-          {loading ? 'Sending OTP...' : 'Send OTP'}
+          {loading ? 'Sending Email...' : 'Send Email'}
         </button>
 
         <p className="mt-4 text-center text-gray-400">

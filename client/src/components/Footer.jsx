@@ -17,7 +17,7 @@ export default function Footer() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const res = await api.get("/api/categories");
+        const res = await api.get("/categories");
         setCategories(res.data);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
@@ -88,7 +88,7 @@ export default function Footer() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 mb-10 sm:mb-12 text-center sm:text-left">
               {/* Column 1: Brand & Headline */}
               <div className="lg:col-span-1 sm:col-span-2">
-                 {/* RESPONSIVE: Centered logo on mobile */}
+                {/* RESPONSIVE: Centered logo on mobile */}
                 <div className="flex justify-center sm:justify-start">
                   <img className="h-20 w-20 mb-4" src={logo} alt="Company Logo" />
                 </div>
