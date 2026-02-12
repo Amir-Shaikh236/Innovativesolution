@@ -161,7 +161,7 @@ exports.forgetPassword = async (req, res) => {
     const message = `
         <h2> Email Verification </h2>
         <p>Please click the button below to verify your email </p>
-        <a href="${link}" style="padding:10px 15px;background:#0d6efd;color:#fff;text-decoration:none;border-radius:5px"> Verify Email </a>
+        <a href="${resetUrl}" style="padding:10px 15px;background:#0d6efd;color:#fff;text-decoration:none;border-radius:5px"> Verify Email </a>
         <p> This link will expire in 1 Hour. </p>
         `
 

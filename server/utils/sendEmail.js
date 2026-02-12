@@ -31,7 +31,7 @@ const sendEmail = async (options) => {
     from: process.env.EMAIL_FROM || '"INNOVATIVE STAFFING" <no-reply@innovativestaffing.com>',
     to: options.to,
     subject: options.subject,
-    html: options.text, // In your controller, we passed the HTML string as 'text'
+    html: options.text, // we passed the HTML string as 'text'
   };
 
   await transporter.sendMail(mailOptions);
