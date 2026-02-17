@@ -196,7 +196,7 @@ export default function TermsPage() {
 
   return (
     <main className="min-h-screen bg-black text-[#F5F5F5] font-sans px-6 py-20 md:py-32 flex flex-col items-center">
-      
+
       {/* Hero Section */}
       <motion.section
         initial={{ opacity: 0, y: -20 }}
@@ -225,7 +225,7 @@ export default function TermsPage() {
             ))}
           </ul>
         </div>
-        
+
         {/* Accordion Sections */}
         <div className="space-y-4">
           {termsData.map((item) => (

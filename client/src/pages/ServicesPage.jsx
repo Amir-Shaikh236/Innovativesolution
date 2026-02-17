@@ -18,8 +18,8 @@ export default function ServicesPage() {
     async function fetchData() {
       try {
         const [catRes, spRes] = await Promise.all([
-          api.get("/api/categories"),
-          api.get("/api/subpages"),
+          api.get("/categories"),
+          api.get("/subpages"),
         ]);
         setAllCategories(catRes.data);
         setSubpages(spRes.data);
@@ -42,8 +42,8 @@ export default function ServicesPage() {
     selectedCats.length === 0
       ? subpages
       : subpages.filter((sp) =>
-          selectedCats.includes(sp.category?.name || sp.category)
-        );
+        selectedCats.includes(sp.category?.name || sp.category)
+      );
 
   if (loading)
     return (
@@ -123,8 +123,8 @@ function FlipCard({ service, navigate }) {
     service.image
       ? `${BASE_URL}${service.image}`
       : service.img
-      ? service.img
-      : "https://placehold.co/600x400/000000/F5F5F5?text=Service";
+        ? service.img
+        : "https://placehold.co/600x400/000000/F5F5F5?text=Service";
 
   return (
     <motion.div

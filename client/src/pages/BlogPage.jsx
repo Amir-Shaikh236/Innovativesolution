@@ -15,7 +15,7 @@ export default function BlogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "All");
-  
+
   // Get current page from URL or default to 1
   const currentPage = parseInt(searchParams.get("page")) || 1;
 
@@ -24,7 +24,7 @@ export default function BlogPage() {
     const fetchBlogs = async () => {
       setLoading(true);
       try {
-        const res = await api.get("/api/blogs", {
+        const res = await api.get("/blogs", {
           params: {
             page: currentPage,
             category: activeCategory,
@@ -46,7 +46,7 @@ export default function BlogPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await api.get("/api/blogs/categories");
+        const res = await api.get("/blogs/categories");
         setCategories(["All", ...res.data]);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
@@ -73,7 +73,7 @@ export default function BlogPage() {
   // HANDLER FOR SEARCH INPUT, with debounce to prevent excessive API calls
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
-        setSearchParams({ page: 1, category: activeCategory, search: searchTerm });
+      setSearchParams({ page: 1, category: activeCategory, search: searchTerm });
     }, 500); // Wait for 500ms of inactivity before making the API call
 
     return () => clearTimeout(debounceTimer);
@@ -117,11 +117,10 @@ export default function BlogPage() {
           <button
             key={category}
             onClick={() => handleCategoryChange(category)}
-            className={`px-6 py-2 rounded-lg font-semibold transition ${
-              activeCategory === category
-                ? "bg-[#40E0D0] text-black shadow-md"
-                : "bg-transparent text-[#F5F5F5] border border-[#008080]/30 hover:bg-[#008080]/20"
-            }`}
+            className={`px-6 py-2 rounded-lg font-semibold transition ${activeCategory === category
+              ? "bg-[#40E0D0] text-black shadow-md"
+              : "bg-transparent text-[#F5F5F5] border border-[#008080]/30 hover:bg-[#008080]/20"
+              }`}
           >
             {category}
           </button>
@@ -179,11 +178,10 @@ export default function BlogPage() {
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
-                className={`px-4 py-2 rounded ${
-                  page === blogData.currentPage
-                    ? "bg-[#40E0D0] text-black"
-                    : "bg-[#F5F5F5]/10 text-[#F5F5F5] hover:bg-[#F5F5F5]/20"
-                }`}
+                className={`px-4 py-2 rounded ${page === blogData.currentPage
+                  ? "bg-[#40E0D0] text-black"
+                  : "bg-[#F5F5F5]/10 text-[#F5F5F5] hover:bg-[#F5F5F5]/20"
+                  }`}
               >
                 {page}
               </button>

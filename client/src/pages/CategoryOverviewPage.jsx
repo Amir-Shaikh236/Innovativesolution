@@ -94,11 +94,11 @@ export default function CategoryOverviewPage() {
   useEffect(() => {
     async function fetchCategoryAndSubs() {
       try {
-        const { data: cat } = await api.get(`/api/categories/slug/${slug}`);
+        const { data: cat } = await api.get(`/categories/slug/${slug}`);
         setCategory(cat);
 
         if (cat?._id) {
-          const { data: subs } = await api.get(`/api/subpages?category=${cat._id}`);
+          const { data: subs } = await api.get(`/subpages?category=${cat._id}`);
           setSubCategories(subs);
         }
       } catch {

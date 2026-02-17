@@ -112,7 +112,7 @@ function SectionContent({ section, flipcards }) {
 const sectionStyles = {
   hero: "bg-gray-900/50 p-10 rounded-xl border border-gray-700 shadow-lg",
   default: "bg-transparent",
-  features: "bg-gray-800/50 rounded-xl p-6", 
+  features: "bg-gray-800/50 rounded-xl p-6",
   benefits: "bg-gray-800/50 rounded-xl p-6",
   examples: "bg-gray-800/50 rounded-xl p-6",
   cta: "bg-gradient-to-r from-[#008080] to-[#2E8B57] border border-[#008080] p-10 rounded-xl",
@@ -130,7 +130,7 @@ export default function Subpage() {
     async function fetchContent() {
       setLoading(true);
       try {
-        const res = await api.get(`/api/subpages/slug/${slug}`);
+        const res = await api.get(`/subpages/slug/${slug}`);
         setSubpage(res.data);
         setFlipcards(res.data.flipcards || []);
       } catch {
@@ -165,7 +165,7 @@ export default function Subpage() {
         transition={{ duration: 0.8 }}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-12 space-y-14 mt-10">
-          
+
           <section className={` flex flex-col md:flex-row items-center md:gap-10`}>
             {subpage.image && (
               <motion.div
@@ -202,7 +202,7 @@ export default function Subpage() {
             </motion.div>
           </section>
 
-        
+
           {subpage.sections?.map((section, index) => (
             <motion.section
               key={section._id || section.heading || index}
