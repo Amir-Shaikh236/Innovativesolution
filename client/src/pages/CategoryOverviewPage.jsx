@@ -185,11 +185,10 @@ export default function CategoryOverviewPage() {
           {category.sections?.map((section, idx) => (
             <motion.section
               key={section._id || section.heading || idx}
-              className={`p-10 rounded-xl ${
-                section.type === "cta"
-                  ? "bg-[#008080] text-white"
-                  : "bg-gray-900/50 border border-gray-700"
-              }`}
+              className={`p-10 rounded-xl ${section.type === "cta"
+                ? "bg-[#008080] text-white"
+                : "bg-gray-900/50 border border-gray-700"
+                }`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -197,9 +196,8 @@ export default function CategoryOverviewPage() {
             >
               {section.heading && (
                 <h2
-                  className={`text-3xl font-bold mb-6 ${
-                    section.type === "cta" ? "text-white" : "text-[#008080]"
-                  }`}
+                  className={`text-3xl font-bold mb-6 ${section.type === "cta" ? "text-white" : "text-[#008080]"
+                    }`}
                 >
                   {section.type === "features"
                     ? `Our ${section.heading}`

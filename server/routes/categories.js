@@ -7,6 +7,7 @@ const { adminAuth } = require('../middleware/authMiddleware');
 router.get('/', categoryController.getAllCategories);
 router.get('/slug/:slug', categoryController.getCategoryBySlug);
 router.get('/:id', categoryController.getCategoryById);
+
 // Protected routes
 router.post('/', adminAuth, categoryController.createCategory);
 router.put('/:id', adminAuth, categoryController.updateCategory);
