@@ -27,8 +27,8 @@ export default function TeamUpRequest() {
             try {
                 // Fetch both categories and subpages in parallel
                 const [categoriesRes, subpagesRes] = await Promise.all([
-                    api.get("/api/categories"),
-                    api.get("/api/subpages"),
+                    api.get("/categories"),
+                    api.get("/subpages"),
                 ]);
 
                 setCategoriesData(categoriesRes.data);
@@ -195,8 +195,8 @@ export default function TeamUpRequest() {
                             type="submit"
                             disabled={submitting}
                             className={`w-full py-3 rounded-md font-bold transition ${submitting
-                                    ? "bg-[#2E8B57]/50 text-slate-400 cursor-not-allowed"
-                                    : "bg-[#40E0D0] text-black hover:bg-[#2E8B57] hover:text-white"
+                                ? "bg-[#2E8B57]/50 text-slate-400 cursor-not-allowed"
+                                : "bg-[#40E0D0] text-black hover:bg-[#2E8B57] hover:text-white"
                                 }`}
                         >
                             {submitting ? "Submitting..." : "Submit"}

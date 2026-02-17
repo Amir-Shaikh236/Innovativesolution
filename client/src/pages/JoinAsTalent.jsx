@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../api"; 
+import api from "../api";
 
 export default function JoinAsTalent() {
   const [form, setForm] = useState({
@@ -24,53 +24,53 @@ export default function JoinAsTalent() {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setSubmitting(true);
-  setError("");
-  setSuccess(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
+    setSuccess(false);
 
-  try {
-    const data = new FormData();
-    data.append("firstName", form.firstName);
-    data.append("lastName", form.lastName);
-    data.append("email", form.email);
-    data.append("phone", form.phone);
-    data.append("location", form.location);
-    data.append("anythingElse", form.about); // backend expects anythingElse
-    data.append("file", form.file);
+    try {
+      const data = new FormData();
+      data.append("firstName", form.firstName);
+      data.append("lastName", form.lastName);
+      data.append("email", form.email);
+      data.append("phone", form.phone);
+      data.append("location", form.location);
+      data.append("anythingElse", form.about); // backend expects anythingElse
+      data.append("file", form.file);
 
-    const res = await api.post("/api/JoinTalent", data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+      const res = await api.post("/JoinTalent", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    // Axios does not have res.ok or res.json()
-    // Instead just check status or data (optionally)
-    if (res.status !== 201) {
-      // You can also use res.data.error if backend sends it
-      throw new Error(res.data?.error || "Failed to submit");
+      // Axios does not have res.ok or res.json()
+      // Instead just check status or data (optionally)
+      if (res.status !== 201) {
+        // You can also use res.data.error if backend sends it
+        throw new Error(res.data?.error || "Failed to submit");
+      }
+
+      setSuccess(true);
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        location: "",
+        about: "",
+        file: null,
+      });
+    } catch (err) {
+      // Axios errors have response data sometimes
+      const message = err.response?.data?.error || err.message || "Submission failed";
+      setError(message);
     }
 
-    setSuccess(true);
-    setForm({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      location: "",
-      about: "",
-      file: null,
-    });
-  } catch (err) {
-    // Axios errors have response data sometimes
-    const message = err.response?.data?.error || err.message || "Submission failed";
-    setError(message);
-  }
-
-  setSubmitting(false);
-};
+    setSubmitting(false);
+  };
 
 
   return (
@@ -178,11 +178,10 @@ const handleSubmit = async (e) => {
             <button
               type="submit"
               disabled={submitting}
-              className={`w-full py-3 rounded-lg font-bold transition-colors duration-300 ${
-                submitting
+              className={`w-full py-3 rounded-lg font-bold transition-colors duration-300 ${submitting
                   ? "bg-teal-800 text-slate-400 cursor-not-allowed"
                   : "bg-[#40E0D0] text-black hover:bg-[#2E8B57] hover:text-white"
-              }`}
+                }`}
             >
               {submitting ? "Submitting..." : "Apply Now"}
             </button>

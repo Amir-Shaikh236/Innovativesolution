@@ -36,12 +36,12 @@ export default function CaseStudiesPage() {
   useEffect(() => {
     // In a real application, you would fetch data from your backend
     // const fetchCaseStudies = async () => {
-    //   const res = await api.get("/api/case-studies");
+    //   const res = await api.get("/case-studies");
     //   setCaseStudies(res.data);
     //   setLoading(false);
     // };
     // fetchCaseStudies();
-    
+
     // Using mock data for demonstration purposes
     setCaseStudies(mockCaseStudies);
     setLoading(false);

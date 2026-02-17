@@ -11,7 +11,7 @@ export default function BlogOverviewPage() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await api.get(`/api/blogs/slug/${slug}`);
+        const res = await api.get(`/blogs/slug/${slug}`);
         setBlog(res.data);
         setLoading(false);
       } catch (err) {
