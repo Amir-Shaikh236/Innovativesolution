@@ -42,7 +42,7 @@ export default function Footer() {
     setSubmitting(true);
     setMessage(""); // Clear previous messages
     try {
-      await api.post("/api/subscriptions", { email });
+      await api.post("/subscriptions", { email });
       setMessage("Thanks for subscribing!");
       setEmail(""); // Clear the input field on success
     } catch (err) {

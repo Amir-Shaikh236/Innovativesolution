@@ -20,8 +20,8 @@ export default function Header({ isLoggedIn, onLogout }) {
       (async () => {
         try {
           const [catsRes, subsRes] = await Promise.all([
-            api.get("/api/categories"),
-            api.get("/api/subpages"),
+            api.get("/categories"),
+            api.get("/subpages"),
           ]);
           const cats = catsRes.data;
           const subs = subsRes.data;
