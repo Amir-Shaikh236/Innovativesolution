@@ -36,13 +36,39 @@ exports.getCategoryBySlug = async (req, res) => {
 exports.createCategory = async (req, res) => {
   try {
     const { name, slug, description, order, image, sections } = req.body;
-    const category = new Category({ name, slug, description, order, image, sections });
+    if (!name || !slug) {
+      return res.status(400).json({ error: "Name and slug are required" });
+    }
+
+    // check duplicate slug
+    const existingCategory = await Category.findOne({ slug });
+    if (existingCategory) {
+      return res.status(400).json({ error: "Slug already exists" });
+    }
+
+    const category = new Category({
+      name,
+      slug,
+      description,
+      order,
+      image,
+      sections
+    });
+
     await category.save();
-    res.status(201).json(category);
+
+    res.status(201).json({
+      message: "Category created successfully",
+      data: category
+    });
+
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({
+      error: err.message || "Server error"
+    });
   }
 };
+
 
 // Update category (with sections array support)
 exports.updateCategory = async (req, res) => {

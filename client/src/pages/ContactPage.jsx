@@ -11,7 +11,7 @@ export default function ContactPage() {
     inquiryType: '',
     message: ''
   });
-  
+
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [submissionError, setSubmissionError] = useState('');
@@ -33,8 +33,8 @@ export default function ContactPage() {
     setSubmissionError('');
 
     try {
-      const res = await api.post("/api/contact", formData);
-      
+      const res = await api.post("/contact", formData);
+
       if (res.status === 201) {
         setSubmissionMessage('Thanks for reaching out! Our team will get back to you within 24 hours');
         setFormData({
@@ -57,7 +57,7 @@ export default function ContactPage() {
 
   return (
     <main className="min-h-screen bg-black text-[#F5F5F5] font-sans px-6 py-20 md:py-32 flex flex-col items-center">
-      
+
       {/* Hero Section */}
       <motion.section
         initial={{ opacity: 0, y: -20 }}
@@ -72,9 +72,9 @@ export default function ContactPage() {
           Whether you have a question, a business inquiry, or just want to say hello, we’re here to listen.
         </p>
       </motion.section>
-      
+
       <div className="max-w-6xl w-full bg-gray-900/50 border border-gray-700 rounded-3xl p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-12">
-        
+
         {/* Left Column */}
         <motion.section
           initial={{ opacity: 0, x: -30 }}
@@ -83,7 +83,7 @@ export default function ContactPage() {
           className="flex flex-col justify-center"
         >
           <h2 className="text-3xl font-bold mb-8 text-[#008080]">Get in Touch</h2>
-          
+
           {/* Contact Info */}
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
@@ -119,7 +119,7 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
-          
+
           {/* Follow Us */}
           <div className="mt-12">
             <h3 className="font-bold text-lg mb-4 text-[#F5F5F5]">Follow Us</h3>
@@ -136,7 +136,7 @@ export default function ContactPage() {
               </a>
             </div>
           </div>
-          
+
           {/* Quick Help */}
           <div className="mt-12 p-6 bg-[#008080]/20 rounded-xl">
             <div className="flex items-center space-x-3 mb-2">

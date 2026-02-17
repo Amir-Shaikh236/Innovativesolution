@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -27,9 +26,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({
   // 'https://innovative-staffing.vercel.app',
   // 'https://innovative-staffing-v7jj.vercel.app',
-  origin: [
-    'http://localhost:5173'
-  ],
+  origin: [`${process.env.FRONTEND_URL}`],
   credentials: true,
 }));
 
