@@ -66,7 +66,7 @@ export default function TeamUpRequest() {
         setSubmitting(true);
         setSuccess(false);
         try {
-            const res = await api.post("/api/teamup", form);
+            const res = await api.post("/teamup", form);
             console.log("✅ Backend response:", res.data);
             setSuccess(true);
         } catch (err) {

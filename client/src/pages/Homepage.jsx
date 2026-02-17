@@ -29,7 +29,7 @@ const useMarqueeScroll = (ref, dependencies = []) => {
     animationId = requestAnimationFrame(scroll);
 
     return () => cancelAnimationFrame(animationId);
-   
+
   }, [...dependencies]);
 };
 
@@ -43,7 +43,7 @@ const HowWeWorkFlashcard = ({ step, accent }) => {
   const backHeading = accent === "blue" ? "text-[#008080]" : "text-purple-700";
 
   return (
-  
+
     <div
       className="relative w-full max-w-xs sm:w-80 h-96 cursor-pointer"
       style={{ perspective: 1000 }}
@@ -51,7 +51,7 @@ const HowWeWorkFlashcard = ({ step, accent }) => {
       onMouseLeave={() => setIsFlipped(false)}
     >
       <motion.div
-        
+
         className={`absolute w-full h-full rounded-3xl p-6 sm:p-8 flex flex-col justify-center items-center text-center shadow-lg ${frontBg}`}
         style={{ backfaceVisibility: "hidden", transformStyle: "preserve-3d" }}
         animate={{
@@ -59,19 +59,19 @@ const HowWeWorkFlashcard = ({ step, accent }) => {
         }}
         transition={{ duration: 0.7, type: "tween" }}
       >
-      
+
         <span className="text-3xl sm:text-4xl font-extrabold text-[#F5F5F5] mb-4">{step.front.icon}</span>
         <h3 className="text-lg sm:text-xl font-bold text-[#F5F5F5] mb-2">{step.front.headline}</h3>
         <p className="text-[#F5F5F5] text-opacity-80 text-sm">{step.front.description}</p>
       </motion.div>
       <motion.div
-       
+
         className={`absolute w-full h-full rounded-3xl p-6 sm:p-8 flex flex-col justify-center text-center shadow-lg bg-[#F5F5F5] ${backBorder}`}
         style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden", transformStyle: "preserve-3d" }}
         animate={{ rotateY: isFlipped ? 0 : -180 }}
         transition={{ duration: 0.7, type: "tween" }}
       >
- 
+
         <h4 className={`text-xl sm:text-2xl font-extrabold mb-4 ${backHeading}`}>{step.back.headline}</h4>
         <p className="text-sm text-gray-600 mb-4">{step.back.description}</p>
         <ul className="text-left text-sm text-gray-700 space-y-2">
@@ -105,7 +105,7 @@ const CategorySlider = ({ categories }) => {
       const autoScroll = setInterval(nextSlide, 5000);
       return () => clearInterval(autoScroll);
     }
-    }, [categories.length]);
+  }, [categories.length]);
 
   if (!categories || categories.length === 0) {
     return <div>Loading categories...</div>;
@@ -114,7 +114,7 @@ const CategorySlider = ({ categories }) => {
   const currentCategory = categories[currentSlide];
 
   return (
-      <section className="relative w-full h-[70vh] sm:h-[60vh] max-w-7xl mx-auto rounded-3xl overflow-hidden shadow-xl my-12 sm:my-20">
+    <section className="relative w-full h-[70vh] sm:h-[60vh] max-w-7xl mx-auto rounded-3xl overflow-hidden shadow-xl my-12 sm:my-20">
       <AnimatePresence initial={false} mode="wait">
         <motion.div
           key={currentCategory._id}
@@ -129,12 +129,12 @@ const CategorySlider = ({ categories }) => {
             style={{ backgroundImage: `url(${BASE_URL}${currentCategory.image})` }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent flex items-end">
-                <div className="p-6 sm:p-8 text-[#F5F5F5]">
+            <div className="p-6 sm:p-8 text-[#F5F5F5]">
               <h2 className="text-3xl md:text-4xl font-bold text-[#008080]">{currentCategory.name}</h2>
               <p className="text-base md:text-lg mb-4">{currentCategory.description}</p>
               <Link
                 to={`/category/${currentCategory.slug}`}
-                    className="inline-block px-5 py-2 sm:px-6 sm:py-3 bg-[#40E0D0] text-black rounded-lg font-semibold hover:bg-[#2E8B57] transition"
+                className="inline-block px-5 py-2 sm:px-6 sm:py-3 bg-[#40E0D0] text-black rounded-lg font-semibold hover:bg-[#2E8B57] transition"
               >
                 View {currentCategory.name} Services
               </Link>
@@ -181,9 +181,9 @@ export default function HomePage() {
       try {
         setLoading(true);
         const [clientsRes, featuredRes, categoriesRes] = await Promise.all([
-          api.get("/api/clients"),
-          api.get("/api/featuredSolutions"),
-          api.get("/api/categories"),
+          api.get("/clients"),
+          api.get("/featuredSolutions"),
+          api.get("/categories"),
         ]);
         setClients(clientsRes.data);
         setFeaturedSolutions(featuredRes.data);
@@ -201,8 +201,8 @@ export default function HomePage() {
     const fetchBlogs = async () => {
       try {
         setLoadingBlogs(true);
-        const res = await api.get("/api/blogs");
-        setBlogs(res.data.blogs); 
+        const res = await api.get("/blogs");
+        setBlogs(res.data.blogs);
       } catch (e) {
         console.error("Failed to fetch blogs:", e);
       } finally {
@@ -288,9 +288,9 @@ export default function HomePage() {
         className="font-sans text-[#F5F5F5] bg-[#000000] min-h-screen"
       >
         <section className="relative w-full min-h-[100vh] flex items-center bg-no-repeat bg-cover bg-center">
-             <div className="container mx-auto px-4 sm:px-6 py-20 relative z-10 flex flex-col lg:flex-row items-center gap-12">
+          <div className="container mx-auto px-4 sm:px-6 py-20 relative z-10 flex flex-col lg:flex-row items-center gap-12">
             <motion.div
-                 className="lg:w-1/2 max-w-2xl text-center lg:text-left"
+              className="lg:w-1/2 max-w-2xl text-center lg:text-left"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 1 }}
@@ -301,30 +301,30 @@ export default function HomePage() {
               >
                 Redefining recruitment with innovative staffing solution – bridging businesses and talent to build stronger teams
               </h1>
-                  <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start">
                 <motion.button
                   onClick={goToTeamRequest}
-                     className="px-6 py-3 sm:px-8 sm:py-4 rounded-md bg-[#40E0D0] hover:bg-[#2E8B57] shadow-lg transition text-black font-semibold"
+                  className="px-6 py-3 sm:px-8 sm:py-4 rounded-md bg-[#40E0D0] hover:bg-[#2E8B57] shadow-lg transition text-black font-semibold"
                   whileTap={{ scale: 0.95 }}
                 >
                   Request Proposal
                 </motion.button>
                 <Link
                   to="/services"
-                       className="px-6 py-3 sm:px-8 sm:py-4 rounded-md border border-[#40E0D0] text-[#40E0D0] font-semibold hover:bg-[#40E0D0]/10 transition drop-shadow"
+                  className="px-6 py-3 sm:px-8 sm:py-4 rounded-md border border-[#40E0D0] text-[#40E0D0] font-semibold hover:bg-[#40E0D0]/10 transition drop-shadow"
                 >
                   Explore Services
                 </Link>
                 <motion.button
                   onClick={onJoinTalent}
-                    className="px-6 py-3 sm:px-8 sm:py-4 rounded-md border border-[#40E0D0] text-[#40E0D0] font-semibold hover:bg-[#40E0D0]/10 transition drop-shadow"
+                  className="px-6 py-3 sm:px-8 sm:py-4 rounded-md border border-[#40E0D0] text-[#40E0D0] font-semibold hover:bg-[#40E0D0]/10 transition drop-shadow"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   Join as Talent
                 </motion.button>
               </div>
-                  <div className="mt-8 flex flex-wrap gap-x-4 gap-y-2 justify-center lg:justify-start text-[#F5F5F5] text-opacity-70 text-sm font-semibold">
+              <div className="mt-8 flex flex-wrap gap-x-4 gap-y-2 justify-center lg:justify-start text-[#F5F5F5] text-opacity-70 text-sm font-semibold">
                 <span>Budget-friendly</span>
                 <span>•</span>
                 <span>ISO-ready quality</span>
@@ -336,35 +336,35 @@ export default function HomePage() {
         </section>
 
         <section className="py-16 px-4 sm:px-6 max-w-7xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-8 sm:mb-12 text-[#008080]">Our Four Pillars</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-8 sm:mb-12 text-[#008080]">Our Four Pillars</h2>
           <CategorySlider categories={categories} />
         </section>
 
         <section
-             className={`py-16 px-4 sm:px-6 max-w-6xl mx-auto text-center transition-colors duration-500 bg-[#000000] rounded-3xl`}
+          className={`py-16 px-4 sm:px-6 max-w-6xl mx-auto text-center transition-colors duration-500 bg-[#000000] rounded-3xl`}
         >
-              <h2 className="text-3xl sm:text-4xl font-extrabold mb-8 sm:mb-12 text-[#008080]">How We Work</h2>
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-8 sm:mb-12 text-[#008080]">How We Work</h2>
           <div className="flex flex-col justify-center items-center">
-          <div className="flex w-74 flex-wrap justify-center rounded-lg ring ring-[#40E0D0]/30 bg-[#F5F5F5]/10 overflow-hidden mb-12 sm:mb-16">
-            {["For Businesses", "For Talent"].map((label, idx) => (
-              <button
-                key={label}
-                onClick={() => {
-                  setActiveTab(idx === 0 ? "business" : "talent");
-                }}
-                       className={`px-6 py-3 text-base sm:text-lg font-semibold whitespace-nowrap transition duration-300 w-1/2 sm:w-auto
+            <div className="flex w-74 flex-wrap justify-center rounded-lg ring ring-[#40E0D0]/30 bg-[#F5F5F5]/10 overflow-hidden mb-12 sm:mb-16">
+              {["For Businesses", "For Talent"].map((label, idx) => (
+                <button
+                  key={label}
+                  onClick={() => {
+                    setActiveTab(idx === 0 ? "business" : "talent");
+                  }}
+                  className={`px-6 py-3 text-base sm:text-lg font-semibold whitespace-nowrap transition duration-300 w-1/2 sm:w-auto
               ${activeTab === (idx === 0 ? "business" : "talent")
-                    ? idx === 0
-                      ? "bg-[#40E0D0] text-black shadow-lg"
-                      : "bg-purple-700 text-black shadow-lg"
-                    : "text-[#F5F5F5] hover:bg-[#F5F5F5]/10 hover:text-white"
-                  }`}
-                aria-selected={activeTab === (idx === 0 ? "business" : "talent")}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+                      ? idx === 0
+                        ? "bg-[#40E0D0] text-black shadow-lg"
+                        : "bg-purple-700 text-black shadow-lg"
+                      : "text-[#F5F5F5] hover:bg-[#F5F5F5]/10 hover:text-white"
+                    }`}
+                  aria-selected={activeTab === (idx === 0 ? "business" : "talent")}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -373,7 +373,7 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-                className="flex flex-wrap gap-8 md:gap-10  justify-center mb-6"
+              className="flex flex-wrap gap-8 md:gap-10  justify-center mb-6"
             >
               {currentSteps.map((step, i) => (
                 <motion.div
@@ -382,7 +382,7 @@ export default function HomePage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 40 }}
                   transition={{ duration: 0.5, delay: i * 0.07 }}
-                  className="w-full sm:w-auto flex justify-center" 
+                  className="w-full sm:w-auto flex justify-center"
                 >
                   <HowWeWorkFlashcard step={step} accent={step.back.accent} />
                 </motion.div>
@@ -403,7 +403,7 @@ export default function HomePage() {
           )}
         </section>
 
-             <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 text-center bg-[#000000]">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 text-center bg-[#000000]">
           <motion.h2
             className="text-3xl sm:text-4xl font-bold text-[#008080]"
             initial={{ opacity: 0, y: 20 }}
@@ -423,7 +423,7 @@ export default function HomePage() {
             “We believe talent flourishes when given the right platform. Our programs empower professionals to grow while helping businesses succeed. We build careers and deliver impact — fast onboarding, high retention, and real growth for every talent.”
           </motion.h4>
           <motion.div
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 my-8 sm:my-12"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 my-8 sm:my-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -463,7 +463,7 @@ export default function HomePage() {
           </Link>
         </section>
 
-            <section className="max-w-7xl mx-auto py-16 px-4 sm:px-6 bg-[#000000]">
+        <section className="max-w-7xl mx-auto py-16 px-4 sm:px-6 bg-[#000000]">
           <motion.h2
             className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-[#008080]"
             initial={{ opacity: 0, y: 20 }}

@@ -49,7 +49,7 @@ export default function OtpVerify() {
     setError('');
     setMessage('');
     try {
-      await api.post('/api/users/signup/request-otp', { email: formData.email });
+      await api.post('/users/signup/request-otp', { email: formData.email });
       setMessage('OTP resent to your email.');
     } catch (err) {
       setError(err.response?.data?.msg || 'Failed to resend OTP');
