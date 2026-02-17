@@ -22,11 +22,6 @@ export default function ContactPage() {
     inquiryType: "",
     message: "",
   });
-<<<<<<< HEAD
-
-  const [submissionMessage, setSubmissionMessage] = useState('');
-=======
->>>>>>> 76944ea3a84120259abe8fefb8fc3a0d667c262b
   const [loading, setLoading] = useState(false);
   const [submissionMessage, setSubmissionMessage] = useState("");
   const [submissionError, setSubmissionError] = useState("");
@@ -44,10 +39,6 @@ export default function ContactPage() {
 
     try {
       const res = await api.post("/contact", formData);
-<<<<<<< HEAD
-
-=======
->>>>>>> 76944ea3a84120259abe8fefb8fc3a0d667c262b
       if (res.status === 201) {
         setSubmissionMessage(
           "Thanks for reaching out! Our team will contact you within 24 hours.",
@@ -67,14 +58,8 @@ export default function ContactPage() {
   };
 
   return (
-<<<<<<< HEAD
-    <main className="min-h-screen bg-black text-[#F5F5F5] font-sans px-6 py-20 md:py-32 flex flex-col items-center">
-
-      {/* Hero Section */}
-=======
     <main className="min-h-screen bg-[#2F6690] px-4 sm:px-6 pb-16 py-24 flex flex-col items-center">
       {/* HERO */}
->>>>>>> 76944ea3a84120259abe8fefb8fc3a0d667c262b
       <motion.section
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -90,30 +75,18 @@ export default function ContactPage() {
         </p>
       </motion.section>
 
-<<<<<<< HEAD
-      <div className="max-w-6xl w-full bg-gray-900/50 border border-gray-700 rounded-3xl p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-12">
-
-        {/* Left Column */}
-=======
       {/* CONTENT */}
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 bg-[#F4F8FB] border border-[#E3EAF2] rounded-3xl p-8 md:p-14 shadow-lg text-[#1F2937]">
         {/* LEFT */}
->>>>>>> 76944ea3a84120259abe8fefb8fc3a0d667c262b
         <motion.section
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-<<<<<<< HEAD
-          <h2 className="text-3xl font-bold mb-8 text-[#008080]">Get in Touch</h2>
-
-          {/* Contact Info */}
-=======
           <h2 className="text-3xl font-bold mb-8 text-[#2F6690]">
             Get in Touch
           </h2>
 
->>>>>>> 76944ea3a84120259abe8fefb8fc3a0d667c262b
           <div className="space-y-6">
             <Info
               icon={<Mail />}
@@ -135,11 +108,7 @@ export default function ContactPage() {
             <Info icon={<MapPin />} title="Location" value="Pune" />
           </div>
 
-<<<<<<< HEAD
-          {/* Follow Us */}
-=======
           {/* SOCIAL */}
->>>>>>> 76944ea3a84120259abe8fefb8fc3a0d667c262b
           <div className="mt-12">
             <h3 className="font-bold mb-4 text-[#2F6690]">Follow Us</h3>
             <div className="flex space-x-6">
@@ -153,19 +122,11 @@ export default function ContactPage() {
             </div>
           </div>
 
-<<<<<<< HEAD
-          {/* Quick Help */}
-          <div className="mt-12 p-6 bg-[#008080]/20 rounded-xl">
-            <div className="flex items-center space-x-3 mb-2">
-              <Sparkles className="text-[#40E0D0]" size={24} />
-              <h3 className="font-bold text-xl text-[#F5F5F5]">Quick Help</h3>
-=======
           {/* QUICK HELP */}
           <div className="mt-12 p-6 border border-[#E3EAF2] rounded-xl">
             <div className="flex items-center space-x-2 mb-2">
               <Sparkles className="text-[#2F6690]" />
               <h3 className="font-bold text-lg text-[#2F6690]">Quick Help</h3>
->>>>>>> 76944ea3a84120259abe8fefb8fc3a0d667c262b
             </div>
 
             <p className="text-sm text-[#374151] mb-4">
