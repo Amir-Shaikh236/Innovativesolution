@@ -23,11 +23,13 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// 'https://innovative-staffing.vercel.app',
+// 'https://innovativn:estaffing-v7jj.vercel.app'
+
 app.use(cors({
-  // 'https://innovative-staffing.vercel.app',
-  // 'https://innovative-staffing-v7jj.vercel.app',
-  origin: [`${process.env.FRONTEND_URL}`],
-  credentials: true,
+  origin: process.env.FRONTEND_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
 
 // Body parser with size limits to prevent large payload attacks
@@ -58,4 +60,5 @@ app.use('/api/subscriptions', subscriptionRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
 });
