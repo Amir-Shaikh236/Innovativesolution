@@ -5,3 +5,4 @@ node_modules/
 # Env
 .env
 .env.local
+.final.md
