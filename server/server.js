@@ -32,6 +32,8 @@ app.use(cors({
   credentials: true
 }));
 
+app.set("trust proxy", 1);
+
 // Body parser with size limits to prevent large payload attacks
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
