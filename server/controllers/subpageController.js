@@ -7,6 +7,7 @@ exports.getAllSubpages = async (req, res) => {
     if (req.query.category) {
       filter.category = req.query.category;
     }
+    
     const subpages = await Subpage.find(filter)
       .populate('category')
       .sort({ order: 1 });
