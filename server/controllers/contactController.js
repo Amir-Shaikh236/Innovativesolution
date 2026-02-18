@@ -1,11 +1,11 @@
 const nodemailer = require("nodemailer");
 const ContactRequest = require("../models/ContactRequest");
 const Joi = require('joi')
+const xss = require("xss"); // <--- Ensure this is imported!
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
-  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
