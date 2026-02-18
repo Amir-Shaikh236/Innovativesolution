@@ -60,5 +60,4 @@ app.use('/api/subscriptions', subscriptionRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
 });
