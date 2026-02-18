@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const ContactRequest = require("../models/ContactRequest");
 const Joi = require('joi')
-const xss = require("xss"); // <--- Ensure this is imported!
+const xss = require("xss");
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
