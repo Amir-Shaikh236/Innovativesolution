@@ -90,9 +90,7 @@ exports.loginUser = async (req, res) => {
       const options = {
         expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         httpOnly: true,
-
         // ⚠️ FIXED: Only use 'secure: true' in production (HTTPS).
-        // For localhost (HTTP), this MUST be false.
         secure: process.env.NODE_ENV === 'production',
 
         // ⚠️ FIXED: 'Lax' works on localhost. 'None' fails without HTTPS.
