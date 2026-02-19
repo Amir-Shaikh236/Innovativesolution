@@ -34,7 +34,7 @@ const contactSchema = Joi.object({
   })
 });
 
-// Enhanced sanitization: removes newlines + XSS protection using xss library
+// Enhanced sanitization: removes newlines + XSS protection using xss library.
 const sanitize = (str = '') => {
   const cleaned = String(str).replace(/[\r\n]/g, '');
   return xss(cleaned);
