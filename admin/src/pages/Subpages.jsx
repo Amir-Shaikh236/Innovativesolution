@@ -35,7 +35,7 @@ export default function Subpages() {
 
   const fetchSubpages = async () => {
     try {
-      const { data } = await api.get('/api/subpages');
+      const { data } = await api.get('/subpages');
       setSubpages(data);
     } catch {
       setError('Failed to load subpages');
@@ -44,7 +44,7 @@ export default function Subpages() {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await api.get('/api/categories');
+      const { data } = await api.get('/categories');
       setCategories(data);
     } catch {
       setError('Failed to load categories');
@@ -81,7 +81,7 @@ export default function Subpages() {
     formData.append('image', file);
     setUploading(true);
     try {
-      const { data } = await api.post('/api/upload', formData, {
+      const { data } = await api.post('/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setForm((prev) => ({ ...prev, image: data.url }));
@@ -101,9 +101,9 @@ export default function Subpages() {
     }
     try {
       if (form._id) {
-        await api.put(`/api/subpages/${form._id}`, form);
+        await api.put(`/subpages/${form._id}`, form);
       } else {
-        await api.post('/api/subpages', form);
+        await api.post('/subpages', form);
       }
       setForm({
         title: '',
@@ -132,7 +132,7 @@ export default function Subpages() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this subpage?')) return;
     try {
-      await api.delete(`/api/subpages/${id}`);
+      await api.delete(`/subpages/${id}`);
       fetchSubpages();
     } catch {
       setError('Failed to delete subpage');
@@ -314,7 +314,7 @@ export default function Subpages() {
               form._id ? 'Update Subpage' : 'Add Subpage'
             }</button>
             {form._id && <button type="button" disabled={uploading} onClick={() => {
-              setForm({title: '', slug: '', description: '', content: '', category: '', order: 0, image: '', sections: [], _id: null});
+              setForm({ title: '', slug: '', description: '', content: '', category: '', order: 0, image: '', sections: [], _id: null });
               setPreviewURL('');
             }} className="px-10 py-3 rounded border border-gray-300 hover:bg-gray-100 transition">Cancel</button>}
           </div>
@@ -374,11 +374,11 @@ export default function Subpages() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{sp.title}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{sp.slug}</td>
-                   <td className="px-6 py-4 whitespace-nowrap">
-  {sp.category
-    ? (typeof sp.category === 'object' ? sp.category.name : sp.category)
-    : <span className="text-gray-400 italic">No Category</span>}
-</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {sp.category
+                        ? (typeof sp.category === 'object' ? sp.category.name : sp.category)
+                        : <span className="text-gray-400 italic">No Category</span>}
+                    </td>
 
                     <td className="px-6 py-4 whitespace-nowrap">{sp.order}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-center space-x-4">

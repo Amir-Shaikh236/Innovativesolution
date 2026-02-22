@@ -26,9 +26,9 @@ export default function FlipCards() {
     setError('');
     try {
       if (form._id) {
-        await api.put(`/api/flipcards/${form._id}`, form);
+        await api.put(`/flipcards/${form._id}`, form);
       } else {
-        await api.post('/api/flipcards', form);
+        await api.post('/flipcards', form);
       }
       setForm({ title: '', description: '', image: '', link: '', order: 0, _id: null });
       fetchFlipcards();
@@ -42,7 +42,7 @@ export default function FlipCards() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this flipcard?')) return;
     try {
-      await api.delete(`/api/flipcards/${id}`);
+      await api.delete(`/flipcards/${id}`);
       fetchFlipcards();
     } catch {
       setError('Failed to delete flipcard');

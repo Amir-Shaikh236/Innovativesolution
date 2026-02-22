@@ -10,7 +10,7 @@ export default function Subscriptions() {
     const fetchSubscriptions = async () => {
       try {
         setLoading(true);
-        const res = await api.get('/api/subscriptions');
+        const res = await api.get('/subscriptions');
         setSubscriptions(res.data);
       } catch (err) {
         setError('Failed to fetch subscriptions.');

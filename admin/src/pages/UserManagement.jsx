@@ -13,7 +13,7 @@ export default function UserManagement() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/api/users');
+      const res = await api.get('/users');
       setUsers(res.data);
     } catch (err) {
       setError('Failed to fetch users. Please try again.');
@@ -24,7 +24,7 @@ export default function UserManagement() {
 
   const toggleAdminStatus = async (userId, isAdmin) => {
     try {
-      await api.put(`/api/users/${userId}/admin`, { isAdmin: !isAdmin });
+      await api.put(`/users/${userId}/admin`, { isAdmin: !isAdmin });
       // Update the user list after a successful API call
       fetchUsers();
     } catch (err) {
