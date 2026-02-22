@@ -202,8 +202,9 @@ export default function HomePage() {
       try {
         setLoadingBlogs(true);
         const res = await api.get("/blogs");
-        setBlogs(res.data.blogs);
+        setBlogs(res.data.blogs || []);
       } catch (e) {
+        setBlogs([]);
         console.error("Failed to fetch blogs:", e);
       } finally {
         setLoadingBlogs(false);
@@ -212,7 +213,7 @@ export default function HomePage() {
     fetchBlogs();
   }, []);
 
-  const homepageBlogs = blogs.slice(0, 3);
+  const homepageBlogs = (blogs || []).slice(0, 3);
 
   if (loading || loadingBlogs) {
     return (
