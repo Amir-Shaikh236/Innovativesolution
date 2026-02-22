@@ -18,11 +18,7 @@ export default function Login({ onLogin }) {
 
     setLoading(true);
     try {
-      const { data } = await api.post('/api/admin/login', { username, password });
-
-      // Save token in localStorage under 'adminToken'
-      localStorage.setItem('adminToken', data.token);
-
+      const { data } = await api.post('/admin/login', { username, password });
       // Pass token and user info upward to parent to update app state
       onLogin({ token: data.token, user: data.admin });
     } catch (err) {
@@ -73,9 +69,8 @@ export default function Login({ onLogin }) {
       <button
         type="submit"
         disabled={loading}
-        className={`w-full py-3 rounded-lg font-semibold text-white transition ${
-          loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-        }`}
+        className={`w-full py-3 rounded-lg font-semibold text-white transition ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         aria-live="polite"
       >
         {loading ? 'Logging in...' : 'Login'}

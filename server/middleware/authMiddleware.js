@@ -15,13 +15,26 @@ const protect = async (req, res, next) => {
     }
 };
 
-// 2. Admin Only (Checks Role)
-const adminAuth = (req, res, next) => {
-    // We assume 'protect' has already run and set req.user
-    if (req.user && (req.user.isAdmin)) {
-        next();
-    } else {
-        res.status(403).json({ msg: 'Not authorized as an admin' });
+const adminAuth = async (req, res, next) => {
+    try {
+        const token = req.cookies.adminToken;
+
+        if (!token) {
+            return res.status(401).json({ msg: 'Not authorized, no admin token found' });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select('-password');
+
+        // Verify the user exists and is actually an admin
+        if (user && user.isAdmin) {
+            req.user = user; // Attach user data to the request
+            next();
+        } else {
+            res.status(403).json({ msg: 'Not authorized as an admin' });
+        }
+    } catch (err) {
+        res.status(401).json({ msg: 'Admin token failed or expired' });
     }
 };
 
