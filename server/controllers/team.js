@@ -27,6 +27,14 @@ exports.createTeamUpRequest = async (req, res) => {
       subCategory,
     } = req.body;
 
+    // Validate required fields
+    if (!mainCategory || mainCategory.trim() === "") {
+      return res.status(400).json({ error: "Main category is required." });
+    }
+    if (!subCategory || subCategory.trim() === "") {
+      return res.status(400).json({ error: "Sub category is required." });
+    }
+
     // Find the names for the main category and subcategory using their IDs
     let mainCategoryName = "Not specified";
     let subCategoryName = "Not specified";
