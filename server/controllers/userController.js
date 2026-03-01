@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { sendVerificationEmail, sendEmail } = require('../utils/sendEmail');
 const PasswordReset = require('../models/PasswordReset');
+const Joi = require('joi');
+const xss = require('xss');
 
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, {
@@ -11,32 +13,67 @@ const generateToken = (id, role) => {
   });
 };
 
+// Validation schemas
+const registerSchema = Joi.object({
+  name: Joi.string().min(2).max(50).required().trim(),
+  email: Joi.string().email().required().lowercase().trim(),
+  password: Joi.string().min(8).max(128).required()
+    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)'))
+    .messages({
+      'string.pattern.base': 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
+      'string.min': 'Password must be at least 8 characters long'
+    }),
+});
+
+const loginSchema = Joi.object({
+  email: Joi.string().email().required().lowercase().trim(),
+  password: Joi.string().required(),
+});
+
+const forgotPasswordSchema = Joi.object({
+  email: Joi.string().email().required().lowercase().trim(),
+});
+
+const resetPasswordSchema = Joi.object({
+  password: Joi.string().min(8).max(128).required()
+    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)'))
+    .messages({
+      'string.pattern.base': 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
+      'string.min': 'Password must be at least 8 characters long'
+    }),
+});
+
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-
-    if (!password) {
-      return res.status(400).json({ message: "Password is required in the request body" });
+    // Validate input
+    const { error, value } = registerSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
     }
 
-    const userExist = await User.findOne({ email });
+    const { name, email, password } = value;
+
+    // Sanitize inputs
+    const sanitizedName = xss(name);
+    const sanitizedEmail = xss(email);
+
+    const userExist = await User.findOne({ email: sanitizedEmail });
     if (userExist) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-
     const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt)
+    const hashPassword = await bcrypt.hash(password, salt);
 
     const token = jwt.sign(
-      { name, email, password: hashPassword },
+      { name: sanitizedName, email: sanitizedEmail, password: hashPassword },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    await sendVerificationEmail(email, token)
+    await sendVerificationEmail(sanitizedEmail, token);
 
-    res.status(200).json({ message: `Verification Link send to email: ${email}` })
+    res.status(200).json({ message: `Verification Link sent to email: ${sanitizedEmail}` });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

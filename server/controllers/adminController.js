@@ -3,10 +3,24 @@ const Category = require('../models/Category')
 const Blog = require('../models/Blog')
 const Subscription = require('../models/Subscription')
 const jwt = require('jsonwebtoken');
+const Joi = require('joi');
+
+// Validation schema
+const adminLoginSchema = Joi.object({
+  email: Joi.string().email().lowercase().trim(),
+  username: Joi.string().email().lowercase().trim(),
+  password: Joi.string().required(),
+}).or('email', 'username');
 
 exports.login = async (req, res) => {
   try {
-    const { email, username, password } = req.body;
+    // Validate input
+    const { error, value } = adminLoginSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ msg: error.details[0].message });
+    }
+
+    const { email, username, password } = value;
     const loginEmail = email || username;
 
     if (!loginEmail || !password) {
