@@ -1,4 +1,7 @@
 const User = require('../models/User');
+const Category = require('../models/Category')
+const Blog = require('../models/Blog')
+const Subscription = require('../models/Subscription')
 const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
@@ -24,10 +27,10 @@ exports.login = async (req, res) => {
 
     // Setting the JWT inside an HTTP-Only cookie
     res.cookie("adminToken", token, {
-      httpOnly: true, // Prevents JavaScript (XSS) from reading the cookie
-      secure: process.env.NODE_ENV === "production", // Must be true on Render
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Allows cross-domain requests (Vercel -> Render)
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds to match JWT
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     // Send the response
@@ -48,8 +51,6 @@ exports.AdminLogout = (req, res) => {
   res.status(200).json({ msg: "Admin logged out successfully" });
 };
 
-// In your admin routes file (e.g., adminRoutes.js)
-
 // Route to verify cookie on page refresh
 exports.getadmin = async (req, res) => {
   try {
@@ -57,11 +58,33 @@ exports.getadmin = async (req, res) => {
       return res.status(404).json({ msg: "Admin not found" });
     }
 
-    // 2. Just send the user data back to React exactly how it expects it: { admin: ... }
     res.status(200).json({ admin: req.user });
 
   } catch (error) {
     console.error("Crash in getadmin controller:", error);
     res.status(500).json({ msg: "Server Error", error: error.message });
+  }
+};
+
+exports.getDashboardStats = async (req, res) => {
+  try {
+    // Promise.all runs all 4 database queries simultaneously, saving massive amounts of time
+    const [categoriesCount, blogsCount, subscriptionsCount, usersCount] = await Promise.all([
+      Category.countDocuments(),
+      Blog.countDocuments(),
+      Subscription.countDocuments(),
+      User.countDocuments()
+    ]);
+
+    res.status(200).json({
+      categories: categoriesCount,
+      blogs: blogsCount,
+      subscriptions: subscriptionsCount,
+      users: usersCount
+    });
+
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    res.status(500).json({ message: "Server error while fetching statistics" });
   }
 };
