@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import api from '../api'; // Axios instance configured with backend base URL
 
 export default function Login({ onLogin }) {
@@ -66,7 +67,7 @@ export default function Login({ onLogin }) {
         className="w-full mb-5 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition disabled:opacity-50"
       />
 
-      <button
+      <Button
         type="submit"
         disabled={loading}
         className={`w-full py-3 rounded-lg font-semibold text-white transition ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
@@ -74,7 +75,7 @@ export default function Login({ onLogin }) {
         aria-live="polite"
       >
         {loading ? 'Logging in...' : 'Login'}
-      </button>
+      </Button>
     </form>
   );
 }
