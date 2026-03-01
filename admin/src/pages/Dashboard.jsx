@@ -59,7 +59,7 @@ export default function Dashboard({ onLogout }) {
             <Mail size={48} className="text-purple-600 mb-4" />
             <span className="text-lg font-semibold text-purple-700">View Subscriptions</span>
           </Link>
-          
+
           <Link
             to="/manage-users"
             className="flex flex-col items-center px-6 py-8 border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 bg-blue-50 hover:bg-blue-100"

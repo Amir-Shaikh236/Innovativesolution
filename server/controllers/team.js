@@ -68,7 +68,7 @@ exports.createTeamUpRequest = async (req, res) => {
         Company Name: ${companyName}
         Contact Name: ${firstName} ${lastName}
         Email: ${email}
-        Phone: ${phone}
+        Phone: ${phone}  
         Main Category: ${mainCategoryName}
         Sub Category: ${subCategoryName}
         Description: ${description}

@@ -29,7 +29,7 @@ export default function Categories() {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await api.get('/api/categories');
+      const { data } = await api.get('/categories');
       setCategories(data);
     } catch {
       setError('Failed to load categories');
@@ -46,7 +46,7 @@ export default function Categories() {
     const formData = new FormData();
     formData.append('image', file);
     try {
-      const { data } = await api.post('/api/upload', formData, {
+      const { data } = await api.post('/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setForm(prev => ({ ...prev, image: data.url }));
@@ -80,10 +80,10 @@ export default function Categories() {
     setError('');
     try {
       if (form._id) {
-        await api.put(`/api/categories/${form._id}`, form);
+        await api.put(`/categories/${form._id}`, form);
       } else {
         // The corrected part: use the current form state for the POST request
-        await api.post('/api/categories', form);
+        await api.post('/categories', form);
       }
       // Reset the form only after a successful submission
       setForm({ name: '', slug: '', description: '', order: 0, image: '', sections: [], _id: null });
@@ -102,7 +102,7 @@ export default function Categories() {
   const handleDelete = async id => {
     if (!window.confirm('Confirm deletion?')) return;
     try {
-      await api.delete(`/api/categories/${id}`);
+      await api.delete(`/categories/${id}`);
       fetchCategories();
     } catch {
       setError('Delete failed');

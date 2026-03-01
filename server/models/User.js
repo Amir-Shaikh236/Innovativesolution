@@ -7,8 +7,6 @@ const userSchema = new mongoose.Schema({
   password: { type: String },
   age: { type: Number },
   isAdmin: { type: Boolean, default: false },
-  otp: { type: String },
-  otpExpire: { type: Date },
 });
 
 // Password comparison method

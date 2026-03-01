@@ -27,7 +27,7 @@ export default function AdminBlogPanel() {
 
   const fetchBlogs = async () => {
     try {
-      const res = await api.get("/api/blogs/all");
+      const res = await api.get("/blogs/all");
       setBlogs(res.data);
     } catch (error) {
       console.error("Failed to fetch blogs:", error);
@@ -55,7 +55,7 @@ export default function AdminBlogPanel() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this blog?")) {
       try {
-        await api.delete(`/api/blogs/${id}`);
+        await api.delete(`/blogs/${id}`);
         fetchBlogs();
       } catch (error) {
         console.error("Failed to delete blog:", error);
@@ -82,7 +82,7 @@ export default function AdminBlogPanel() {
       const formData = new FormData();
       formData.append("image", imageFile);
       try {
-        const uploadRes = await api.post("/api/upload", formData, {
+        const uploadRes = await api.post("/upload", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         // Debug log
@@ -105,7 +105,6 @@ export default function AdminBlogPanel() {
       return;
     }
 
-
     const blogData = {
       ...form,
       image: finalImageUrl, // Use the final, correct URL
@@ -114,9 +113,9 @@ export default function AdminBlogPanel() {
 
     try {
       if (editing) {
-        await api.put(`/api/blogs/${editing}`, blogData);
+        await api.put(`/blogs/${editing}`, blogData);
       } else {
-        await api.post("/api/blogs", blogData);
+        await api.post("/blogs", blogData);
       }
       resetForm();
       fetchBlogs();
