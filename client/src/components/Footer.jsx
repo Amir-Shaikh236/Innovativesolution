@@ -18,8 +18,9 @@ export default function Footer() {
     async function fetchCategories() {
       try {
         const res = await api.get("/categories");
-        setCategories(res.data);
+        setCategories(res.data || []);
       } catch (err) {
+        setCategories([]);
         console.error("Failed to fetch categories:", err);
         setError("Failed to load services.");
       } finally {
