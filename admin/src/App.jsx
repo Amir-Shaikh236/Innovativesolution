@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -10,18 +10,17 @@ import AdminBlogPanel from './pages/AdminBlogPanel';
 import PrivateRoute from './components/PrivateRoute';
 import UserManagement from './pages/UserManagement';
 import Subscriptions from './pages/Subscriptions';
+import AdminLayout from './components/AdminLayout';
 import api from './api';
 
 function App() {
   const [admin, setAdmin] = useState(null);
-  const [loading, setLoading] = useState(true); // Optional: Good to prevent flickering
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const verifyAdmin = async () => {
       try {
-        // This request will automatically send the httpOnly cookie to the backend
         const res = await api.get('/admin/getadmin');
-
         if (res.data && res.data.admin) {
           setAdmin(res.data.admin);
         }
@@ -35,15 +34,12 @@ function App() {
     verifyAdmin();
   }, []);
 
-  // 2. Secure Logout
   const handleLogout = async () => {
     try {
-      // Tell the backend to clear the httpOnly cookie
-      await api.post('/admin-Logout');
+      await api.post('/admin/admin-Logout');
     } catch (error) {
       console.error("Error logging out from server:", error);
     } finally {
-      // Clear the React state whether the server request succeeds or fails
       setAdmin(null);
     }
   };
@@ -59,70 +55,26 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Login Route */}
         <Route path="/login" element={!admin ? <Login onLogin={setAdmin} /> : <Navigate to="/" />} />
-
         <Route
-          path="/"
           element={
             <PrivateRoute admin={admin}>
-              <Dashboard onLogout={handleLogout} />
+              <AdminLayout onLogout={handleLogout}>
+                <Outlet />
+              </AdminLayout>
             </PrivateRoute>
           }
-        />
+        >
 
-        <Route
-          path="/categories"
-          element={
-            <PrivateRoute admin={admin}>
-              <Categories />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/subpages"
-          element={
-            <PrivateRoute admin={admin}>
-              <Subpages />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/flipcards"
-          element={
-            <PrivateRoute admin={admin}>
-              <FlipCards />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/blogs"
-          element={
-            <PrivateRoute admin={admin}>
-              <AdminBlogPanel />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/manage-users"
-          element={
-            <PrivateRoute admin={admin}>
-              <UserManagement />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/subscriptions"
-          element={
-            <PrivateRoute admin={admin}>
-              <Subscriptions />
-            </PrivateRoute>
-          }
-        />
+          <Route path="/" element={<Dashboard onLogout={handleLogout} />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/subpages" element={<Subpages />} />
+          <Route path="/flipcards" element={<FlipCards />} />
+          <Route path="/blogs" element={<AdminBlogPanel />} />
+          <Route path="/manage-users" element={<UserManagement />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
+        </Route>
 
       </Routes>
     </Router>
