@@ -7,7 +7,7 @@ const User = require('./models/User');
 const Category = require('./models/Category');
 const Subpage = require('./models/Subpage');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/innovativestaffing';
+const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/innovativestaffing';
 
 const seedData = async () => {
   try {
@@ -15,22 +15,22 @@ const seedData = async () => {
     console.log('Connected to MongoDB');
 
     // Clear existing data
-    await User.deleteMany({});
+    // await User.deleteMany({});
     await Category.deleteMany({});
     await Subpage.deleteMany({});
     console.log('Cleared existing data');
 
     // Create admin user
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('admin123', salt);
-    
-    const adminUser = await User.create({
-      name: 'Admin',
-      email: 'admin@innovativestaffing.com',
-      password: hashedPassword,
-      isAdmin: true
-    });
-    console.log('Created admin user:', adminUser.email);
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash('admin123', salt);
+
+    // const adminUser = await User.create({
+    //   name: 'Admin',
+    //   email: 'admin@innovativestaffing.com',
+    //   password: hashedPassword,
+    //   isAdmin: true
+    // });
+    // console.log('Created admin user:', adminUser.email);
 
     // Create default categories
     const categories = await Category.insertMany([

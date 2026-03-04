@@ -1,460 +1,179 @@
-import React, { useEffect, useState } from 'react';
-import api from '../api';
-import { BASE_URL } from '../api';
-const SECTION_TYPES = [
-  { value: 'features', label: 'Features' },
-  { value: 'target', label: 'Target Audience' },
-  { value: 'examples', label: 'Examples' },
-  { value: 'benefits', label: 'Benefits' },
-  { value: 'packages', label: 'Packages' },
-  { value: 'cta', label: 'CTA' },
-];
+import React, { useState, useEffect } from 'react';
+import { FileText, Plus, Search, Edit, Trash2, Loader2, Image as ImageIcon } from 'lucide-react';
+import api, { BASE_URL } from '../api';
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table";
+
+import SubpageDialog from '../components/SubpageDialog';
 
 export default function Subpages() {
   const [subpages, setSubpages] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [form, setForm] = useState({
-    title: '',
-    slug: '',
-    description: '',
-    content: '',
-    category: '',
-    order: 0,
-    image: '',
-    sections: [],
-    _id: null,
-  });
-  const [previewURL, setPreviewURL] = useState('');
-  const [error, setError] = useState('');
-  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedSubpage, setSelectedSubpage] = useState(null);
 
   useEffect(() => {
-    fetchSubpages();
-    fetchCategories();
+    fetchInitialData();
   }, []);
 
-  const fetchSubpages = async () => {
+  const fetchInitialData = async () => {
+    setLoading(true);
     try {
-      const { data } = await api.get('/subpages');
-      setSubpages(data);
-    } catch {
-      setError('Failed to load subpages');
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const { data } = await api.get('/categories');
-      setCategories(data);
-    } catch {
-      setError('Failed to load categories');
-    }
-  };
-
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleSectionChange = (idx, field, value) => {
-    setForm((prev) => {
-      const updated = [...prev.sections];
-      updated[idx][field] = value;
-      return { ...prev, sections: updated };
-    });
-  };
-
-  const addSection = () =>
-    setForm((prev) => ({
-      ...prev,
-      sections: [...prev.sections, { type: '', heading: '', content: '' }],
-    }));
-
-  const removeSection = (idx) =>
-    setForm((prev) => ({
-      ...prev,
-      sections: prev.sections.filter((_, i) => i !== idx),
-    }));
-
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setPreviewURL(URL.createObjectURL(file));
-    const formData = new FormData();
-    formData.append('image', file);
-    setUploading(true);
-    try {
-      const { data } = await api.post('/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      setForm((prev) => ({ ...prev, image: data.url }));
-    } catch {
-      setError('Failed to upload image');
+      const [subRes, catRes] = await Promise.all([
+        api.get('/subpages'),
+        api.get('/categories')
+      ]);
+      setSubpages(subRes.data || []);
+      setCategories(catRes.data.categories || catRes.data || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     } finally {
-      setUploading(false);
+      setLoading(false);
     }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    if (!form.category) {
-      setError('Category is required');
-      return;
-    }
-    try {
-      if (form._id) {
-        await api.put(`/subpages/${form._id}`, form);
-      } else {
-        await api.post('/subpages', form);
-      }
-      setForm({
-        title: '',
-        slug: '',
-        description: '',
-        content: '',
-        category: '',
-        order: 0,
-        image: '',
-        sections: [],
-        _id: null,
-      });
-      setPreviewURL('');
-      fetchSubpages();
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to save subpage');
-    }
-  };
-
-  const handleEdit = (sp) => {
-    const categoryId = sp.category?._id || sp.category || '';
-    setForm({ ...sp, category: categoryId, sections: sp.sections || [] });
-    setPreviewURL(sp.image || '');
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this subpage?')) return;
     try {
       await api.delete(`/subpages/${id}`);
-      fetchSubpages();
+      fetchInitialData();
     } catch {
-      setError('Failed to delete subpage');
+      alert('Delete failed');
     }
   };
 
-  const renderSectionInput = (section, idx) => {
-    switch (section.type) {
-      case 'features':
-      case 'benefits':
-      case 'examples':
-        return (
-          <textarea
-            rows={5}
-            placeholder="Add list items here, one per line"
-            value={section.content}
-            onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-indigo-500"
-          />
-        );
-      case 'packages':
-        return (
-          <textarea
-            rows={7}
-            placeholder="Add HTML or markdown content"
-            value={section.content}
-            onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-indigo-500"
-          />
-        );
-      case 'cta':
-        return (
-          <input
-            type="url"
-            placeholder="Enter CTA URL"
-            value={section.content}
-            onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-          />
-        );
-      default:
-        return (
-          <textarea
-            rows={3}
-            placeholder="Content"
-            value={section.content}
-            onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-indigo-500"
-          />
-        );
-    }
+  const openAddDialog = () => {
+    setSelectedSubpage(null);
+    setIsDialogOpen(true);
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 p-10">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-10">
+  const openEditDialog = (subpage) => {
+    setSelectedSubpage(subpage);
+    setIsDialogOpen(true);
+  };
 
-        <h1 className="text-4xl font-extrabold mb-12">Subpages Management</h1>
+  const handleDialogSuccess = () => {
+    setIsDialogOpen(false);
+    fetchInitialData();
+  };
 
-        {error && (
-          <div className="mb-8 bg-red-100 p-4 rounded text-red-700">{error}</div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-
-          {/* Form Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-
-            <div className="space-y-6">
-              <label className="block">
-                <span className="text-gray-700 font-semibold">Title</span>
-                <input
-                  type="text"
-                  name="title"
-                  value={form.title}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                />
-              </label>
-
-              <label className="block">
-                <span className="text-gray-700 font-semibold">Slug</span>
-                <input
-                  type="text"
-                  name="slug"
-                  value={form.slug}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                />
-              </label>
-
-              <label className="block">
-                <span className="text-gray-700 font-semibold">Category</span>
-                <select
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="">Select category</option>
-                  {categories.map(cat => (
-                    <option key={cat._id} value={cat._id}>{cat.name}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="block max-w-[100px]">
-                <span className="text-gray-700 font-semibold">Order</span>
-                <input
-                  type="number"
-                  name="order"
-                  value={form.order}
-                  onChange={handleChange}
-                  placeholder="0"
-                  className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                />
-              </label>
-            </div>
-
-            <div>
-              <label className="block mb-2 text-gray-700 font-semibold">Upload Image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleUpload}
-                disabled={uploading}
-                className="block w-full p-2 border rounded-md cursor-pointer border-gray-300 file:rounded-md file:bg-indigo-600 file:text-white file:border-0 file:px-4 file:py-2 hover:file:bg-indigo-700 transition"
-              />
-              {uploading && <p className="mt-2 text-sm text-gray-500">Uploading image...</p>}
-              {previewURL && !uploading && (
-                <img src={previewURL} alt="Preview" className="mt-4 rounded-md w-52 h-52 object-cover border border-gray-300" />
-              )}
-            </div>
-          </div>
-
-          {/* Description */}
-          <label className="block mb-8">
-            <span className="text-gray-700 font-semibold">Description</span>
-            <textarea
-              name="description"
-              rows={3}
-              value={form.description}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 resize-y"
-              placeholder="Brief description"
-            />
-          </label>
-
-          {/* Sections Editor */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Sections</h2>
-              <button type="button" onClick={addSection} className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">+ Add Section</button>
-            </div>
-            {form.sections.length === 0 && <p className="italic text-gray-500">No sections added yet.</p>}
-            <div className="space-y-6">
-              {form.sections.map((section, idx) => (
-                <div key={idx} className="p-6 bg-gray-50 border border-gray-300 rounded shadow-sm relative">
-                  <button type="button" className="absolute top-4 right-4 font-semibold text-red-600 rounded hover:text-red-800" onClick={() => removeSection(idx)} aria-label="Delete section">&times;</button>
-                  <div className="flex flex-col md:flex-row gap-4 mb-4">
-                    <select className="flex-1 p-3 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500" value={section.type} onChange={e => handleSectionChange(idx, 'type', e.target.value)} required>
-                      <option value="">Select section type</option>
-                      {SECTION_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                    </select>
-                    <input type="text" placeholder="Section heading" className="flex-1 p-3 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500" value={section.heading} onChange={e => handleSectionChange(idx, 'heading', e.target.value)} required={section.type !== 'cta'} />
-                  </div>
-                  <textarea rows={section.type === 'features' || section.type === 'benefits' ? 5 : 3} className="w-full p-3 border border-gray-300 rounded resize-y focus:ring-2 focus:ring-indigo-500" placeholder="Section content" value={section.content} onChange={e => handleSectionChange(idx, 'content', e.target.value)} required />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-4">
-            <button type="submit" disabled={uploading} className="px-10 py-3 bg-indigo-600 text-white rounded shadow hover:bg-indigo-700 transition">{
-              form._id ? 'Update Subpage' : 'Add Subpage'
-            }</button>
-            {form._id && <button type="button" disabled={uploading} onClick={() => {
-              setForm({ title: '', slug: '', description: '', content: '', category: '', order: 0, image: '', sections: [], _id: null });
-              setPreviewURL('');
-            }} className="px-10 py-3 rounded border border-gray-300 hover:bg-gray-100 transition">Cancel</button>}
-          </div>
-        </form>
-
-
-
-        {/* Table listing subpages */}
-        <div className="overflow-x-auto mt-10">
-          <table className="min-w-full bg-white divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Image
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Slug
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Order
-                </th>
-                <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {subpages.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                    No subpages found.
-                  </td>
-                </tr>
-              ) : (
-                subpages.map((sp) => (
-                  <tr
-                    key={sp._id}
-                    className="hover:bg-indigo-50 transition cursor-pointer"
-                    onClick={() => handleEdit(sp)}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {sp.image ? (
-                        <img
-                          src={`${BASE_URL}${sp.image}`}
-                          alt={sp.title}
-                          className="w-16 h-16 object-cover rounded"
-                        />
-                      ) : (
-                        <span className="text-gray-400 italic">No Image</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{sp.title}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{sp.slug}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {sp.category
-                        ? (typeof sp.category === 'object' ? sp.category.name : sp.category)
-                        : <span className="text-gray-400 italic">No Category</span>}
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap">{sp.order}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center space-x-4">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(sp);
-                        }}
-                        className="text-indigo-600 hover:text-indigo-900 font-semibold"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(sp._id);
-                        }}
-                        className="text-red-600 hover:text-red-900 font-semibold"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+  const filteredSubpages = subpages.filter(sp =>
+    sp.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  function renderSectionContentInput(section, idx) {
-    switch (section.type) {
-      case 'features':
-      case 'benefits':
-      case 'examples':
-        return (
-          <textarea
-            rows={5}
-            placeholder="Enter one item per line"
-            value={section.content}
-            onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
-            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+            <FileText className="h-6 w-6 text-emerald-600" />
+            Manage Subpages
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">Create and structure content pages within your categories.</p>
+        </div>
+
+        <Button onClick={openAddDialog} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 shadow-sm rounded-xl transition-all duration-200">
+          <Plus className="h-5 w-5" />
+          Add Subpage
+        </Button>
+      </div>
+
+      <div className="bg-white p-2.5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+        <div className="relative max-w-md w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search subpages..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="h-10 pl-9 bg-gray-50/50 border-transparent focus-visible:bg-white focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 transition-all rounded-xl"
           />
-        );
-      case 'packages':
-        return (
-          <textarea
-            rows={7}
-            placeholder="Rich HTML or markdown content"
-            value={section.content}
-            onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
-            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"
-          />
-        );
-      case 'cta':
-        return (
-          <input
-            type="url"
-            placeholder="Enter CTA URL"
-            value={section.content}
-            onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
-            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        );
-      default:
-        return (
-          <textarea
-            rows={3}
-            placeholder="Content"
-            value={section.content}
-            onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
-            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"
-          />
-        );
-    }
-  }
+        </div>
+      </div>
+
+      <Card className="border-gray-100 shadow-sm rounded-2xl overflow-hidden">
+        <div className='px-6 py-2'>
+          <Table>
+            <TableHeader className="bg-gray-50/50 rounded-t-xl">
+              <TableRow className="hover:bg-transparent border-gray-100">
+                <TableHead className="font-semibold text-gray-600 text-center rounded-tl-xl">Image</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-center">Title</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-center">Category</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-center">Order</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-center rounded-tr-xl">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={5} className="h-32 text-center">
+                    <div className="flex justify-center items-center gap-2 text-gray-500">
+                      <Loader2 className="h-5 w-5 animate-spin text-emerald-600" /> Loading subpages...
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : filteredSubpages.length === 0 ? (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={5} className="h-48 text-center">
+                    <FileText className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                    <p className="text-lg font-medium text-gray-900">No subpages found</p>
+                    <p className="text-sm text-gray-500 mt-1">Get started by creating a new subpage.</p>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredSubpages.map((sp) => (
+                  <TableRow key={sp._id} className="hover:bg-emerald-50/60 transition-colors duration-200 border-gray-50">
+                    <TableCell className="text-center">
+                      <div className="flex justify-center">
+                        {sp.image ? (
+                          <img src={`${BASE_URL}${sp.image}`} alt={sp.title} className="w-12 h-12 object-cover rounded-lg border border-gray-200 shadow-sm" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-lg bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center">
+                            <ImageIcon className="h-5 w-5 text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium text-gray-900 text-center">
+                      <div className="flex flex-col items-center">
+                        <span>{sp.title}</span>
+                        <span className="text-xs text-gray-400 font-normal mt-0.5">/{sp.slug}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+                        {sp.category ? (typeof sp.category === 'object' ? sp.category.name : 'Linked Category') : 'No Category'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-center text-gray-500 font-medium">{sp.order || '0'}</TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex justify-center gap-2">
+                        <Button onClick={() => openEditDialog(sp)} variant="ghost" size="icon" className="text-gray-400 hover:text-blue-600 hover:bg-blue-50 h-8 w-8 rounded-lg cursor-pointer transition-colors duration-200">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button onClick={() => handleDelete(sp._id)} variant="ghost" size="icon" className="text-gray-400 hover:text-red-600 hover:bg-red-50 h-8 w-8 rounded-lg cursor-pointer transition-colors duration-200">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </Card>
+
+      <SubpageDialog isOpen={isDialogOpen} onOpenChange={setIsDialogOpen} initialData={selectedSubpage} onSuccess={handleDialogSuccess} categories={categories} />
+    </div>
+  );
 }
