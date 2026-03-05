@@ -71,17 +71,17 @@ const CounterCard = ({ number, label, symbol = "" }) => {
   return (
     <motion.div
       ref={elementRef}
-      className="bg-gradient-to-br from-[#1a3a3a] to-transparent border border-[#40E0D0]/30 p-6 rounded-xl text-center hover:border-[#40E0D0]/70 transition hover:shadow-lg hover:shadow-[#40E0D0]/20"
+      className="group bg-emerald-100 text-gray-800  to-transparent border border-[#40E0D0]/30 p-6 rounded-xl text-center hover:border-[#40E0D0]/70 transition hover:shadow-lg hover:shadow-[#40E0D0]/20"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       viewport={{ once: true, margin: "-10%" }}
     >
-      <span className="block text-5xl font-bold text-[#40E0D0] mb-3">
-        <Counter to={numericValue } duration={1.5} shouldStart={isVisible}/>
+      <span className="block text-5xl font-bold text-teal-800 mb-3">
+        <Counter to={numericValue} duration={1.5} shouldStart={isVisible} />
         {symbol}
       </span>
-      <p className="text-[#D0D0D0]/90 text-sm">{label}</p>
+      <p className="text-black text-sm">{label}</p>
     </motion.div>
   );
 };

@@ -28,7 +28,7 @@ const menuItems = [
     { title: "Dashboard", url: "/", icon: LayoutDashboard },
     { title: "Categories", url: "/categories", icon: Layers },
     { title: "SubPages", url: "/subpages", icon: FileText },
-    { title: "Services", url: "/subpages", icon: Briefcase },
+    // { title: "Services", url: "/subpages", icon: Briefcase },
     { title: "Blogs", url: "/blogs", icon: BookOpen },
     { title: "Manage Users", url: "/manage-users", icon: Users },
     { title: "Subscriptions", url: "/subscriptions", icon: CreditCard },

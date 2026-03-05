@@ -47,17 +47,17 @@ export default function AdminLayout({ children, admin, onLogout }) {
                     </div>
                     <div className="flex items-center gap-5">
                         <div className="flex items-center gap-3">
-                            <button className="p-2.5 bg-white rounded-full text-gray-400 hover:text-emerald-600 shadow-sm transition-all">
+                            <button className="p-2.5 bg-white rounded-full text-gray-400 hover:text-emerald-600 shadow-sm cursor-pointer transition-all">
                                 <Mail className="h-5 w-5" />
                             </button>
-                            <button className="relative p-2.5 bg-white rounded-full text-gray-400 hover:text-emerald-600 shadow-sm transition-all">
+                            <button className="relative p-2.5 bg-white rounded-full text-gray-400 hover:text-emerald-600 shadow-sm cursor-pointer transition-all">
                                 <Bell className="h-5 w-5" />
                                 <span className="absolute top-2 right-2.5 h-2 w-2 bg-red-500 rounded-full border-2 border-white box-content"></span>
                             </button>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="flex items-center gap-3 p-1.5 pr-4 bg-white rounded-full outline-none hover:shadow-md transition-all shadow-sm">
+                                <button className="flex items-center gap-3 p-1.5 pr-4 bg-white rounded-full outline-none hover:shadow-md transition-all shadow-sm cursor-pointer">
                                     <Avatar className="h-9 w-9">
                                         <AvatarImage src="" alt={adminName} />
                                         <AvatarFallback className="bg-emerald-100 text-emerald-700 font-bold">

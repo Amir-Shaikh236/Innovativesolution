@@ -48,7 +48,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-        <Card className="bg-emerald-600 border-none text-white shadow-sm relative overflow-hidden rounded-2xl">
+        <Card className="bg-emerald-600 border-none text-white shadow-sm relative overflow-hidden rounded-2xl cursor-pointer">
           <CardContent className="py-4 px-5 relative z-10 flex flex-col justify-center h-full">
             <p className="text-emerald-100 text-sm font-medium mb-0.5">Total Categories</p>
             <CardTitle className="text-3xl font-bold">
@@ -59,7 +59,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Card 2: Blogs */}
-        <Card className="bg-white border-gray-100 shadow-sm rounded-2xl hover:shadow-md transition-shadow">
+        <Card className="bg-white border-gray-100 shadow-sm rounded-2xl hover:shadow-md transition-shadow cursor-pointer">
           <CardContent className="py-4 px-5 flex items-center gap-4 h-full">
             <div className="h-11 w-11 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
               <BookOpen className="h-5 w-5 text-blue-600" />
@@ -74,7 +74,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Card 3: Subscriptions */}
-        <Card className="bg-white border-gray-100 shadow-sm rounded-2xl hover:shadow-md transition-shadow">
+        <Card className="bg-white border-gray-100 shadow-sm rounded-2xl hover:shadow-md transition-shadow cursor-pointer">
           <CardContent className="py-4 px-5 flex items-center gap-4 h-full">
             <div className="h-11 w-11 rounded-full bg-purple-50 flex items-center justify-center shrink-0">
               <CreditCard className="h-5 w-5 text-purple-600" />
@@ -89,7 +89,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Card 4: Users */}
-        <Card className="bg-white border-gray-100 shadow-sm rounded-2xl hover:shadow-md transition-shadow">
+        <Card className="bg-white border-gray-100 shadow-sm rounded-2xl hover:shadow-md transition-shadow cursor-pointer">
           <CardContent className="py-4 px-5 flex items-center gap-4 h-full">
             <div className="h-11 w-11 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
               <Users className="h-5 w-5 text-orange-600" />
