@@ -58,7 +58,7 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#2F6690] px-4 sm:px-6 pb-16 py-24 flex flex-col items-center">
+    <main className="min-h-screen bg-[#0F766E] px-4 sm:px-6 pb-16 py-24 flex flex-col items-center">
       {/* HERO */}
       <motion.section
         initial={{ opacity: 0, y: -20 }}
@@ -83,7 +83,7 @@ export default function ContactPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl font-bold mb-8 text-[#2F6690]">
+          <h2 className="text-3xl font-bold mb-8 text-emerald-800">
             Get in Touch
           </h2>
 
@@ -110,13 +110,13 @@ export default function ContactPage() {
 
           {/* SOCIAL */}
           <div className="mt-12">
-            <h3 className="font-bold mb-4 text-[#2F6690]">Follow Us</h3>
+            <h3 className="font-bold mb-4 text-emerald-800">Follow Us</h3>
             <div className="flex space-x-6">
               {[Linkedin, Instagram, Twitter].map((Icon, i) => (
                 <Icon
                   key={i}
                   size={28}
-                  className="text-[#2F6690] hover:text-[#1E4F75] transition cursor-pointer"
+                  className="text-emerald-700 hover:text-[#1E4F75] transition cursor-pointer"
                 />
               ))}
             </div>
@@ -124,9 +124,9 @@ export default function ContactPage() {
 
           {/* QUICK HELP */}
           <div className="mt-12 p-6 border border-[#E3EAF2] rounded-xl">
-            <div className="flex items-center space-x-2 mb-2">
-              <Sparkles className="text-[#2F6690]" />
-              <h3 className="font-bold text-lg text-[#2F6690]">Quick Help</h3>
+            <div className="flex items-center space-x-2 mb-2 text-emerald-800">
+              <Sparkles />
+              <h3 className="font-bold text-lg ">Quick Help</h3>
             </div>
 
             <p className="text-sm text-[#374151] mb-4">
@@ -143,7 +143,7 @@ export default function ContactPage() {
             <div className="flex gap-4">
               <Link
                 to="/careers"
-                className="px-6 py-3 bg-[#2F6690] text-white rounded-lg hover:bg-[#1E4F75] transition"
+                className="px-6 py-3 bg-[#0F766E]  text-white rounded-lg hover:bg-[#0F766E]/90  transition"
               >
                 <Briefcase className="inline mr-2" size={18} />
                 Careers
@@ -151,7 +151,7 @@ export default function ContactPage() {
 
               <Link
                 to="/services"
-                className="px-6 py-3 border border-[#2F6690] text-[#2F6690] rounded-lg hover:text-[#1E4F75] hover:border-[#1E4F75] transition"
+                className="px-6 py-3 border border-[#0F766E] text-[#0F766E] rounded-lg hover:bg-[#0F766E]  hover:text-white transition"
               >
                 <Handshake className="inline mr-2" size={18} />
                 Services
@@ -166,7 +166,7 @@ export default function ContactPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl font-bold mb-6 text-[#2F6690]">
+          <h2 className="text-3xl font-bold text-emerald-800">
             Send Us a Message
           </h2>
 
@@ -193,8 +193,8 @@ export default function ContactPage() {
                 required
                 value={formData.inquiryType}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-lg border border-[#E3EAF2]
-                focus:ring-2 focus:ring-[#2F6690] outline-none"
+                className="w-full p-3 rounded-lg border border-black
+      focus:ring-2 focus:ring-[#2F6690] outline-none"
               >
                 <option value="">Select subject</option>
                 <option>General</option>
@@ -209,13 +209,14 @@ export default function ContactPage() {
                 Message
               </label>
               <textarea
+                minLength={10}
                 name="message"
                 rows="5"
                 required
                 value={formData.message}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-lg border border-[#E3EAF2]
-                focus:ring-2 focus:ring-[#2F6690] outline-none"
+                className="w-full p-3 rounded-lg border border-black
+      focus:ring-2 focus:ring-[#2F6690] outline-none"
               />
             </div>
 
@@ -229,7 +230,7 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-[#2F6690] text-white font-bold rounded-lg hover:bg-[#1E4F75] transition"
+              className="w-full py-4 bg-[#0F766E] text-white font-bold rounded-lg hover:bg-[#0F766E]/90  transition"
             >
               {loading ? "Sending..." : "Let’s Connect"}
             </button>
@@ -269,7 +270,7 @@ function Input({ label, name, value, onChange }) {
         value={value}
         onChange={onChange}
         required
-        className="w-full p-3 rounded-lg border border-[#E3EAF2]
+        className="w-full p-3 rounded-lg border border-black
         text-[#1F2937] focus:ring-2 focus:ring-[#2F6690] outline-none"
       />
     </div>
