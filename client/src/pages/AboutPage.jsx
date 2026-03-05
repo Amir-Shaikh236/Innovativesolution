@@ -1,6 +1,16 @@
 import React from "react";
-import { Globe, Pin } from "lucide-react";
-
+import CounterCard from "../components/counter";
+import {
+  Building2,
+  Globe,
+  Handshake,
+  Laptop,
+  Lightbulb,
+  Pin,
+  Star,
+  Target,
+} from "lucide-react";
+import {motion, useInView} from "framer-motion"
 import founder from "../assets/founder.jpeg";
 
 const StudentIcon = () => (
@@ -241,8 +251,10 @@ const AboutPage = () => {
             What We Do
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center">
-              <span className="text-4xl mb-4">🧑‍💻</span>
+            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="text-4xl mb-4">
+                <Laptop className="w-12 h-12" />
+              </span>
               <h3 className="text-xl font-semibold mb-2">
                 Training & Mentorship
               </h3>
@@ -250,24 +262,30 @@ const AboutPage = () => {
                 Preparing candidates with skills, projects, and confidence.
               </p>
             </div>
-            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center">
-              <span className="text-4xl mb-4">📊</span>
+            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="text-4xl mb-4">
+                <Building2 className="w-12 h-12" />
+              </span>
               <h3 className="text-xl font-semibold mb-2">Business Solutions</h3>
               <p className="text-[#F5F5F5]/80">
                 Affordable staffing, management, and technology services for
                 startups & MSMEs.
               </p>
             </div>
-            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center">
-              <span className="text-4xl mb-4">🎯</span>
+            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="text-4xl mb-4">
+                <Target className="w-12 h-12" />
+              </span>
               <h3 className="text-xl font-semibold mb-2">Smart Hiring</h3>
               <p className="text-[#F5F5F5]/80">
                 A recruitment process designed to identify, test, and prepare
                 high-performing candidates.
               </p>
             </div>
-            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center">
-              <span className="text-4xl mb-4">🤝</span>
+            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="text-4xl mb-4">
+                <Handshake className="w-12 h-12" />
+              </span>
               <h3 className="text-xl font-semibold mb-2">Partnerships</h3>
               <p className="text-[#F5F5F5]/80">
                 Creating long-term connections between talent and organizations
@@ -308,8 +326,10 @@ const AboutPage = () => {
         {/* 7. Mission, Vision, Values */}
         <section id="mission-vision-values" className="mb-16 md:mb-24">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="text-4xl">🌟</span>
+            <div className="bg-gray-900/50 p-6 rounded-lg transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="flex justify-center  ">
+                <Star className="w-8 h-8 " />
+              </span>
               <h3 className="text-2xl font-bold text-[#008080] my-2">
                 Mission
               </h3>
@@ -318,16 +338,20 @@ const AboutPage = () => {
                 and confidence to succeed.
               </p>
             </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="text-4xl">🔮</span>
+            <div className="bg-gray-900/50 p-6 rounded-lg transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="flex justify-center  ">
+                <Globe className="w-8 h-8 " />
+              </span>
               <h3 className="text-2xl font-bold text-[#008080] my-2">Vision</h3>
               <p className="text-[#F5F5F5]/90">
                 To be the most trusted partner for startups and MSMEs in
                 building future-ready teams.
               </p>
             </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="text-4xl">💡</span>
+            <div className="bg-gray-900/50 p-6 rounded-lg transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="flex justify-center  ">
+                <Lightbulb className="w-9 h-9 " />
+              </span>
               <h3 className="text-2xl font-bold text-[#008080] my-2">Values</h3>
               <p className="text-[#F5F5F5]/90">
                 Integrity | Innovation | Diversity | Growth
@@ -342,36 +366,10 @@ const AboutPage = () => {
             Our Impact
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="block text-5xl font-bold text-[#40E0D0]">
-                100+
-              </span>
-              <p className="mt-2 text-[#F5F5F5]/90">
-                ✅ candidates trained and placed successfully
-              </p>
-            </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="block text-5xl font-bold text-[#40E0D0]">
-                10+
-              </span>
-              <p className="mt-2 text-[#F5F5F5]/90">
-                ✅ startups scaled with our support
-              </p>
-            </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="block text-5xl font-bold text-[#40E0D0]">
-                70%
-              </span>
-              <p className="mt-2 text-[#F5F5F5]/90">
-                ✅ women professionals reintroduced into workforce
-              </p>
-            </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="block text-5xl font-bold text-[#40E0D0]">
-                95%
-              </span>
-              <p className="mt-2 text-[#F5F5F5]/90">✅ client retention rate</p>
-            </div>
+           <CounterCard number="100+" symbol="+" label="✅ candidates trained and placed successfully" />
+            <CounterCard number="10+" symbol="+" label="✅ startups scaled with our support" />
+            <CounterCard number="70%" symbol="%" label="✅ women professionals reintroduced into workforce" />
+            <CounterCard number="95%" symbol="%" label="✅ client retention rate" />
           </div>
         </section>
 

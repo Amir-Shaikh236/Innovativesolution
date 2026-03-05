@@ -166,7 +166,7 @@ export default function ContactPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl font-bold mb-6 text-[#2F6690]">
+          <h2 className="text-3xl font-bold text-[#2F6690]">
             Send Us a Message
           </h2>
 
@@ -193,8 +193,8 @@ export default function ContactPage() {
                 required
                 value={formData.inquiryType}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-lg border border-[#E3EAF2]
-                focus:ring-2 focus:ring-[#2F6690] outline-none"
+                className="w-full p-3 rounded-lg border border-black
+      focus:ring-2 focus:ring-[#2F6690] outline-none"
               >
                 <option value="">Select subject</option>
                 <option>General</option>
@@ -209,13 +209,14 @@ export default function ContactPage() {
                 Message
               </label>
               <textarea
+                minLength={10}
                 name="message"
                 rows="5"
                 required
                 value={formData.message}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-lg border border-[#E3EAF2]
-                focus:ring-2 focus:ring-[#2F6690] outline-none"
+                className="w-full p-3 rounded-lg border border-black
+      focus:ring-2 focus:ring-[#2F6690] outline-none"
               />
             </div>
 
@@ -269,7 +270,7 @@ function Input({ label, name, value, onChange }) {
         value={value}
         onChange={onChange}
         required
-        className="w-full p-3 rounded-lg border border-[#E3EAF2]
+        className="w-full p-3 rounded-lg border border-black
         text-[#1F2937] focus:ring-2 focus:ring-[#2F6690] outline-none"
       />
     </div>
