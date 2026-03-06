@@ -15,7 +15,7 @@ import {
   Handshake,
 } from "lucide-react";
 
-export default function ContactPage() {
+export default function ContactPage({ user }) {
   const [formData, setFormData] = useState({
     fullName: "",
     emailAddress: "",
@@ -25,6 +25,17 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(false);
   const [submissionMessage, setSubmissionMessage] = useState("");
   const [submissionError, setSubmissionError] = useState("");
+
+  // Auto-fill name and email when user is logged in
+  React.useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: user.name || "",
+        emailAddress: user.email || "",
+      }));
+    }
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 
-export default function TeamUpRequest() {
+export default function TeamUpRequest({ user }) {
     const [categoriesData, setCategoriesData] = useState([]);
     const [subpagesData, setSubpagesData] = useState([]); // State to hold all subpage data
     const [subcategories, setSubcategories] = useState([]); // State for filtered subcategories
@@ -19,6 +19,19 @@ export default function TeamUpRequest() {
     const [error, setError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+
+    // Auto-fill email and name when user is logged in
+    useEffect(() => {
+        if (user) {
+            const nameParts = (user.name || "").split(" ");
+            setForm((prev) => ({
+                ...prev,
+                firstName: nameParts[0] || "",
+                lastName: nameParts.slice(1).join(" ") || "",
+                email: user.email || "",
+            }));
+        }
+    }, [user]);
 
     useEffect(() => {
         async function fetchData() {
