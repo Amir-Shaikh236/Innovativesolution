@@ -23,6 +23,8 @@ const registerSchema = Joi.object({
       'string.pattern.base': 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
       'string.min': 'Password must be at least 8 characters long'
     }),
+  confirmPassword: Joi.any().strip(), // Allow but ignore
+  age: Joi.number().min(18).optional(), // Allow but optional
 });
 
 const loginSchema = Joi.object({
