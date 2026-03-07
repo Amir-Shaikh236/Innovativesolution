@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import api from "../api";
 
-export default function JoinAsTalent() {
+export default function JoinAsTalent({ user }) {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -14,6 +14,19 @@ export default function JoinAsTalent() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  // Auto-fill email and name when user is logged in
+  React.useEffect(() => {
+    if (user) {
+      const nameParts = (user.name || "").split(" ");
+      setForm((prev) => ({
+        ...prev,
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+        email: user.email || "",
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;

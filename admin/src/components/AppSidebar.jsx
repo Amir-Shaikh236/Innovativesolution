@@ -23,12 +23,14 @@ import {
     FileText
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { Badge } from "./ui/badge";
 
 const menuItems = [
     { title: "Dashboard", url: "/", icon: LayoutDashboard },
     { title: "Categories", url: "/categories", icon: Layers },
     { title: "SubPages", url: "/subpages", icon: FileText },
     // { title: "Services", url: "/subpages", icon: Briefcase },
+
     { title: "Blogs", url: "/blogs", icon: BookOpen },
     { title: "Manage Users", url: "/manage-users", icon: Users },
     { title: "Subscriptions", url: "/subscriptions", icon: CreditCard },
@@ -39,19 +41,29 @@ export function AppSidebar({ onLogout }) {
 
     return (
         <Sidebar collapsible="icon" className="border-r border-gray-100 bg-white">
-            <SidebarHeader className="pt-4">
+            <SidebarHeader className="pt-4 pb-4">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild className="hover:bg-transparent cursor-pointer">
                             <Link to="/">
+                                <Badge
+                                    variant="outline"
+                                    className="relative flex items-center justify-center w-12 h-12 p-0 overflow-hidden border-none rounded-full shadow-md"
+                                >
+                                    {/* 1. The Animated Multi-Color Spinning Gradient */}
+                                    <span className="absolute w-[250%] h-[250%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(#10b981,#9ca3af,#ffffff,#22c55e,#86efac,#10b981)]" />
 
-                                <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-sm">
-                                    <Hexagon className="size-5" fill="currentColor" />
-                                </div>
-
-                                <div className="flex flex-col gap-0.5 leading-none">
-                                    <span className="text-xl font-bold tracking-tight text-gray-900">
-                                        Adminzo
+                                    {/* 2. The Inner Surface (Perfect Circle Mask) */}
+                                    <span className="relative z-10 flex items-center justify-center w-[calc(100%-4px)] h-[calc(100%-4px)] bg-white rounded-full text-2xl font-bold text-black ">
+                                        S
+                                    </span>
+                                </Badge>
+                                <div className="flex flex-col gap-0.5 leading-none overflow-hidden group-data-[collapsible=icon]:hidden ml-1">
+                                    <span className="text-[19px] font-extrabold tracking-tight text-gray-900 truncate">
+                                        Innovative
+                                    </span>
+                                    <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest truncate">
+                                        Staffing Solutions
                                     </span>
                                 </div>
 
