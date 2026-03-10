@@ -270,7 +270,7 @@ export default function BlogDialog({ isOpen, onOpenChange, initialData, onSucces
                             </div>
 
                             {/* ══════════════════════════════════
-                                SECTION 4 — Visibility
+                                SECTION 4 — Visibility  
                             ══════════════════════════════════ */}
                             <div className="space-y-4 pt-2">
                                 <SectionDivider title="Visibility Status" />

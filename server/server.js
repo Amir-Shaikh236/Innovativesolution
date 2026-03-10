@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 5000;
 // 'https://innovativn:estaffing-v7jj.vercel.app'
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: [process.env.FRONTEND_URL, process.env.ADMIN_FRONTEND_URL],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
