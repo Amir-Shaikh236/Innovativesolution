@@ -7,10 +7,7 @@ import {
 import api from '../api';
 import { Link } from 'react-router-dom';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// API LAYER
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── API LAYER ───────────────────────────────────────────────────────────────
 const BASE = "/admin/dashboard-stats";
 const API = {
   fetchStats: () => api.get(`${BASE}`),
@@ -23,10 +20,7 @@ const API = {
 
 const ICON_MAP = { UserPlus, FileText, CreditCard, AlertCircle, CheckCircle2, Zap, Star, Eye };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HOOKS
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── HOOKS ───────────────────────────────────────────────────────────────────
 function useCountUp(target, duration = 1200, active = false) {
   const [val, setVal] = useState(0);
   const prev = useRef(0);
@@ -78,10 +72,43 @@ function useLiveData(fetcher, interval = 30000) {
   return { data, loading, error, lastUpdated, refetch: () => load() };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GLASS STAT CARD — white interior, animated gradient border on hover
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── CARD GRADIENT CONFIGS ───────────────────────────────────────────────────
+const CARD_CFG = [
+  { gradient: 'linear-gradient(135deg,#10b981 0%,#34d399 60%,#6ee7b7 100%)', iconColor: '#10b981', numberColor: '#059669' },
+  { gradient: 'linear-gradient(135deg,#3b82f6 0%,#60a5fa 60%,#93c5fd 100%)', iconColor: '#3b82f6', numberColor: '#2563eb' },
+  { gradient: 'linear-gradient(135deg,#8b5cf6 0%,#a78bfa 60%,#c4b5fd 100%)', iconColor: '#8b5cf6', numberColor: '#7c3aed' },
+  { gradient: 'linear-gradient(135deg,#f97316 0%,#fb923c 60%,#fdba74 100%)', iconColor: '#f97316', numberColor: '#ea580c' },
+];
 
+const CHART_TABS = [
+  { key: 'users', label: 'Users', color: '#10b981' },
+  { key: 'blogs', label: 'Content', color: '#3b82f6' },
+  { key: 'revenue', label: 'Revenue', color: '#8b5cf6' },
+];
+
+// ─── SHARED PANEL COMPONENT ──────────────────────────────────────────────────
+function Panel({ children, title, subtitle, action, className = "" }) {
+  return (
+    <div className={`bg-white dark:bg-slate-900 rounded-[20px] p-[22px] px-6 pb-5 border border-gray-100 dark:border-slate-800/60 shadow-sm transition-colors ${className}`}>
+      {title && (
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-extrabold text-gray-900 dark:text-slate-50 m-0">{title}</h3>
+            {subtitle && <p className="text-[11px] text-gray-400 dark:text-slate-400 mt-0.5 font-medium">{subtitle}</p>}
+          </div>
+          {action && (
+            <button className="group flex items-center gap-1 text-[11px] font-bold text-emerald-500 dark:text-emerald-400 bg-transparent border-none cursor-pointer p-0 hover:text-emerald-600 dark:hover:text-emerald-300 transition-colors">
+              {action} <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          )}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+// ─── GLASS STAT CARD ─────────────────────────────────────────────────────────
 function StatCard({
   label, value, prefix = '', suffix = '', icon: Icon,
   gradient, iconColor, numberColor,
@@ -96,99 +123,51 @@ function StatCard({
     <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      style={{
-        padding: 1.5,
-        borderRadius: 20,
-        background: hov
-          ? gradient
-          : 'linear-gradient(135deg,#e5e7eb 0%,#f3f4f6 50%,#e5e7eb 100%)',
-        transition: 'all 0.35s cubic-bezier(0.34,1.56,0.64,1)',
-        transform: hov ? 'translateY(-5px) scale(1.02)' : 'translateY(0) scale(1)',
-        boxShadow: hov
-          ? '0 24px 48px rgba(0,0,0,0.10),0 8px 16px rgba(0,0,0,0.06)'
-          : '0 2px 8px rgba(0,0,0,0.04)',
-        cursor: 'pointer',
-      }}
+      className={`relative p-[1.5px] rounded-[20px] transition-all duration-300 ease-out cursor-pointer w-full ${hov ? 'shadow-2xl -translate-y-1 scale-[1.02]' : 'shadow-sm translate-y-0 scale-100'
+        } ${!hov ? 'bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800' : ''}`}
+      style={hov ? { background: gradient } : {}}
     >
-      <div style={{
-        background: '#ffffff',
-        borderRadius: 18.5,
-        padding: '20px 22px 18px',
-        minHeight: 155,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
+      <div className="bg-white dark:bg-slate-900 rounded-[18.5px] p-5 pb-4 min-h-[140px] sm:min-h-[155px] flex flex-col justify-between relative overflow-hidden transition-colors w-full">
 
-        {/* Subtle tinted wash */}
-        <div style={{
-          position: 'absolute', inset: 0, borderRadius: 18.5,
-          background: gradient,
-          opacity: hov ? 0.05 : 0,
-          transition: 'opacity 0.35s ease',
-          pointerEvents: 'none',
-        }} />
+        <div
+          className="absolute inset-0 rounded-[18.5px] pointer-events-none transition-opacity duration-300 ease-out"
+          style={{ background: gradient, opacity: hov ? 0.05 : 0 }}
+        />
 
-        {/* Label + Icon */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-          <p style={{
-            fontSize: 10.5, fontWeight: 700, letterSpacing: '0.1em',
-            textTransform: 'uppercase', color: '#9ca3af', margin: 0,
-          }}>
+        <div className="flex items-start justify-between relative z-10">
+          <p className="text-[10px] sm:text-[10.5px] font-bold tracking-widest uppercase text-gray-400 dark:text-slate-500 m-0">
             {label}
           </p>
-          <div style={{
-            width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-            background: hov ? gradient : '#f9fafb',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'all 0.35s ease',
-            boxShadow: hov ? '0 4px 12px rgba(0,0,0,0.12)' : 'none',
-          }}>
-            <Icon style={{ width: 16, height: 16, color: hov ? '#fff' : iconColor }} />
+          <div
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex-shrink-0 flex items-center justify-center transition-all duration-300 ease-out"
+            style={{ background: hov ? gradient : '', boxShadow: hov ? '0 4px 12px rgba(0,0,0,0.12)' : 'none' }}
+            {...(!hov && { className: 'bg-gray-50 dark:bg-slate-800 w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex-shrink-0 flex items-center justify-center transition-all duration-300 ease-out' })}
+          >
+            <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors" style={{ color: hov ? '#fff' : iconColor }} />
           </div>
         </div>
 
-        {/* Value + trend */}
-        <div>
+        <div className="relative z-10 mt-2 sm:mt-0">
           {loading ? (
-            <div style={{
-              height: 38, width: 110, borderRadius: 8, marginTop: 14,
-              background: 'linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%)',
-              backgroundSize: '200% 100%',
-              animation: 'shimmer 1.4s infinite linear',
-            }} />
+            <div className="h-[32px] sm:h-[38px] w-[90px] sm:w-[110px] rounded-lg mt-3.5 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 bg-[length:200%_100%] animate-[shimmer_1.4s_infinite_linear]" />
           ) : (
-            <p style={{
-              fontSize: 38,
-              fontWeight: 900,
-              letterSpacing: '-0.035em',
-              color: hov ? numberColor : '#111827',
-              margin: '10px 0 0',
-              transition: 'color 0.35s ease',
-              lineHeight: 1,
-              fontVariantNumeric: 'tabular-nums',
-            }}>
+            <p
+              className="text-[32px] sm:text-[38px] font-black tracking-tight m-0 mt-2.5 leading-none tabular-nums transition-colors"
+              style={{ color: hov ? numberColor : '' }}
+              {...(!hov && { className: 'text-[32px] sm:text-[38px] font-black tracking-tight text-gray-900 dark:text-white m-0 mt-2.5 leading-none tabular-nums transition-colors' })}
+            >
               {prefix}{count.toLocaleString()}{suffix}
             </p>
           )}
 
           {trendPct !== undefined && !loading && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: 3,
-                fontSize: 11, fontWeight: 700,
-                padding: '3px 8px', borderRadius: 99,
-                background: up ? '#f0fdf4' : '#fef2f2',
-                color: up ? '#16a34a' : '#dc2626',
-              }}>
-                {up
-                  ? <TrendingUp style={{ width: 11, height: 11 }} />
-                  : <TrendingDown style={{ width: 11, height: 11 }} />}
+            <div className="flex items-center gap-1.5 mt-2.5">
+              <span className={`inline-flex items-center gap-0.5 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full ${up ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400'
+                }`}>
+                {up ? <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> : <TrendingDown className="w-2.5 h-2.5 sm:w-3 sm:h-3" />}
                 {Math.abs(trendPct)}%
               </span>
-              <span style={{ fontSize: 11, color: '#9ca3af' }}>{trendLabel}</span>
+              <span className="text-[10px] sm:text-[11px] text-gray-400 dark:text-slate-500 truncate">{trendLabel}</span>
             </div>
           )}
         </div>
@@ -197,10 +176,7 @@ function StatCard({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// LIVE TICKER
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── LIVE TICKER ─────────────────────────────────────────────────────────────
 function LiveTicker({ lastUpdated, nextIn }) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
@@ -211,26 +187,19 @@ function LiveTicker({ lastUpdated, nextIn }) {
   }, [lastUpdated]);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#9ca3af', fontWeight: 500 }}>
-      <span style={{ position: 'relative', display: 'flex', width: 8, height: 8 }}>
-        <span style={{
-          position: 'absolute', inset: 0, borderRadius: '50%',
-          background: '#10b981', opacity: 0.5,
-          animation: 'ping 1.2s cubic-bezier(0,0,0.2,1) infinite',
-        }} />
-        <span style={{ position: 'relative', width: 8, height: 8, borderRadius: '50%', background: '#10b981' }} />
+    <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-gray-400 dark:text-slate-400 font-medium">
+      <span className="relative flex w-2 h-2 shrink-0">
+        <span className="absolute inset-0 rounded-full bg-emerald-500 opacity-50 animate-[ping_1.2s_cubic-bezier(0,0,0.2,1)_infinite]" />
+        <span className="relative w-2 h-2 rounded-full bg-emerald-500" />
       </span>
-      {lastUpdated
-        ? `Updated ${elapsed < 5 ? 'just now' : `${elapsed}s ago`} · next in ${nextIn}s`
-        : 'Loading…'}
+      <span className="truncate">
+        {lastUpdated ? `Updated ${elapsed < 5 ? 'just now' : `${elapsed}s ago`} · next in ${nextIn}s` : 'Loading…'}
+      </span>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// LINE CHART (pure SVG)
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── LINE CHART (Pure SVG) ───────────────────────────────────────────────────
 function LineChart({ datasets, labels, height = 200, animate }) {
   const W = 600, H = height;
   const PAD = { top: 16, right: 16, bottom: 28, left: 48 };
@@ -252,7 +221,7 @@ function LineChart({ datasets, labels, height = 200, animate }) {
     `${pathD(vals)} L${(PAD.left + (vals.length - 1) * xStep).toFixed(1)},${PAD.top + chartH} L${PAD.left},${PAD.top + chartH} Z`;
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height }}>
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto min-h-[150px] sm:min-h-[200px]" style={{ maxHeight: height }}>
       <defs>
         {datasets.map((d) => (
           <linearGradient key={d.key} id={`lg-${d.key}`} x1="0" y1="0" x2="0" y2="1">
@@ -261,38 +230,29 @@ function LineChart({ datasets, labels, height = 200, animate }) {
           </linearGradient>
         ))}
       </defs>
-
       {[0, 1, 2, 3, 4].map((i) => {
         const y = PAD.top + (i / 4) * chartH;
         const val = Math.round(maxV - (i / 4) * range);
         return (
           <g key={i}>
-            <line x1={PAD.left} y1={y} x2={PAD.left + chartW} y2={y} stroke="#f1f5f9" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#d1d5db" fontFamily="monospace">
+            <line x1={PAD.left} y1={y} x2={PAD.left + chartW} y2={y} className="stroke-gray-100 dark:stroke-slate-800" strokeWidth="1" />
+            <text x={PAD.left - 6} y={y + 4} textAnchor="end" className="text-[10px] fill-gray-400 dark:fill-slate-500 font-mono">
               {val >= 1000 ? `${(val / 1000).toFixed(val >= 10000 ? 0 : 1)}k` : val}
             </text>
           </g>
         );
       })}
-
       {datasets.map((d) => d.values.length > 0 && (
         <path key={`a-${d.key}`} d={areaD(d.values)} fill={`url(#lg-${d.key})`} />
       ))}
       {datasets.map((d) => d.values.length > 0 && (
-        <path key={`l-${d.key}`} d={pathD(d.values)} fill="none"
-          stroke={d.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          style={animate ? { strokeDasharray: 2000, strokeDashoffset: 0, animation: 'drawLine 1.4s ease forwards' } : {}}
-        />
+        <path key={`l-${d.key}`} d={pathD(d.values)} fill="none" stroke={d.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={animate ? { strokeDasharray: 2000, strokeDashoffset: 0, animation: 'drawLine 1.4s ease forwards' } : {}} />
       ))}
       {datasets.map((d) => d.values.map((v, i) => (
-        <circle key={`d-${d.key}-${i}`}
-          cx={PAD.left + i * xStep} cy={PAD.top + yScale(v)}
-          r="3.5" fill="white" stroke={d.color} strokeWidth="2"
-        />
+        <circle key={`d-${d.key}-${i}`} cx={PAD.left + i * xStep} cy={PAD.top + yScale(v)} r="3.5" className="fill-white dark:fill-slate-900" stroke={d.color} strokeWidth="2" />
       )))}
       {labels.map((l, i) => (
-        <text key={l} x={PAD.left + i * xStep} y={H - 4}
-          textAnchor="middle" fontSize="10" fill="#d1d5db" fontFamily="monospace">
+        <text key={l} x={PAD.left + i * xStep} y={H - 4} textAnchor="middle" className={`text-[10px] fill-gray-400 dark:fill-slate-500 font-mono ${i % 2 !== 0 ? 'hidden sm:block' : ''}`}>
           {l}
         </text>
       ))}
@@ -300,16 +260,7 @@ function LineChart({ datasets, labels, height = 200, animate }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CHART SECTION
-// ─────────────────────────────────────────────────────────────────────────────
-
-const CHART_TABS = [
-  { key: 'users', label: 'Users', color: '#10b981' },
-  { key: 'blogs', label: 'Content', color: '#3b82f6' },
-  { key: 'revenue', label: 'Revenue', color: '#8b5cf6' },
-];
-
+// ─── CHART SECTION ───────────────────────────────────────────────────────────
 function ChartSection({ userData, blogData, revenueData, loading, animate }) {
   const [tab, setTab] = useState('users');
 
@@ -332,39 +283,40 @@ function ChartSection({ userData, blogData, revenueData, loading, animate }) {
 
   return (
     <Panel>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
         <div>
-          <h3 style={{ fontSize: 15, fontWeight: 800, color: '#111827', margin: 0 }}>Growth Analytics</h3>
-          <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 2, fontWeight: 500 }}>12-month trend · live data</p>
+          <h3 className="text-[15px] font-extrabold text-gray-900 dark:text-slate-50 m-0">Growth Analytics</h3>
+          <p className="text-[11px] text-gray-400 dark:text-slate-400 mt-0.5 font-medium">12-month trend · live data</p>
         </div>
-        <div style={{ display: 'flex', gap: 3, padding: 3, background: '#f9fafb', borderRadius: 10 }}>
+        <div className="flex gap-1 p-1 bg-gray-50 dark:bg-slate-800/50 rounded-xl">
           {CHART_TABS.map((t) => (
-            <button key={t.key} onClick={() => setTab(t.key)} style={{
-              padding: '5px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700,
-              border: 'none', cursor: 'pointer', transition: 'all 0.2s',
-              background: tab === t.key ? '#fff' : 'transparent',
-              color: tab === t.key ? '#111827' : '#9ca3af',
-              boxShadow: tab === t.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-            }}>{t.label}</button>
+            <button key={t.key} onClick={() => setTab(t.key)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold border-none cursor-pointer transition-all duration-200 ${tab === t.key
+                ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 shadow-sm'
+                : 'bg-transparent text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300'
+                }`}
+            >
+              {t.label}
+            </button>
           ))}
         </div>
       </div>
 
       {!loading && (
-        <div style={{ display: 'flex', gap: 16, marginBottom: 8 }}>
+        <div className="flex gap-4 mb-2">
           {datasets[tab].map((d) => (
-            <div key={d.key} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ display: 'inline-block', width: 18, height: 3, borderRadius: 2, background: d.color }} />
-              <span style={{ fontSize: 11, color: '#6b7280', fontWeight: 500 }}>{d.label}</span>
+            <div key={d.key} className="flex items-center gap-1.5">
+              <span className="inline-block w-4.5 h-[3px] rounded-sm" style={{ background: d.color }} />
+              <span className="text-[11px] text-gray-500 dark:text-slate-400 font-medium">{d.label}</span>
             </div>
           ))}
         </div>
       )}
 
       {loading ? (
-        <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
-          <Activity style={{ width: 22, height: 22, color: '#e5e7eb' }} />
-          <p style={{ fontSize: 11, color: '#d1d5db', margin: 0 }}>Loading chart…</p>
+        <div className="h-[200px] flex items-center justify-center flex-col gap-2">
+          <Activity className="w-5 h-5 text-gray-200 dark:text-slate-700 animate-pulse" />
+          <p className="text-[11px] text-gray-300 dark:text-slate-600 m-0">Loading chart…</p>
         </div>
       ) : (
         <LineChart datasets={datasets[tab]} labels={labels} height={200} animate={animate} />
@@ -373,27 +325,24 @@ function ChartSection({ userData, blogData, revenueData, loading, animate }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TOP CONTENT
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── TOP CONTENT ─────────────────────────────────────────────────────────────
 const CAT_COLORS = {
-  Tech: { bg: '#eff6ff', color: '#3b82f6' },
-  Lifestyle: { bg: '#fff7ed', color: '#f97316' },
-  Health: { bg: '#ecfdf5', color: '#10b981' },
+  Tech: { bg: 'bg-blue-50 dark:bg-blue-500/10', color: 'text-blue-500 dark:text-blue-400', hex: '#3b82f6' },
+  Lifestyle: { bg: 'bg-orange-50 dark:bg-orange-500/10', color: 'text-orange-500 dark:text-orange-400', hex: '#f97316' },
+  Health: { bg: 'bg-emerald-50 dark:bg-emerald-500/10', color: 'text-emerald-500 dark:text-emerald-400', hex: '#10b981' },
 };
 
 function TopContent({ data, loading }) {
   if (loading) return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '4px 0' }}>
+    <div className="flex flex-col gap-2.5 py-1">
       {[...Array(5)].map((_, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: '#f1f5f9', flexShrink: 0 }} className="animate-pulse" />
-          <div style={{ flex: 1 }}>
-            <div style={{ height: 10, borderRadius: 99, background: '#f1f5f9', width: '70%', marginBottom: 6 }} className="animate-pulse" />
-            <div style={{ height: 8, borderRadius: 99, background: '#f9fafb', width: '35%' }} className="animate-pulse" />
+        <div key={i} className="flex items-center gap-2.5 animate-pulse">
+          <div className="w-7 h-7 rounded-lg bg-gray-100 dark:bg-slate-800 shrink-0" />
+          <div className="flex-1">
+            <div className="h-2.5 rounded-full bg-gray-100 dark:bg-slate-800 w-[70%] mb-1.5" />
+            <div className="h-2 rounded-full bg-gray-50 dark:bg-slate-800/50 w-[35%]" />
           </div>
-          <div style={{ width: 36, height: 10, borderRadius: 99, background: '#f1f5f9' }} className="animate-pulse" />
+          <div className="w-9 h-2.5 rounded-full bg-gray-100 dark:bg-slate-800" />
         </div>
       ))}
     </div>
@@ -402,46 +351,36 @@ function TopContent({ data, loading }) {
   const maxViews = Math.max(...(data?.map((d) => d.views) || [1]));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <div className="flex flex-col gap-0.5">
       {(data || []).map((item, i) => {
-        const cat = CAT_COLORS[item.category] || { bg: '#f8fafc', color: '#64748b' };
+        const cat = CAT_COLORS[item.category] || { bg: 'bg-gray-50 dark:bg-slate-800', color: 'text-gray-500 dark:text-slate-400', hex: '#64748b' };
         const pct = (item.views / maxViews) * 100;
         return (
-          <div key={i} className="group" style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            padding: '8px 10px', borderRadius: 12, cursor: 'pointer',
-            transition: 'background 0.15s',
-          }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-          >
-            <span style={{ fontSize: 10, fontWeight: 800, color: '#d1d5db', width: 16, textAlign: 'right', flexShrink: 0 }}>
+          <div key={i} className="group flex items-center gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+            <span className="text-[10px] font-extrabold text-gray-300 dark:text-slate-600 w-4 text-right shrink-0">
               {i + 1}
             </span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: '0 0 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-gray-700 dark:text-slate-200 m-0 mb-1 overflow-hidden text-ellipsis whitespace-nowrap">
                 {item.title}
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ flex: 1, height: 3, background: '#f1f5f9', borderRadius: 2, overflow: 'hidden', maxWidth: 100 }}>
-                  <div style={{ width: `${pct}%`, height: '100%', background: cat.color, borderRadius: 2, transition: 'width 0.8s ease' }} />
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-[3px] bg-gray-100 dark:bg-slate-800 rounded-sm overflow-hidden max-w-[100px]">
+                  <div className="h-full rounded-sm transition-all duration-700 ease-out" style={{ width: `${pct}%`, background: cat.hex }} />
                 </div>
-                <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 99, background: cat.bg, color: cat.color }}>
+                <span className={`text-[10px] font-bold px-1.5 py-[1px] rounded-full ${cat.bg} ${cat.color}`}>
                   {item.category}
                 </span>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: '#9ca3af' }}>
-                <Eye style={{ width: 11, height: 11 }} />{item.views.toLocaleString()}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <span className="flex items-center gap-1 text-[11px] text-gray-400 dark:text-slate-500">
+                <Eye className="w-3 h-3" />{item.views.toLocaleString()}
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: '#9ca3af' }}>
-                <Star style={{ width: 11, height: 11 }} />{item.likes.toLocaleString()}
+              <span className="flex items-center gap-1 text-[11px] text-gray-400 dark:text-slate-500">
+                <Star className="w-3 h-3" />{item.likes.toLocaleString()}
               </span>
-              <ArrowUpRight style={{ width: 13, height: 13, color: '#e5e7eb', transition: 'color 0.15s' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#10b981'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#e5e7eb'}
-              />
+              <ArrowUpRight className="w-3.5 h-3.5 text-gray-200 dark:text-slate-700 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors" />
             </div>
           </div>
         );
@@ -450,47 +389,37 @@ function TopContent({ data, loading }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ACTIVITY FEED
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── ACTIVITY FEED ───────────────────────────────────────────────────────────
 function ActivityFeed({ data, loading }) {
   if (loading) return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div className="flex flex-col gap-2">
       {[...Array(6)].map((_, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }} className="animate-pulse">
-          <div style={{ width: 32, height: 32, borderRadius: 10, background: '#f1f5f9', flexShrink: 0 }} />
-          <div style={{ flex: 1, height: 11, borderRadius: 99, background: '#f1f5f9' }} />
-          <div style={{ width: 32, height: 9, borderRadius: 99, background: '#f9fafb' }} />
+        <div key={i} className="flex items-center gap-2.5 animate-pulse">
+          <div className="w-8 h-8 rounded-xl bg-gray-100 dark:bg-slate-800 shrink-0" />
+          <div className="flex-1 h-3 rounded-full bg-gray-100 dark:bg-slate-800" />
+          <div className="w-8 h-2 rounded-full bg-gray-50 dark:bg-slate-800/50" />
         </div>
       ))}
     </div>
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+    <div className="flex flex-col gap-0.5">
       {(data || []).map((item, i) => {
         const Icon = ICON_MAP[item.icon] || Circle;
         return (
-          <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            padding: '7px 8px', borderRadius: 12, cursor: 'pointer',
-            transition: 'background 0.15s',
-          }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-          >
-            <div style={{
-              width: 32, height: 32, borderRadius: 10, flexShrink: 0,
-              background: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Icon style={{ width: 13, height: 13, color: item.color }} />
+          <div key={i} className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+            <div
+              className="w-8 h-8 rounded-xl shrink-0 flex items-center justify-center opacity-90 dark:opacity-70"
+              style={{ background: item.bg }}
+            >
+              <Icon className="w-3.5 h-3.5" style={{ color: item.color }} />
             </div>
-            <p style={{ flex: 1, fontSize: 12.5, color: '#4b5563', fontWeight: 500, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <p className="flex-1 text-[12.5px] text-gray-600 dark:text-slate-300 font-medium m-0 overflow-hidden text-ellipsis whitespace-nowrap">
               {item.text}
             </p>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 10.5, color: '#d1d5db', flexShrink: 0 }}>
-              <Clock style={{ width: 10, height: 10 }} />{item.time}
+            <span className="flex items-center gap-1 text-[10.5px] text-gray-300 dark:text-slate-500 shrink-0">
+              <Clock className="w-2.5 h-2.5" />{item.time}
             </span>
           </div>
         );
@@ -499,41 +428,40 @@ function ActivityFeed({ data, loading }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SUBSCRIPTION BREAKDOWN
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── SUBSCRIPTION BREAKDOWN ──────────────────────────────────────────────────
 const SUB_PLANS = [
-  { label: 'Free', pct: 58, color: '#e2e8f0', text: '#94a3b8' },
-  { label: 'Basic', pct: 22, color: '#bfdbfe', text: '#3b82f6' },
-  { label: 'Pro', pct: 14, color: '#a7f3d0', text: '#10b981' },
-  { label: 'Annual', pct: 6, color: '#ddd6fe', text: '#8b5cf6' },
+  { label: 'Free', pct: 58, color: '#e2e8f0', darkColor: '#334155', text: 'text-slate-400 dark:text-slate-500' },
+  { label: 'Basic', pct: 22, color: '#bfdbfe', darkColor: '#1e3a8a', text: 'text-blue-500 dark:text-blue-400' },
+  { label: 'Pro', pct: 14, color: '#a7f3d0', darkColor: '#064e3b', text: 'text-emerald-500 dark:text-emerald-400' },
+  { label: 'Annual', pct: 6, color: '#ddd6fe', darkColor: '#4c1d95', text: 'text-purple-500 dark:text-purple-400' },
 ];
 
 function SubBreakdown({ total, loading }) {
   return (
     <Panel>
-      <h4 style={{ fontSize: 13, fontWeight: 800, color: '#111827', margin: '0 0 2px' }}>Subscription Plans</h4>
-      <p style={{ fontSize: 11, color: '#9ca3af', margin: '0 0 14px', fontWeight: 500 }}>Distribution across tiers</p>
-      <div style={{ display: 'flex', height: 6, borderRadius: 99, overflow: 'hidden', gap: 2, marginBottom: 14 }}>
+      <h4 className="text-[13px] font-extrabold text-gray-900 dark:text-slate-50 m-0 mb-0.5">Subscription Plans</h4>
+      <p className="text-[11px] text-gray-400 dark:text-slate-400 m-0 mb-3.5 font-medium">Distribution across tiers</p>
+
+      <div className="flex h-1.5 rounded-full overflow-hidden gap-0.5 mb-3.5">
         {SUB_PLANS.map((p) => (
-          <div key={p.label} style={{ width: `${p.pct}%`, background: p.color, transition: 'width 0.6s ease', borderRadius: 99 }} />
+          <div key={p.label} className="h-full transition-all duration-700 ease-out rounded-full" style={{ width: `${p.pct}%`, backgroundColor: p.color }} />
         ))}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+
+      <div className="flex flex-col gap-2.5">
         {SUB_PLANS.map((p) => (
-          <div key={p.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: p.color, display: 'inline-block', flexShrink: 0 }} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: '#374151' }}>{p.label}</span>
+          <div key={p.label} className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: p.color }} />
+              <span className="text-xs font-semibold text-gray-700 dark:text-slate-300">{p.label}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="flex items-center gap-2">
               {!loading && (
-                <span style={{ fontSize: 11, color: '#9ca3af' }}>
+                <span className="text-[11px] text-gray-400 dark:text-slate-500">
                   {Math.round((total || 0) * p.pct / 100).toLocaleString()}
                 </span>
               )}
-              <span style={{ fontSize: 11, fontWeight: 700, color: p.text }}>{p.pct}%</span>
+              <span className={`text-[11px] font-bold ${p.text}`}>{p.pct}%</span>
             </div>
           </div>
         ))}
@@ -542,58 +470,7 @@ function SubBreakdown({ total, loading }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PANEL — shared white card shell
-// ─────────────────────────────────────────────────────────────────────────────
-
-function Panel({ children, title, subtitle, action, style = {} }) {
-  return (
-    <div style={{
-      background: '#fff', borderRadius: 20, padding: '22px 24px 20px',
-      border: '1px solid #f1f5f9', boxShadow: '0 2px 16px rgba(0,0,0,0.045)',
-      ...style,
-    }}>
-      {title && (
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
-          <div>
-            <h3 style={{ fontSize: 14, fontWeight: 800, color: '#111827', margin: 0 }}>{title}</h3>
-            {subtitle && <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 2, fontWeight: 500 }}>{subtitle}</p>}
-          </div>
-          {action && (
-            <button style={{
-              display: 'flex', alignItems: 'center', gap: 3,
-              fontSize: 11, fontWeight: 700, color: '#10b981',
-              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              transition: 'color 0.15s',
-            }}
-              onMouseEnter={(e) => e.currentTarget.style.color = '#059669'}
-              onMouseLeave={(e) => e.currentTarget.style.color = '#10b981'}
-            >
-              {action} <ArrowRight style={{ width: 12, height: 12 }} />
-            </button>
-          )}
-        </div>
-      )}
-      {children}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// CARD GRADIENT CONFIGS
-// ─────────────────────────────────────────────────────────────────────────────
-
-const CARD_CFG = [
-  { gradient: 'linear-gradient(135deg,#10b981 0%,#34d399 60%,#6ee7b7 100%)', iconColor: '#10b981', numberColor: '#059669' },
-  { gradient: 'linear-gradient(135deg,#3b82f6 0%,#60a5fa 60%,#93c5fd 100%)', iconColor: '#3b82f6', numberColor: '#2563eb' },
-  { gradient: 'linear-gradient(135deg,#8b5cf6 0%,#a78bfa 60%,#c4b5fd 100%)', iconColor: '#8b5cf6', numberColor: '#7c3aed' },
-  { gradient: 'linear-gradient(135deg,#f97316 0%,#fb923c 60%,#fdba74 100%)', iconColor: '#f97316', numberColor: '#ea580c' },
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MAIN DASHBOARD
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── MAIN DASHBOARD COMPONENT ────────────────────────────────────────────────
 const REFRESH_INTERVAL = 30000;
 
 export default function Dashboard() {
@@ -632,9 +509,7 @@ export default function Dashboard() {
 
   const s = stats.data || {};
   const tr = s.trends || {};
-  const now = new Date().toLocaleDateString('en-IN', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  });
+  const now = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   const STAT_CARDS = [
     { label: 'Total Users', value: s.users, icon: Users, trendPct: tr.users, ...CARD_CFG[0], delay: 0 },
@@ -644,74 +519,67 @@ export default function Dashboard() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="flex flex-col gap-6 sm:gap-8 w-full max-w-full overflow-hidden">
 
-      {/* ── Header ── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+      {/* ── Header (Fully Responsive Flex/Stack) ── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a', margin: 0, letterSpacing: '-0.025em' }}>
+          <h1 className="text-2xl sm:text-[26px] font-black text-slate-900 dark:text-slate-50 m-0 tracking-tight transition-colors">
             Dashboard
           </h1>
-          <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 3, fontWeight: 500, margin: '3px 0 0' }}>{now}</p>
+          <p className="text-xs sm:text-sm text-slate-400 dark:text-slate-500 mt-1 font-medium m-0 transition-colors">
+            {now}
+          </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="flex items-center gap-3 self-start sm:self-auto w-full sm:w-auto justify-between sm:justify-end">
           <LiveTicker lastUpdated={stats.lastUpdated} nextIn={countdown} />
           <button
             onClick={handleRefresh}
             disabled={manualRefreshing}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '7px 16px', borderRadius: 99, fontSize: 12, fontWeight: 600,
-              background: '#fff', border: '1px solid #e5e7eb', color: '#6b7280',
-              cursor: manualRefreshing ? 'not-allowed' : 'pointer',
-              opacity: manualRefreshing ? 0.5 : 1,
-              boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => { if (!manualRefreshing) { e.currentTarget.style.color = '#10b981'; e.currentTarget.style.borderColor = '#a7f3d0'; } }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#6b7280'; e.currentTarget.style.borderColor = '#e5e7eb'; }}
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 shadow-sm transition-all hover:text-emerald-500 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-500/30 ${manualRefreshing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+              }`}
           >
-            <RefreshCw style={{ width: 13, height: 13 }} className={manualRefreshing ? 'animate-spin' : ''} />
-            Refresh
+            <RefreshCw className={`w-3.5 h-3.5 ${manualRefreshing ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* ── Stat Cards ── */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      {/* ── Stat Cards (1 Col Mobile -> 2 Col Tablet -> 4 Col Desktop) ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
         {STAT_CARDS.map((c) => (
           <StatCard key={c.label} {...c} loading={stats.loading} animate={animate} />
         ))}
       </div>
 
       {/* ── Growth Chart ── */}
-      <ChartSection
-        userData={userGrowth.data}
-        blogData={blogStats.data}
-        revenueData={revenue.data}
-        loading={userGrowth.loading || blogStats.loading || revenue.loading}
-        animate={animate}
-      />
+      <div className="w-full overflow-hidden">
+        <ChartSection
+          userData={userGrowth.data}
+          blogData={blogStats.data}
+          revenueData={revenue.data}
+          loading={userGrowth.loading || blogStats.loading || revenue.loading}
+          animate={animate}
+        />
+      </div>
 
-      {/* ── Bottom row ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-
-        {/* Top content */}
+      {/* ── Bottom row (Stacks on Mobile/Tablet, Splits 3/2 on Desktop) ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6">
         <div className="lg:col-span-3">
-          <Link to="/blogs">
+          <Link to="/blogs" className="block outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 rounded-[20px]">
             <Panel
               title="Top Performing Content"
               subtitle="By views this month"
               action="All posts"
+              className="hover:border-emerald-200 dark:hover:border-emerald-500/30 transition-colors h-full"
             >
               <TopContent data={topContent.data} loading={topContent.loading} />
             </Panel>
           </Link>
         </div>
 
-        {/* Right column */}
-        <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <Panel title="Live Activity" action="">
+        <div className="lg:col-span-2 flex flex-col gap-5 sm:gap-6">
+          <Panel title="Live Activity">
             <ActivityFeed data={activity.data} loading={activity.loading} />
           </Panel>
           <SubBreakdown total={s.subscriptions} loading={stats.loading} />
@@ -726,9 +594,6 @@ export default function Dashboard() {
         @keyframes shimmer {
           0%   { background-position: -200% 0; }
           100% { background-position:  200% 0; }
-        }
-        @keyframes ping {
-          75%, 100% { transform: scale(2); opacity: 0; }
         }
       `}</style>
     </div>

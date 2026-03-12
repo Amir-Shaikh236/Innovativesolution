@@ -12,6 +12,7 @@ import UserManagement from './pages/UserManagement';
 import Subscriptions from './pages/Subscriptions';
 import AdminLayout from './components/AdminLayout';
 import api from './api';
+import Settings from './pages/Settings';
 
 function App() {
   const [admin, setAdmin] = useState(null);
@@ -60,7 +61,7 @@ function App() {
         <Route
           element={
             <PrivateRoute admin={admin}>
-              <AdminLayout onLogout={handleLogout}>
+              <AdminLayout admin={admin} onLogout={handleLogout}>
                 <Outlet />
               </AdminLayout>
             </PrivateRoute>
@@ -74,6 +75,7 @@ function App() {
           <Route path="/blogs" element={<AdminBlogPanel />} />
           <Route path="/manage-users" element={<UserManagement />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/setting" element={<Settings />} />
         </Route>
 
       </Routes>
