@@ -19,8 +19,8 @@ const teamUpRoutes = require("./routes/teamUpRoutes");
 const contactRoutes = require("./routes/contact");
 const userRoutes = require('./routes/userRoutes');
 const subscriptionRoutes = require('./routes/subscriptions');
+const settingRoutes = require('./routes/settingRoutes')
 const cookieParser = require('cookie-parser');
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -49,9 +49,10 @@ app.use('/api/subpages', subpageRoutes);
 app.use('/api/featuredSolutions', featuredSolutionsRoutes);
 app.use('/api/clients', clientsRoutes);
 app.use("/api/blogs", blogRoutes);
-// Admin login route - public, no token required
+
 app.use('/api/admin', adminAuthRoutes);
 app.use('/api/admin/dashboard-stats', dashboardRoutes);
+app.use('/api/admin/settings', settingRoutes);
 app.use('/api/users', userRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
