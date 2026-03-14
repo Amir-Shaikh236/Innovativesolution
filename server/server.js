@@ -21,6 +21,7 @@ const userRoutes = require('./routes/userRoutes');
 const subscriptionRoutes = require('./routes/subscriptions');
 const settingRoutes = require('./routes/settingRoutes')
 const cookieParser = require('cookie-parser');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
