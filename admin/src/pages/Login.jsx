@@ -163,7 +163,7 @@ export default function Login({ onLogin }) {
                 required
                 disabled={loading}
                 autoComplete="username"
-                className="h-12 rounded-xl border-gray-200 bg-white text-sm
+                className="h-12 rounded-xl border-gray-200 bg-white text-sm text-gray-800
                   placeholder:text-gray-300 shadow-sm
                   focus-visible:ring-2 focus-visible:ring-emerald-500/20
                   focus-visible:border-emerald-500
@@ -186,7 +186,7 @@ export default function Login({ onLogin }) {
                   required
                   disabled={loading}
                   autoComplete="current-password"
-                  className="h-12 pr-12 rounded-xl border-gray-200 bg-white text-sm
+                  className="h-12 pr-12 rounded-xl border-gray-200 bg-white text-sm text-gray-800
                     placeholder:text-gray-400 shadow-sm
                     focus-visible:ring-2 focus-visible:ring-emerald-500/20
                     focus-visible:border-emerald-500
