@@ -18,10 +18,11 @@ export default function Footer() {
     async function fetchCategories() {
       try {
         const res = await api.get("/categories");
-        setCategories(res.data);
+        setCategories(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
         setError("Failed to load services.");
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -121,7 +122,7 @@ export default function Footer() {
                     <li>Loading services...</li>
                   ) : error ? (
                     <li>{error}</li>
-                  ) : (
+                  ) : Array.isArray(categories) && categories.length > 0 ? (
                     categories.map((cat) => (
                       <li key={cat._id}>
                         <Link
@@ -132,6 +133,8 @@ export default function Footer() {
                         </Link>
                       </li>
                     ))
+                  ) : (
+                    <li>No services available</li>
                   )}
                 </ul>
               </div>

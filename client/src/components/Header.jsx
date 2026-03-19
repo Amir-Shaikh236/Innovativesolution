@@ -23,8 +23,8 @@ export default function Header({ isLoggedIn, onLogout }) {
             api.get("/categories"),
             api.get("/subpages"),
           ]);
-          const cats = catsRes.data;
-          const subs = subsRes.data;
+          const cats = Array.isArray(catsRes.data) ? catsRes.data : [];
+          const subs = Array.isArray(subsRes.data) ? subsRes.data : [];
           const catsWithSubs = cats.map((cat) => ({
             ...cat,
             subcategories: subs.filter((sub) => {
