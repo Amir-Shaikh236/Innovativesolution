@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Bot } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import chatbotData from "../assets/chatbotData";
 
 // This function finds the best matching answer from the pre-filled data.
@@ -39,8 +40,9 @@ const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
   const chatEndRef = useRef(null);
+  
 
   useEffect(() => {
     if (isOpen && chatEndRef.current) {

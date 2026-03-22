@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api';
 
-export default function OtpVerify() {
+export default function OtpVerify({ onVerified }) {
   const navigate = useNavigate();
   const [otp, setOtp] = useState('');
   const [formData, setFormData] = useState(null);
@@ -15,7 +15,7 @@ export default function OtpVerify() {
     const storedData = JSON.parse(localStorage.getItem('signupData'));
     if (!storedData) {
       setMessage('Signup data missing.');
-      navigate('/register');
+      navigate('/signup');
     } else {
       setFormData(storedData);
     }
@@ -35,7 +35,11 @@ export default function OtpVerify() {
       localStorage.setItem('token', res.data.token);
 
       setMessage('Signup successful! Redirecting...');
-      navigate('/');
+      if (onVerified) {
+        onVerified(res.data.user);
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err.response?.data?.msg || 'OTP verification failed');
     } finally {
