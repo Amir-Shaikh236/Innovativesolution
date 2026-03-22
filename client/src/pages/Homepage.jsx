@@ -185,11 +185,14 @@ export default function HomePage() {
           api.get("/featuredSolutions"),
           api.get("/categories"),
         ]);
-        setClients(clientsRes.data);
-        setFeaturedSolutions(featuredRes.data);
-        setCategories(categoriesRes.data);
+        setClients(Array.isArray(clientsRes.data) ? clientsRes.data : []);
+        setFeaturedSolutions(Array.isArray(featuredRes.data) ? featuredRes.data : []);
+        setCategories(Array.isArray(categoriesRes.data) ? categoriesRes.data : []);
       } catch (err) {
         console.error("Failed to fetch data:", err);
+        setClients([]);
+        setFeaturedSolutions([]);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -482,7 +485,7 @@ export default function HomePage() {
             ].map(({ title, headline, description, link }, idx) => (
               <motion.div
                 key={idx}
-                className="block p-6 border rounded-xl bg-[#F5F5F5] transition flex flex-col"
+                className="p-6 border rounded-xl bg-[#F5F5F5] transition flex flex-col"
                 style={{ borderColor: "#000000" }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}

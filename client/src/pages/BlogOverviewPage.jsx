@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../api";
+import { motion } from "framer-motion";
 import { Share2, Linkedin, Twitter, Facebook } from 'lucide-react';
 import { BASE_URL } from '../api';
 export default function BlogOverviewPage() {

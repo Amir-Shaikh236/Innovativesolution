@@ -47,9 +47,11 @@ export default function BlogPage() {
     const fetchCategories = async () => {
       try {
         const res = await api.get("/blogs/categories");
-        setCategories(["All", ...res.data]);
+        const cats = Array.isArray(res.data) ? res.data : [];
+        setCategories(["All", ...cats]);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
+        setCategories(["All"]);
       }
     };
     fetchCategories();
@@ -133,7 +135,7 @@ export default function BlogPage() {
           {blogData.blogs.map((blog, idx) => (
             <motion.div
               key={blog._id}
-              className="block p-4 border rounded-xl bg-[#1a1a1a] hover:shadow-xl transition flex flex-col h-full"
+              className="p-4 border rounded-xl bg-[#1a1a1a] hover:shadow-xl transition flex flex-col h-full"
               style={{ borderColor: "#008080" }}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}

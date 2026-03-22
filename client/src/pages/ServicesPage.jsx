@@ -21,10 +21,12 @@ export default function ServicesPage() {
           api.get("/categories"),
           api.get("/subpages"),
         ]);
-        setAllCategories(catRes.data);
-        setSubpages(spRes.data);
+        setAllCategories(Array.isArray(catRes.data) ? catRes.data : []);
+        setSubpages(Array.isArray(spRes.data) ? spRes.data : []);
       } catch {
         setError("Failed to load services. Please try again later.");
+        setAllCategories([]);
+        setSubpages([]);
       } finally {
         setLoading(false);
       }

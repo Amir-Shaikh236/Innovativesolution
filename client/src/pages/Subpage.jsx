@@ -195,7 +195,7 @@ export default function Subpage() {
               )}
               {subpage.content && (
                 <div
-                  className="prose prose-invert max-w-none max-w-xl mx-auto md:mx-0"
+                  className="prose prose-invert max-w-xl mx-auto md:mx-0"
                   dangerouslySetInnerHTML={{ __html: subpage.content }}
                 />
               )}
