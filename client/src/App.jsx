@@ -119,7 +119,7 @@ function App() {
         <Route path="/blogs" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogOverviewPage />} />
         <Route path="/careers" element={<Careers />} />
-        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/contact" element={<ContactPage user={user} />} />
         <Route path="/case-studies" element={<CaseStudy />} />
         <Route path="/case-studies/:slug" element={<CaseStudyDetailPage />} />
         <Route path="/industries" element={<IndustriesPage />} />
@@ -138,9 +138,9 @@ function App() {
         <Route path="/passwordreset/:resetToken" element={<RedirectIfAuth><PasswordReset /></RedirectIfAuth>} />
 
         {/* Protected Routes Wrapped in RequireAuth */}
-        <Route path="/join-as-talent" element={<RequireAuth><JoinAsTalent /></RequireAuth>} />
+        <Route path="/join-as-talent" element={<RequireAuth><JoinAsTalent user={user} /></RequireAuth>} />
 
-        <Route path="/team-up-request" element={<TeamUpRequest />} />
+        <Route path="/team-up-request" element={<TeamUpRequest user={user} />} />
       </Routes>
       <Chatbot />
       <Footer />

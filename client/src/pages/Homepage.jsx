@@ -205,18 +205,18 @@ export default function HomePage() {
       try {
         setLoadingBlogs(true);
         const res = await api.get("/blogs");
-setBlogs(res.data.blogs || []);
-    } catch (e) {
-      console.error("Failed to fetch blogs:", e);
-      setBlogs([]);
-    } finally {
-      setLoadingBlogs(false);
-    }
-  };
-  fetchBlogs();
-}, []);
+        setBlogs(res.data.blogs || []);
+      } catch (e) {
+        setBlogs([]);
+        console.error("Failed to fetch blogs:", e);
+      } finally {
+        setLoadingBlogs(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
 
-const homepageBlogs = (blogs || []).slice(0, 3);
+  const homepageBlogs = (blogs || []).slice(0, 3);
 
   if (loading || loadingBlogs) {
     return (

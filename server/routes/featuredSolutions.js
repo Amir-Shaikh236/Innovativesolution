@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
 });
 
 // Admin-protected routes for create/update/delete
-
 router.post('/', adminAuth, async (req, res) => {
   try {
     const solution = new FeaturedSolution(req.body);

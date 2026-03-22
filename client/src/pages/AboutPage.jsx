@@ -1,12 +1,22 @@
 import React from "react";
-import { Globe, Pin } from "lucide-react";
-
+import CounterCard from "../components/counter";
+import {
+  Building2,
+  Globe,
+  Handshake,
+  Laptop,
+  Lightbulb,
+  Pin,
+  Star,
+  Target,
+} from "lucide-react";
+import {motion, useInView} from "framer-motion"
 import founder from "../assets/founder.jpeg";
 
 const StudentIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-8 w-8 text-[#40E0D0]"
+    className="h-8 w-8 text-emerald-800 "
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -25,7 +35,7 @@ const StudentIcon = () => (
 const WomenIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-8 w-8 text-[#40E0D0]"
+    className="h-8 w-8 text-emerald-800 "
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -42,7 +52,7 @@ const WomenIcon = () => (
 const BusinessIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-8 w-8 text-[#40E0D0]"
+    className="h-8 w-8 text-emerald-800 "
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -77,14 +87,14 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="bg-[#2F6690] text-[#F5F5F5] font-sans">
+    <div className="bg-[#0F766E]  text-white font-sans">
       <div className="container mx-auto px-6 py-12 md:py-20">
         {/* 1. Headline & 2. Subheadline */}
         <header className="text-center mb-16 md:mb-24 mt-10">
-          <h1 className="text-2xl md:text-5xl font-bold text-[#008080] leading-tight">
+          <h1 className="text-2xl md:text-5xl font-bold text-white leading-tight">
             Empowering Careers
           </h1>
-          <h2 className="text-4xl md:text-6xl font-bold text-[#008080] leading-tight">
+          <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight">
             Accelerating Businesses
           </h2>
           <p className="mt-6 text-lg md:text-xl text-[#F5F5F5] max-w-3xl mx-auto">
@@ -93,11 +103,11 @@ const AboutPage = () => {
           </p>
         </header>
 
-        <section id="why-we-started" className="mb-16 md:mb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 justify-center">
+        <section id="why-we-started" className="mb-16 md:mb-24 w-full px-6 ">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 justify-center bg-[#D9F3F0] p-4 w-full border  mx-auto">
             {/* Founder Photo Placeholder */}
             <div className="flex justify-center lg:justify-center mt-50">
-              <div className="bg-gray-900 w-full max-w-sm h-120  rounded-2xl  border-2 border-[#008080] flex items-center justify-center">
+              <div className="bg-gray-900 w-full max-w-sm h-120  rounded-2xl  border-2 border-white flex items-center justify-center">
                 <img
                   src={founder}
                   className="rounded-2xl shadow-2xl w-full max-w-lg aspect-square object-cover h-120 "
@@ -109,17 +119,21 @@ const AboutPage = () => {
             {/* Pillar Cards */}
             <div className="space-y-6">
               {/* Pillar 1 */}
-              <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
+              <div
+                className="bg-gradient-to-br from-[#B9F2EC] via-[#86E0D6] to-[#5CC9BC]
+                shadow-lg hover:shadow-xl
+                transition-all duration-300 p-6 rounded-lg border border-gray-800"
+              >
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 pt-1">
+                  <div className="flex-shrink-0 pt-1 rounded-full bg-white/40  mb-6 p-2">
                     <StudentIcon />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-[#40E0D0] flex gap-2.5 align items-center">
+                    <h4 className="text-xl font-bold text-emerald-800 flex gap-2.5 align items-center">
                       <Pin />
                       Pillar 1 — Career Growth for Students
                     </h4>
-                    <p className="mt-2 text-[#F5F5F5]/90">
+                    <p className="mt-2 text-black">
                       Many students complete their studies with solid
                       theoretical knowledge but struggle when it comes to
                       real-world application. We saw this gap and built a system
@@ -133,16 +147,20 @@ const AboutPage = () => {
               </div>
 
               {/* Pillar 2 */}
-              <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-800 ">
+              <div
+                className="bg-gradient-to-br from-[#B9F2EC] via-[#86E0D6] to-[#5CC9BC]
+                shadow-lg hover:shadow-xl
+                transition-all duration-300 p-6 rounded-lg border border-gray-800  "
+              >
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 pt-1">
+                  <div className="flex-shrink-0 pt-1 rounded-full bg-white/40  mb-6 p-2">
                     <WomenIcon />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-[#40E0D0] flex gap-2.5 align items-center">
+                    <h4 className="text-xl font-bold text-emerald-800 flex gap-2.5 align items-center">
                       <Pin /> Pillar 2 — Safe Opportunities for Students & Women
                     </h4>
-                    <p className="mt-2 text-[#F5F5F5]/90">
+                    <p className="mt-2 text-black">
                       In today’s market, learners often face scams, unpaid gigs,
                       or low-quality opportunities disguised as “experience.”
                       For women restarting their careers, this challenge is even
@@ -157,16 +175,20 @@ const AboutPage = () => {
               </div>
 
               {/* Pillar 3 */}
-              <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-800 ">
+              <div
+                className="bg-gradient-to-br from-[#B9F2EC] via-[#86E0D6] to-[#5CC9BC]
+                shadow-lg hover:shadow-xl
+                transition-all duration-300 p-6 rounded-lg border border-gray-800"
+              >
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 pt-1">
+                  <div className="flex-shrink-0 pt-1 rounded-full bg-white/40  mb-6 p-2">
                     <BusinessIcon />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-[#40E0D0] flex gap-2.5 align items-center">
+                    <h4 className="text-xl font-bold text-emerald-800 flex gap-2.5 align items-center">
                       <Pin /> Pillar 3 — Staffing Solutions for Businesses
                     </h4>
-                    <p className="mt-2 text-[#F5F5F5]/90">
+                    <p className="mt-2 text-black">
                       Startups and MSMEs often need quick, flexible staffing —
                       not long-term contracts. We designed a solution where
                       companies can hire curated talent on-demand, whether for
@@ -178,17 +200,21 @@ const AboutPage = () => {
                 </div>
               </div>
               {/*Pillar 4*/}
-              <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-800 ">
+              <div
+                className="bg-gradient-to-br from-[#B9F2EC] via-[#86E0D6] to-[#5CC9BC]
+                shadow-lg hover:shadow-xl
+                transition-all duration-300 p-6 rounded-lg border border-gray-800"
+              >
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 pt-1 text-[#40E0D0]">
+                  <div className="flex-shrink-0 pt-1 text-emerald-800 rounded-full bg-white/40  mb-6 p-2 ">
                     <Globe />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-[#40E0D0] flex gap-2.5 align items-center">
+                    <h4 className="text-xl font-bold text-emerald-800 flex gap-2.5 align items-center">
                       <Pin /> Pillar 4 — Empowering Micro Small Medium
                       Enterprises
                     </h4>
-                    <p className="mt-2 text-[#F5F5F5]/90">
+                    <p className="mt-2 text-black">
                       Micro, Small and Medium Enterprises (MSMEs) are the
                       backbone of the Indian economy. They include small-scale
                       businesses, startups, artisans, manufacturers, traders,
@@ -209,9 +235,7 @@ const AboutPage = () => {
             id="who-we-are"
             className="max-w-4xl mx-auto text-center mb-16 mt-12 md:mb-24"
           >
-            <h2 className="text-3xl font-bold text-[#008080] mb-6">
-              Who We Are
-            </h2>
+            <h2 className="text-3xl font-bold text-white mb-6">Who We Are</h2>
             <p className="text-base md:text-lg leading-relaxed">
               At Innovative Staffing Solutions, we are driven by a clear
               mission: to empower enthusiastic young talent and women restarting
@@ -223,7 +247,7 @@ const AboutPage = () => {
           </section>
 
           <div className="text-center pt-10">
-            <h2 className="text-3xl font-bold text-[#008080] mb-6">
+            <h2 className="text-3xl font-bold text-white mb-6">
               Why We Started
             </h2>
             <p className="text-base md:text-lg max-w-4xl mx-auto mb-12">
@@ -236,40 +260,52 @@ const AboutPage = () => {
         </section>
 
         {/* 5. What We Do */}
-        <section id="what-we-do" className="mb-16 md:mb-24 text-center">
-          <h2 className="text-3xl font-bold text-[#008080] mb-12">
-            What We Do
-          </h2>
+        <section id="what-we-do" className="mb-16 md:mb-24 text-center ">
+          <h2 className="text-3xl font-bold text-white mb-12">What We Do</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center">
-              <span className="text-4xl mb-4">🧑‍💻</span>
-              <h3 className="text-xl font-semibold mb-2">
+            <div className=" group bg-emerald-100 text-gray-800 hover:text-white  backdrop-blur-md border border-white/20 rounded-lg p-6 flex flex-col items-center transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="text-4xl mb-4">
+                <Laptop className="w-12 h-12" />
+              </span>
+              <h3 className="text-xl text-emerald-800 group-hover:text-white font-semibold mb-2">
                 Training & Mentorship
               </h3>
-              <p className="text-[#F5F5F5]/80">
+              <p className="text-black group-hover:text-white">
                 Preparing candidates with skills, projects, and confidence.
               </p>
             </div>
-            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center">
-              <span className="text-4xl mb-4">📊</span>
-              <h3 className="text-xl font-semibold mb-2">Business Solutions</h3>
-              <p className="text-[#F5F5F5]/80">
+            <div className=" group bg-emerald-100 text-gray-800 hover:text-white  rounded-lg p-6 flex flex-col items-center transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="text-4xl mb-4">
+                <Building2 className="w-12 h-12" />
+              </span>
+              <h3 className="text-xl  text-emerald-800 group-hover:text-white font-semibold mb-2">
+                Business Solutions
+              </h3>
+              <p className="text-black group-hover:text-white">
                 Affordable staffing, management, and technology services for
                 startups & MSMEs.
               </p>
             </div>
-            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center">
-              <span className="text-4xl mb-4">🎯</span>
-              <h3 className="text-xl font-semibold mb-2">Smart Hiring</h3>
-              <p className="text-[#F5F5F5]/80">
+            <div className="group bg-emerald-100 text-gray-800 hover:text-white rounded-lg p-6 flex flex-col items-center transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="text-4xl mb-4">
+                <Target className="w-12 h-12" />
+              </span>
+              <h3 className="text-xl text-emerald-800 group-hover:text-white font-semibold mb-2">
+                Smart Hiring
+              </h3>
+              <p className="text-black group-hover:text-white">
                 A recruitment process designed to identify, test, and prepare
                 high-performing candidates.
               </p>
             </div>
-            <div className="bg-gray-900/50 border border-[#008080]/50 rounded-lg p-6 flex flex-col items-center">
-              <span className="text-4xl mb-4">🤝</span>
-              <h3 className="text-xl font-semibold mb-2">Partnerships</h3>
-              <p className="text-[#F5F5F5]/80">
+            <div className="group bg-emerald-100 text-gray-800 hover:text-white  rounded-lg p-6 flex flex-col items-center transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="text-4xl mb-4">
+                <Handshake className="w-12 h-12" />
+              </span>
+              <h3 className="text-xl text-emerald-800 group-hover:text-white font-semibold mb-2">
+                Partnerships
+              </h3>
+              <p className="text-black group-hover:text-white ">
                 Creating long-term connections between talent and organizations
                 that value innovation.
               </p>
@@ -279,23 +315,23 @@ const AboutPage = () => {
 
         {/* 6. How We Hire */}
         <section id="how-we-hire" className="mb-16 md:mb-24 max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-[#008080] mb-12">
+          <h2 className="text-3xl font-bold text-center text-white mb-12">
             How We Hire
           </h2>
           <div className="relative">
             {/* The vertical line */}
             <div
-              className="absolute left-4 top-0 h-full w-0.5 bg-[#008080]/50"
+              className="absolute left-4 top-0 h-full w-0.5 bg-white/50"
               aria-hidden="true"
             ></div>
 
             <div className="space-y-8">
               {hiringProcess.map((item, index) => (
                 <div key={item.title} className="relative pl-12">
-                  <div className="absolute left-0 top-1 flex items-center justify-center w-8 h-8 bg-[#008080] rounded-full">
-                    <span className="text-white font-bold">{index + 1}</span>
+                  <div className="absolute left-0 top-1 flex items-center justify-center w-8 h-8 bg-white rounded-full">
+                    <span className="text-black font-bold">{index + 1}</span>
                   </div>
-                  <h3 className="text-xl font-semibold text-[#40E0D0]">
+                  <h3 className="text-xl font-semibold text-white">
                     {item.title}
                   </h3>
                   <p className="mt-1 text-[#F5F5F5]/80">{item.description}</p>
@@ -308,28 +344,38 @@ const AboutPage = () => {
         {/* 7. Mission, Vision, Values */}
         <section id="mission-vision-values" className="mb-16 md:mb-24">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="text-4xl">🌟</span>
-              <h3 className="text-2xl font-bold text-[#008080] my-2">
+            <div className="group bg-emerald-100 text-gray-800 hover:text-white  backdrop-blur-md  p-6 rounded-lg transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="flex justify-center  ">
+                <Star className="w-8 h-8 " />
+              </span>
+              <h3 className="text-2xl font-bold text-emerald-800 my-2 group-hover:text-white">
                 Mission
               </h3>
-              <p className="text-[#F5F5F5]/90">
+              <p className="group-hover:text-white text-black">
                 To empower fresh talent and women professionals with the skills
                 and confidence to succeed.
               </p>
             </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="text-4xl">🔮</span>
-              <h3 className="text-2xl font-bold text-[#008080] my-2">Vision</h3>
-              <p className="text-[#F5F5F5]/90">
+            <div className="group bg-emerald-100 text-gray-800 hover:text-white  backdrop-blur-md  p-6 rounded-lg transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="flex justify-center  ">
+                <Globe className="w-8 h-8 " />
+              </span>
+              <h3 className="text-2xl font-bold group-hover:text-white text-emerald-800 my-2">
+                Vision
+              </h3>
+              <p className="text-black group-hover:text-white">
                 To be the most trusted partner for startups and MSMEs in
                 building future-ready teams.
               </p>
             </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="text-4xl">💡</span>
-              <h3 className="text-2xl font-bold text-[#008080] my-2">Values</h3>
-              <p className="text-[#F5F5F5]/90">
+            <div className="group bg-emerald-100 text-gray-800 hover:text-white  backdrop-blur-md  p-6 rounded-lg transition-all duration-300 hover:bg-gray-900/60 hover:scale-105 hover:shadow-2xl">
+              <span className="flex justify-center  ">
+                <Lightbulb className="w-9 h-9 " />
+              </span>
+              <h3 className="text-2xl font-bold group-hover:text-white text-emerald-800 my-2">
+                Values
+              </h3>
+              <p className="text-black group-hover:text-white">
                 Integrity | Innovation | Diversity | Growth
               </p>
             </div>
@@ -338,40 +384,30 @@ const AboutPage = () => {
 
         {/* 8. Our Impact */}
         <section id="impact" className="mb-16 md:mb-24">
-          <h2 className="text-3xl font-bold text-center text-[#008080] mb-12">
+          <h2 className="text-3xl font-bold text-center text-white mb-12">
             Our Impact
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="block text-5xl font-bold text-[#40E0D0]">
-                100+
-              </span>
-              <p className="mt-2 text-[#F5F5F5]/90">
-                ✅ candidates trained and placed successfully
-              </p>
-            </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="block text-5xl font-bold text-[#40E0D0]">
-                10+
-              </span>
-              <p className="mt-2 text-[#F5F5F5]/90">
-                ✅ startups scaled with our support
-              </p>
-            </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="block text-5xl font-bold text-[#40E0D0]">
-                70%
-              </span>
-              <p className="mt-2 text-[#F5F5F5]/90">
-                ✅ women professionals reintroduced into workforce
-              </p>
-            </div>
-            <div className="bg-gray-900/50 p-6 rounded-lg">
-              <span className="block text-5xl font-bold text-[#40E0D0]">
-                95%
-              </span>
-              <p className="mt-2 text-[#F5F5F5]/90">✅ client retention rate</p>
-            </div>
+            <CounterCard
+              number="100+"
+              symbol="+"
+              label="✅ candidates trained and placed successfully"
+            />
+            <CounterCard
+              number="10+"
+              symbol="+"
+              label="✅ startups scaled with our support"
+            />
+            <CounterCard
+              number="70%"
+              symbol="%"
+              label="✅ women professionals reintroduced into workforce"
+            />
+            <CounterCard
+              number="95%"
+              symbol="%"
+              label="✅ client retention rate"
+            />
           </div>
         </section>
 
@@ -380,7 +416,7 @@ const AboutPage = () => {
           id="why-choose-us"
           className="mb-16 md:mb-24 max-w-4xl mx-auto"
         >
-          <h2 className="text-3xl font-bold text-center text-[#008080] mb-12">
+          <h2 className="text-3xl font-bold text-center text-white mb-12">
             Why Choose Us
           </h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -460,8 +496,8 @@ const AboutPage = () => {
             alike.
           </p>
           <a
-            href="#forms" // Replace with your form link or route
-            className="inline-block bg-[#40E0D0] text-black font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#2E8B57] hover:text-white transition-colors duration-300"
+            href="/contact" // Replace with your form link or route
+            className="inline-block bg-[#40E0D0] text-black font-bold py-3 px-8 rounded-lg text-lg hover:bg-[#40E0D0]/20 hover:text-white transition-colors duration-300"
           >
             Get Started
           </a>

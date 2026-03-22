@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 
-export default function TeamUpRequest() {
+export default function TeamUpRequest({ user }) {
     const [categoriesData, setCategoriesData] = useState([]);
     const [subpagesData, setSubpagesData] = useState([]); // State to hold all subpage data
     const [subcategories, setSubcategories] = useState([]); // State for filtered subcategories
@@ -19,6 +19,19 @@ export default function TeamUpRequest() {
     const [error, setError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+
+    // Auto-fill email and name when user is logged in
+    useEffect(() => {
+        if (user) {
+            const nameParts = (user.name || "").split(" ");
+            setForm((prev) => ({
+                ...prev,
+                firstName: nameParts[0] || "",
+                lastName: nameParts.slice(1).join(" ") || "",
+                email: user.email || "",
+            }));
+        }
+    }, [user]);
 
     useEffect(() => {
         async function fetchData() {
@@ -47,11 +60,18 @@ export default function TeamUpRequest() {
     useEffect(() => {
         if (form.mainCategory) {
             // Filter the list of all subpages based on the selected main category ID
-            const filteredSubcategories = subpagesData.filter(
-                (sub) => String(sub.category._id) === String(form.mainCategory)
-            );
+            // Handle both populated (object) and non-populated (string) category fields
+            const filteredSubcategories = subpagesData.filter((sub) => {
+                const subCategoryId = sub.category?._id || sub.category;
+                return String(subCategoryId) === String(form.mainCategory);
+            });
             setSubcategories(filteredSubcategories);
-            setForm((f) => ({ ...f, subCategory: "" }));
+            // Only reset subCategory if the currently selected one is not in the new list
+            const currentSubId = form.subCategory;
+            const isCurrentSubInList = filteredSubcategories.some(s => String(s._id) === String(currentSubId));
+            if (!isCurrentSubInList) {
+                setForm((f) => ({ ...f, subCategory: "" }));
+            }
         } else {
             setSubcategories([]);
             setForm((f) => ({ ...f, subCategory: "" }));
@@ -65,14 +85,19 @@ export default function TeamUpRequest() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Client-side validation
+        if (!form.mainCategory || !form.subCategory) {
+            alert("Please select both a main category and subcategory.");
+            return;
+        }
+        
         setSubmitting(true);
         setSuccess(false);
         try {
             const res = await api.post("/teamup", form);
-            console.log("✅ Backend response:", res.data);
             setSuccess(true);
         } catch (err) {
-            console.error("❌ Submission error:", err.response?.data || err.message);
             alert("Failed to send request. Please try again.");
         } finally {
             setSubmitting(false);
@@ -91,6 +116,23 @@ export default function TeamUpRequest() {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center p-4 text-center text-red-400 font-semibold">
                 {error}
+            </div>
+        );
+    }
+
+    // Show message if no categories exist
+    if (categoriesData.length === 0) {
+        return (
+            <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-[#F5F5F5]">
+                <div className="bg-gray-900/50 rounded-xl shadow-lg p-8 border border-gray-700 mt-20 text-center">
+                    <h2 className="text-2xl font-bold text-[#008080] mb-4">No Categories Available</h2>
+                    <p className="text-slate-300 mb-6">
+                        Categories need to be created in the admin panel before they can be selected here.
+                    </p>
+                    <p className="text-slate-400 text-sm">
+                        Please contact the administrator or log in to the admin panel to add categories.
+                    </p>
+                </div>
             </div>
         );
     }
@@ -176,7 +218,7 @@ export default function TeamUpRequest() {
                             className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#40E0D0] focus:border-[#40E0D0] transition disabled:opacity-50 appearance-none"
                         >
                             <option value="" disabled>
-                                Select Sub Category
+                                {form.mainCategory ? (subcategories.length > 0 ? "Select Sub Category" : "No subcategories available") : "Select Main Category first"}
                             </option>
                             {subcategories.map((sub) => (
                                 <option key={sub._id} value={sub._id}>

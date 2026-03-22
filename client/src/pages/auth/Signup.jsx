@@ -41,7 +41,7 @@ export default function Signup() {
       navigate('/verify-email');
     } catch (err) {
       console.log(err)
-      setError(err.response?.data?.msg || 'Failed to send Email');
+      setError(err.response?.data?.message || 'Failed to send Email');
     } finally {
       setLoading(false);
     }
