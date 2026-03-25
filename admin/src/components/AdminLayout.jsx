@@ -10,7 +10,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-    Search, Mail, Bell, LogOut, X, LayoutDashboard, Users,
+    Search, Bell, LogOut, X, LayoutDashboard, Users,
     Settings, FileText, Tag, ArrowRight, BookOpen, Sun, Moon
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +59,7 @@ function SpotlightModal({ open, onClose }) {
             style={{ background: "rgba(15,23,42,0.45)", backdropFilter: "blur(6px)" }}
             onMouseDown={(e) => e.target === e.currentTarget && onClose()}
         >
-            {/* Responsive Width: 90vw on mobile, max-w-xl on desktop */}
+
             <div className="w-[90vw] sm:w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl border border-gray-100/60 dark:border-slate-800 bg-white dark:bg-slate-900">
 
                 <div className="flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-4 border-b border-gray-100 dark:border-slate-800">
@@ -209,19 +209,19 @@ export default function AdminLayout({ children, admin, onLogout }) {
                         <OnlineStatus />
 
                         {/* Theme Toggle Button */}
-                        <button
+                        {/* <button
                             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                             className="relative p-2 sm:p-2.5 bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-full text-gray-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0"
                         >
                             <Sun className="h-4 w-4 transition-all scale-100 rotate-0 dark:scale-0 dark:-rotate-90" />
                             <Moon className="absolute top-2 sm:top-2.5 left-2 sm:left-2.5 h-4 w-4 transition-all scale-0 rotate-90 dark:scale-100 dark:rotate-0" />
-                        </button>
+                        </button> */}
 
-                        <button className="hidden sm:flex p-2.5 bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-full text-gray-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0">
+                        {/* <button className="hidden sm:flex p-2.5 bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-full text-gray-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0">
                             <Mail className="h-4 w-4" />
-                        </button>
+                        </button> */}
 
-                        <button
+                        {/* <button
                             onClick={() => navigate("/admin/notifications")}
                             className="relative p-2 sm:p-2.5 bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-full text-gray-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0"
                         >
@@ -229,7 +229,7 @@ export default function AdminLayout({ children, admin, onLogout }) {
                             <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900">
                                 <span className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-75" />
                             </span>
-                        </button>
+                        </button> */}
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
