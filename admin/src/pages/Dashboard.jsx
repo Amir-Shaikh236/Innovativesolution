@@ -123,7 +123,7 @@ function StatCard({
     <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      className={`relative p-[1.5px] rounded-[20px] transition-all duration-300 ease-out cursor-pointer w-full ${hov ? 'shadow-2xl -translate-y-1 scale-[1.02]' : 'shadow-sm translate-y-0 scale-100'
+      className={`relative p-[1.5px] rounded-[20px] transition-all duration-300 ease-out cursor-pointer w-full ${hov ? 'shadow-2xl -translate-y-1 scale-[1]' : 'shadow-sm translate-y-0 scale-100'
         } ${!hov ? 'bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800' : ''}`}
       style={hov ? { background: gradient } : {}}
     >
