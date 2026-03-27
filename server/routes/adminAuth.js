@@ -15,8 +15,7 @@ const adminLoginLimiter = rateLimit({
 
 // Public login route with rate limiting
 router.post('/login', adminLoginLimiter, adminController.login);
-router.post('/admin-Logout', adminController.AdminLogout);
-router.get('/getadmin', adminAuth, adminController.getadmin);
-router.get('/dashboard-stats', adminAuth, adminController.getDashboardStats)
+router.post('/admin-Logout', adminController.logout);
+router.get('/getadmin', adminAuth, adminController.getAdmin);
 
 module.exports = router;

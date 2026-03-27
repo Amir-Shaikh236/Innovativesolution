@@ -77,7 +77,8 @@ export default function BlogPage() {
     const fetchCategories = async () => {
       try {
         const res = await api.get("/blogs/categories");
-        setCategories(["All", ...res.data]);
+        const cats = Array.isArray(res.data) ? res.data : [];
+        setCategories(["All", ...cats]);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
         setCategories(["All"]);
@@ -219,59 +220,33 @@ export default function BlogPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-8">
-                    <h3 className="font-bold text-xl mb-4 text-slate-800 line-clamp-2 group-hover:text-[#0F766E] transition-colors duration-300">
-                      {blog.title}
-                    </h3>
-                    
-                    <p className="text-slate-600 text-sm mb-6 leading-relaxed line-clamp-3">
-                      {blog.summary}
-                    </p>
-
-                    {/* Tags */}
-                    {blog.tags && blog.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {blog.tags.slice(0, 3).map(tag => (
-                          <span 
-                            key={tag} 
-                            className="bg-gradient-to-r from-emerald-50 to-teal-50 text-[#0F766E] text-xs font-medium px-3 py-1.5 rounded-full border border-emerald-200/50"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                        {blog.tags.length > 3 && (
-                          <span className="bg-slate-100 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-full">
-                            +{blog.tags.length - 3} more
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Read More Link */}
-                    <Link
-                      to={`/blog/${blog.slug}`}
-                      className="inline-flex items-center font-semibold text-[#0F766E] hover:text-[#0D9488] transition-colors duration-300 group/link"
-                    >
-                      Read Full Article
-                      <svg 
-                        className="ml-2 w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </Link>
-                  </div>
-                </motion.article>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-24">
-              <div className="max-w-md mx-auto">
-                <div className="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Search className="w-10 h-10 text-slate-400" />
+      {/* Blog Posts Grid */}
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <AnimatePresence>
+          {blogData.blogs.map((blog, idx) => (
+            <motion.div
+              key={blog._id}
+              className="p-4 border rounded-xl bg-[#1a1a1a] hover:shadow-xl transition flex flex-col h-full"
+              style={{ borderColor: "#008080" }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 40 }}
+              transition={{ delay: idx * 0.1 }}
+            >
+              <img
+                src={blog.image ? `${BASE_URL}${blog.image}` : "https://via.placeholder.com/400x250/ffffff?text=Blog+Image"}
+                alt={blog.title}
+                className="h-48 w-full object-cover rounded-lg mb-4"
+              />
+              <div className="flex-1 flex flex-col justify-between">
+                <h3 className="font-bold text-xl mb-2 text-[#008080]">{blog.title}</h3>
+                <p className="text-[#F5F5F5]/70 text-sm mb-4 flex-grow line-clamp-3">{blog.summary}</p>
+                <div className="mt-auto flex flex-wrap gap-2">
+                  {blog.tags && blog.tags.map(tag => (
+                    <span key={tag} className="bg-[#008080]/20 text-[#40E0D0] text-xs font-medium px-2 py-1 rounded-full">
+                      #{tag}
+                    </span>
+                  ))}
                 </div>
                 <h3 className="text-2xl font-bold text-slate-800 mb-4">No articles found</h3>
                 <p className="text-slate-600 mb-8">
