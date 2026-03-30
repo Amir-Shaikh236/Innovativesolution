@@ -44,10 +44,12 @@ export default function TeamUpRequest({ user }) {
                     api.get("/subpages"),
                 ]);
 
-                setCategoriesData(categoriesRes.data);
-                setSubpagesData(subpagesRes.data);
+                setCategoriesData(Array.isArray(categoriesRes.data) ? categoriesRes.data : []);
+                setSubpagesData(Array.isArray(subpagesRes.data) ? subpagesRes.data : []);
             } catch (err) {
                 setError("Failed to load categories and subcategories.");
+                setCategoriesData([]);
+                setSubpagesData([]);
             } finally {
                 setLoading(false);
             }

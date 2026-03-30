@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import api from "../api";
 import { Search } from "lucide-react";
 import { BASE_URL } from '../api';
+
 export default function BlogPage() {
   const [blogData, setBlogData] = useState({
     blogs: [],
@@ -107,7 +108,6 @@ export default function BlogPage() {
     setSearchTerm(e.target.value);
   }, []);
 
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
@@ -116,7 +116,7 @@ export default function BlogPage() {
             <div className="w-16 h-16 border-4 border-slate-200 border-t-[#0F766E] rounded-full animate-spin mx-auto mb-4"></div>
             <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-emerald-300 rounded-full animate-spin mx-auto" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
           </div>
-          <p className="text-slate-600 font-medium">Loading content...</p>
+          <p className="text-slate-600 font-medium">Loading amazing content...</p>
         </div>
       </div>
     );
@@ -135,7 +135,7 @@ export default function BlogPage() {
         
         <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-bold  border border-white/20 text-white">
+            <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-bold mb-4 border border-white/20 text-white">
               <span className="w-2 h-2 bg-emerald-300 rounded-full mr-2 animate-pulse"></span>
               Latest Insights & Trends
             </div>
