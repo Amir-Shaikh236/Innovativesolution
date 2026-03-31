@@ -28,11 +28,37 @@ const PORT = process.env.PORT || 5000;
 // 'https://innovative-staffing.vercel.app',
 // 'https://innovativn:estaffing-v7jj.vercel.app'
 
-app.use(cors({
-  origin: [process.env.FRONTEND_URL, process.env.ADMIN_FRONTEND_URL],
+/// Dynamic CORS configuration for development and production
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    // Allow localhost in development
+    if (process.env.NODE_ENV === 'development') {
+      const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+      if (isLocalhost) {
+        return callback(null, true);
+      }
+    }
+
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_FRONTEND_URL,
+      'https://innovative-staffing.vercel.app',
+      'https://innovativn:estaffing-v7jj.vercel.app'
+    ].filter(Boolean);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
 
 app.set("trust proxy", 1);
 
