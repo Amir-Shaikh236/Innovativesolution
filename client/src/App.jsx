@@ -28,7 +28,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import FAQsPage from './pages/FAQsPage';
-import Chatbot from "./components/Chatbot";
+import Chatbot from "./components/AdvancedChatbot";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
 function App() {

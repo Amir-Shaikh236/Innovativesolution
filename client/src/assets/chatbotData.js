@@ -5,11 +5,13 @@ const chatbotData = [
   },
   {
     q: "How can I contact your support team?",
-    a: "Our support team is available 24/7. You can reach us through the contact form on our website or email us directly. We typically respond within 24 hours."
+    a: "Our support team is available 24/7. You can reach us through the contact form on our website or email us directly. We typically respond within 24 hours.",
+    cta: { label: "Contact Us", link: "/contact" }
   },
   {
     q: "Do you provide staffing solutions?",
-    a: "Yes, we specialize in connecting talented professionals with companies that need them. Whether you're looking for full-time, contract, or freelance talent, we can help."
+    a: "Yes, we specialize in connecting talented professionals with companies that need them. Whether you're looking for full-time, contract, or freelance talent, we can help.",
+    cta: { label: "View Services", link: "/services" }
   },
   {
     q: "What industries do you serve?",
@@ -17,7 +19,8 @@ const chatbotData = [
   },
   {
     q: "How do I apply to work with you as a talent?",
-    a: "You can join our talent network through the 'Join as Talent' section on our website. Fill out the application form and our team will review your profile."
+    a: "You can join our talent network through the 'Join as Talent' section on our website. Fill out the application form and our team will review your profile.",
+    cta: { label: "Join as Talent", link: "/join-as-talent" }
   },
   {
     q: "What is your pricing model?",

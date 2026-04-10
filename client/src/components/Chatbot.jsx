@@ -62,7 +62,30 @@ const Chatbot = () => {
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
-  const handleSend = (messageToSend, isQuickAction = false) => {
+  const fetchChatbotReply = async (userMessage) => {
+    try {
+      const res = await fetch('/api/chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.reply) {
+          return { text: data.reply, cta: data.cta || null };
+        }
+      }
+      console.warn('Chatbot backend returned unexpected response:', res.status);
+    } catch (err) {
+      console.warn('Chatbot backend request failed:', err);
+    }
+
+    const local = getAnswerFromData(userMessage);
+    return { text: local.a, cta: local.cta || null };
+  };
+
+  const handleSend = async (messageToSend, isQuickAction = false) => {
     const userMessage = messageToSend || userInput.trim();
     if (!userMessage) return;
 
@@ -72,31 +95,40 @@ const Chatbot = () => {
     }
     setIsTyping(true);
 
-    setTimeout(() => {
-      let response = {};
+    setTimeout(async () => {
+      let response = { text: '', cta: null };
+
       if (isQuickAction) {
-        // Hard-coded responses for quick actions
         switch (userMessage) {
-          case "Website Guide":
-            response = { a: "I can provide a step-by-step guided walkthrough on how to use the website and its core functions. Would you like to start?" };
+          case 'Website Guide':
+            response = {
+              text: 'I can provide a step-by-step guided walkthrough on how to use the website and its core functions. Would you like to start?',
+              cta: { label: 'Start Tour', link: '/services' }
+            };
             break;
-          case "FAQs":
-            response = { a: "I can provide answers to common questions about our services for both clients and gig workers. What category are you interested in? (e.g., Verification, Payments, NDAs, etc.)" };
+          case 'FAQs':
+            response = {
+              text: 'I can provide answers to common questions about our services for both clients and gig workers. What category are you interested in? (e.g., Verification, Payments, NDAs, etc.)',
+              cta: { label: 'View FAQs', link: '/faqs' }
+            };
             break;
-          case "Customer Care":
-            response = { a: "Our support team is available 24/7. Please provide your email address, and I will forward your request to a human representative." };
+          case 'Customer Care':
+            response = {
+              text: 'Our support team is available 24/7. Please provide your email address, and I will forward your request to a human representative.',
+              cta: { label: 'Contact Page', link: '/contact' }
+            };
             break;
           default:
-            response = getAnswerFromData(userMessage);
+            const local = getAnswerFromData(userMessage);
+            response = { text: local.a, cta: local.cta || null };
         }
       } else {
-        // Use the keyword search for regular user input
-        response = getAnswerFromData(userMessage);
+        response = await fetchChatbotReply(userMessage);
       }
 
-      setMessages(prev => [...prev, { sender: 'bot', text: response.a, cta: response.cta }]);
+      setMessages(prev => [...prev, { sender: 'bot', text: response.text, cta: response.cta }]);
       setIsTyping(false);
-    }, 1000);
+    }, 600);
   };
 
   const handleQuickAction = (action) => {
@@ -174,6 +206,14 @@ const Chatbot = () => {
                       }`}
                   >
                     {msg.text}
+                    {msg.cta && msg.sender === 'bot' && (
+                      <button
+                        onClick={() => navigate(msg.cta.link)}
+                        className="mt-2 px-3 py-1 rounded bg-[#40E0D0] text-black font-semibold text-sm hover:bg-[#2E8B57]"
+                      >
+                        {msg.cta.label}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

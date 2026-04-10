@@ -107,4 +107,4 @@ const chatbotData = [
   { q: 'networking opportunities', a: 'Yes. You will have opportunities to connect with peers, mentors, and industry professionals.' },
 ];
 
-export default chatbotData;
+module.exports = chatbotData;
