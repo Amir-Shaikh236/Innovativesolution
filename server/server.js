@@ -20,6 +20,7 @@ const contactRoutes = require("./routes/contact");
 const userRoutes = require('./routes/userRoutes');
 const subscriptionRoutes = require('./routes/subscriptions');
 const settingRoutes = require('./routes/settingRoutes')
+const chatbotRoutes = require('./routes/chatbot');
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -62,7 +63,7 @@ app.use("/api/JoinTalent", JoinTalent);
 app.use("/api/teamup", teamUpRoutes);
 app.use("/api/contact", contactRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
-
+app.use('/api/chatbot', chatbotRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

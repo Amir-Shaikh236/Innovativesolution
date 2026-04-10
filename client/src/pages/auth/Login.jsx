@@ -25,7 +25,7 @@ export default function Login({ onVerified }) {
 
     try {
       const { data } = await api.post('/auth/login', formData);
-      onVerified(data.token, data.user);
+      onVerified(data.user);
       setMessage('Login successful');
 
     } catch (err) {
