@@ -23,6 +23,7 @@ export default function Footer() {
         setCategories([]);
         console.error("Failed to fetch categories:", err);
         setError("Failed to load services.");
+        setCategories([]);
       } finally {
         setLoading(false);
       }
