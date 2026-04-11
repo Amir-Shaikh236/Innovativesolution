@@ -1,141 +1,197 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import api from '../../api';
-
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api";
+import sideImg from "../../assets/side.png";
+import { Eye, EyeOff } from "lucide-react";
 export default function Signup() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    email: '',
-    name: '',
-    password: '',
-    confirmPassword: '',
-    age: '',
+    name: "",
+    email: "",
+    age: "",
+    password: "",
+    confirmPassword: "",
   });
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const OnSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setMessage('');
+  const togglePassword = (field) => {
+    
+  };
 
-    if (parseInt(formData.age, 10) < 18) {
-      setError('You must be at least 18 years old to signup.');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (parseInt(formData.age) < 18) {
+      setError("You must be at least 18 years old.");
       return;
     }
+
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.');
+      setError("Passwords do not match.");
       return;
     }
 
     setLoading(true);
     try {
-      await api.post('/auth/register', formData);
-
-      setMessage(`Verification Email sent to your email: ${formData.email}`);
-      navigate('/verify-email');
+      await api.post("/auth/register", formData);
+      setMessage("Verification email sent!");
+      
     } catch (err) {
-      console.log(err)
-      setError(err.response?.data?.message || 'Failed to send Email');
+      setError(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-black min-h-screen pt-32 pb-16 flex flex-col justify-center items-center font-sans">
-      <form
-        onSubmit={OnSubmit}
-        className="max-w-md w-full p-8 bg-black rounded-2xl shadow-lg border border-teal-700"
-        noValidate
-      >
-        <h2 className="text-2xl font-extrabold text-teal-600 mb-6 text-center">
-          Signup - Request OTP
-        </h2>
+    <div className="min-h-screen flex pt-15">
+      
+      {/* LEFT SIDE IMAGE */}
+      <div className="hidden md:flex w-1/2">
+        <img
+                  src={sideImg}
+                  alt="login visual"
+                  className="w-full aspect-square  object-fit   "
+                />
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Enter your email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="w-full mb-4 px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-        />
+       
+      </div>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Enter your full name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="w-full mb-4 px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-        />
+      {/* RIGHT SIDE FORM */}
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-[#F4F8FB] px-4">
+        
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-[#E3EAF2]">
+          
+          <h2 className="text-3xl font-bold text-center text-[#1F2937]">
+            Create Account
+          </h2>
+          <p className="text-center text-gray-500 mb-6">
+            Please fill in your details.
+          </p>
 
-        <input
-          type="number"
-          name="age"
-          placeholder="Age (must be 18+)"
-          value={formData.age}
-          onChange={handleChange}
-          min={18}
-          required
-          className="w-full mb-4 px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-        />
+          <form onSubmit={handleSubmit} className="space-y-4">
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          minLength={6}
-          className="w-full mb-4 px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-        />
+            {/* Name */}
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg border border-[#0F766E] 
+              focus:ring-2 focus:ring-[#2F6690] outline-none"
+            />
 
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-          minLength={6}
-          className="w-full mb-6 px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-        />
+            {/* Email */}
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg border border-[#0F766E] 
+              focus:ring-2 focus:ring-[#2F6690] outline-none"
+            />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full py-3 rounded-lg font-semibold text-black transition ${loading
-            ? 'bg-teal-400 cursor-not-allowed'
-            : 'bg-teal-400 hover:bg-green-700 hover:text-white'
-            }`}
-        >
-          {loading ? 'Sending Email...' : 'Send Email'}
-        </button>
+            {/* Age */}
+            <input
+              type="number"
+              name="age"
+              placeholder="Age (18+)"
+              required
+              value={formData.age}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg border border-[#0F766E] 
+              focus:ring-2 focus:ring-[#2F6690] outline-none"
+            />
 
-        <p className="mt-4 text-center text-gray-400">
-          Already have an account?{' '}
-          <Link to="/login" className="text-teal-400 font-semibold hover:underline">
-            Login here.
-          </Link>
-        </p>
+            {/* Password */}
+            <div className="relative">
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    placeholder="Password"
+    required
+    value={formData.password}
+    onChange={handleChange}
+    className="w-full px-4 py-2 pr-10 rounded-lg border border-[#0F766E] 
+    focus:ring-2 focus:ring-[#2F6690] outline-none"
+  />
 
-        {message && (
-          <p className="mt-4 text-green-500 font-medium text-center">{message}</p>
-        )}
-        {error && (
-          <p className="mt-4 text-red-500 font-medium text-center">{error}</p>
-        )}
-      </form>
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+  >
+    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+  </button>
+</div>
+
+            {/* Confirm Password */}
+           <div className="relative">
+  <input
+    type={showConfirmPassword ? "text" : "password"}
+    name="confirmPassword"
+    placeholder="Confirm Password"
+    required
+    value={formData.confirmPassword}
+    onChange={handleChange}
+    className="w-full px-4 py-2 pr-10 rounded-lg border border-[#0F766E] 
+    focus:ring-2 focus:ring-[#2F6690] outline-none"
+  />
+
+  <button
+    type="button"
+    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+  >
+    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+  </button>
+</div>
+
+            {/* Error / Message */}
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {message && <p className="text-green-600 text-sm">{message}</p>}
+
+            {/* Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-full bg-[#0F766E] text-white font-semibold 
+              hover:bg-[#0F766E]/90 transition"
+            >
+              {loading ? "Creating..." : "SIGN UP"}
+            </button>
+
+          </form>
+
+          {/* Footer */}
+          <p className="text-center text-sm text-gray-500 mt-6">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/login")}
+              className="text-[#2F6690] font-medium hover:underline"
+            >
+              Sign In
+            </button>
+          </p>
+
+        </div>
+      </div>
     </div>
   );
 }
