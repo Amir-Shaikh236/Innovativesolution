@@ -7,8 +7,8 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarHeader,
-    useSidebar, // 🚨 1. Import the useSidebar hook
+    SidebarHeader1,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import {
     LayoutDashboard,
@@ -38,7 +38,7 @@ const menuItems = [
 export function AppSidebar({ onLogout }) {
     const location = useLocation();
 
-    // 🚨 2. Destructure setOpenMobile to control the mobile sidebar state
+    // 2. Destructure setOpenMobile to control the mobile sidebar state
     const { setOpenMobile } = useSidebar();
 
     return (
