@@ -32,7 +32,7 @@ const getClientInfo = (req) => {
 // Get or create conversation
 const getOrCreateConversation = async (sessionId, req) => {
   let conversation = await ChatConversation.findOne({ sessionId });
-  
+
   if (!conversation) {
     conversation = new ChatConversation({
       sessionId,
@@ -41,7 +41,7 @@ const getOrCreateConversation = async (sessionId, req) => {
     });
     await conversation.save();
   }
-  
+
   return conversation;
 };
 
@@ -51,7 +51,7 @@ const processUserMessage = async (userMessage, conversation) => {
   const { intent, confidence: intentConfidence } = classifyIntent(userMessage);
   const entities = extractEntities(userMessage);
   const keywords = extractKeywords(userMessage);
-  
+
   return {
     sentiment,
     intent,
@@ -65,16 +65,16 @@ const processUserMessage = async (userMessage, conversation) => {
 exports.getAdvancedChatbotReply = async (req, res) => {
   try {
     const sessionId = getOrCreateSessionId(req);
-    
+
     if (!req.body || typeof req.body.message !== 'string') {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: 'Invalid request format',
         reply: 'I encountered an error processing your message. Please try again.'
       });
     }
 
     const userMessage = req.body.message.trim();
-    
+
     if (!userMessage) {
       return res.json({
         reply: "Please type a question so I can assist you."
@@ -91,7 +91,7 @@ exports.getAdvancedChatbotReply = async (req, res) => {
     const { bestMatch, alternativeMatches, confidence } = findBestMatchAdvanced(userMessage, chatbotData);
 
     // Check if we need to escalate
-    const needsEscalation = 
+    const needsEscalation =
       nlpAnalysis.sentiment.sentiment === 'negative' ||
       nlpAnalysis.intent === 'complaint' ||
       (bestMatch === null && confidence < 0.2);
@@ -157,12 +157,12 @@ exports.getAdvancedChatbotReply = async (req, res) => {
 
     // Add session ID to response
     botResponse.sessionId = sessionId;
-    
+
     res.json(botResponse);
 
   } catch (error) {
     console.error('[Advanced Chatbot Controller ERROR]', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Chatbot server error',
       reply: 'An unexpected error occurred. Please try again later.'
     });
@@ -202,9 +202,9 @@ exports.submitChatbotFeedback = async (req, res) => {
     conversation.resolvedTime = new Date();
     await conversation.save();
 
-    res.json({ 
-      success: true, 
-      message: 'Thank you for your feedback!' 
+    res.json({
+      success: true,
+      message: 'Thank you for your feedback!'
     });
 
   } catch (error) {
@@ -255,7 +255,7 @@ exports.getChatbotAnalytics = async (req, res) => {
 
     const totalConversations = await ChatConversation.countDocuments(query);
     const escalatedCount = await ChatConversation.countDocuments({ ...query, escalated: true });
-    
+
     const feedback = await ChatFeedback.find(query);
     const avgRating = feedback.length > 0
       ? (feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length).toFixed(2)
@@ -282,9 +282,9 @@ exports.getChatbotAnalytics = async (req, res) => {
       intentsDistribution: intents,
       recentConversations: conversations.slice(0, 10),
       trends: {
-        positiveMessages: conversations.reduce((sum, c) => 
+        positiveMessages: conversations.reduce((sum, c) =>
           sum + c.messages.filter(m => m.sentiment === 'positive').length, 0),
-        negativeMessages: conversations.reduce((sum, c) => 
+        negativeMessages: conversations.reduce((sum, c) =>
           sum + c.messages.filter(m => m.sentiment === 'negative').length, 0)
       }
     });
@@ -309,8 +309,8 @@ exports.escalateConversation = async (req, res) => {
     conversation.status = 'escalated';
     await conversation.save();
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Your request has been escalated to our support team. They will contact you shortly.'
     });
 
@@ -334,8 +334,8 @@ exports.addToImproveQueue = async (req, res) => {
     // Log unmatched query for future improvement
     console.log('[FAQ Improvement Queue] Unmatched query:', userQuery);
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Thank you! We\'ll use your feedback to improve our chatbot.'
     });
 
