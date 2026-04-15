@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import api from "../api";
 import { Search } from "lucide-react";
 import { BASE_URL } from '../api';
@@ -49,13 +49,13 @@ export default function BlogPage() {
     if (currentPage === 1) {
       timeoutId = setTimeout(() => {
         fetchBlogs(currentPage, activeCategory, searchTerm);
-        
+
         // Update URL without causing re-render
         const newParams = new URLSearchParams();
         if (searchTerm) newParams.set("search", searchTerm);
         if (activeCategory !== "All") newParams.set("category", activeCategory);
         newParams.set("page", "1");
-        
+
         // Only update URL if it's different
         const currentUrl = searchParams.toString();
         const newUrl = newParams.toString();
@@ -94,7 +94,7 @@ export default function BlogPage() {
     if (searchTerm) newParams.set("search", searchTerm);
     if (activeCategory !== "All") newParams.set("category", activeCategory);
     newParams.set("page", page.toString());
-    
+
     setSearchParams(newParams);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [searchTerm, activeCategory, setSearchParams]);
@@ -133,18 +133,18 @@ export default function BlogPage() {
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}></div>
         </div>
-        
+
         <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-bold mb-4 border border-white/20 text-white">
               <span className="w-2 h-2 bg-emerald-300 rounded-full mr-2 animate-pulse"></span>
               Latest Insights & Trends
             </div>
-            
+
             <h1 className="text-5xl lg:text-7xl font-bold mb-3 text-white leading-tight">
               Insights & Ideas
             </h1>
-            
+
             <p className="text-xl lg:text-2xl text-white max-w-3xl mx-auto leading-relaxed">
               Discover expert perspectives on HR innovation, AI transformation, and cutting-edge software solutions
             </p>
@@ -186,11 +186,10 @@ export default function BlogPage() {
                 <button
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 ${
-                    activeCategory === category
-                      ? "bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white shadow-lg shadow-emerald-500/25"
-                      : "bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900"
-                  }`}
+                  className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 ${activeCategory === category
+                    ? "bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white shadow-lg shadow-emerald-500/25"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900"
+                    }`}
                 >
                   {category}
                 </button>
@@ -198,103 +197,103 @@ export default function BlogPage() {
             </div>
           </div>
 
-      {/* Blog Posts Grid */}
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        <AnimatePresence>
-          {blogData.blogs.map((blog, idx) => (
-            <motion.div
-              key={blog._id}
-              className="p-4 border rounded-xl bg-[#1a1a1a] hover:shadow-xl transition flex flex-col h-full"
-              style={{ borderColor: "#008080" }}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 40 }}
-              transition={{ delay: idx * 0.1 }}
-            >
-              <img
-                src={blog.image ? `${BASE_URL}${blog.image}` : "https://via.placeholder.com/400x250/ffffff?text=Blog+Image"}
-                alt={blog.title}
-                className="h-48 w-full object-cover rounded-lg mb-4"
-              />
-              <div className="flex-1 flex flex-col justify-between">
-                <h3 className="font-bold text-xl mb-2 text-[#008080]">{blog.title}</h3>
-                <p className="text-[#F5F5F5]/70 text-sm mb-4 flex-grow line-clamp-3">{blog.summary}</p>
-                <div className="mt-auto flex flex-wrap gap-2">
-                  {blog.tags && blog.tags.map(tag => (
-                    <span key={tag} className="bg-[#008080]/20 text-[#40E0D0] text-xs font-medium px-2 py-1 rounded-full">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">No articles found</h3>
-                <p className="text-slate-600 mb-8">
-                  {searchTerm || activeCategory !== "All" 
-                    ? "Try adjusting your search terms or browse different categories" 
-                    : "New content is coming soon. Check back later for fresh insights"}
-                </p>
-                {(searchTerm || activeCategory !== "All") && (
-                  <button
-                    onClick={() => {
-                      setSearchTerm("");
-                      setActiveCategory("All");
-                    }}
-                    className="bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg transition-all duration-300"
+          {/* Blog Posts Grid */}
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <AnimatePresence>
+              {blogData.blogs.length > 0 ? (
+                blogData.blogs.map((blog, idx) => (
+                  <motion.div
+                    key={blog._id}
+                    className="p-4 border rounded-xl bg-[#1a1a1a] hover:shadow-xl transition flex flex-col h-full"
+                    style={{ borderColor: "#008080" }}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 40 }}
+                    transition={{ delay: idx * 0.1 }}
                   >
-                    Clear Filters
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+                    <img
+                      src={
+                        blog.image
+                          ? `${BASE_URL}${blog.image}`
+                          : "https://via.placeholder.com/400x250/ffffff?text=Blog+Image"
+                      }
+                      alt={blog.title}
+                      className="h-48 w-full object-cover rounded-lg mb-4"
+                    />
 
-          {/* Enhanced Pagination */}
-          {blogData.totalPages > 1 && (
-            <div className="flex justify-center">
-              <nav className="bg-white rounded-2xl shadow-lg border border-slate-200/50 p-2" aria-label="Blog pagination">
-                <div className="flex items-center space-x-1">
-                  {/* Previous button */}
-                  {blogData.currentPage > 1 && (
+                    <div className="flex-1 flex flex-col justify-between">
+                      <h3 className="font-bold text-xl mb-2 text-[#008080]">
+                        {blog.title}
+                      </h3>
+
+                      <p className="text-[#F5F5F5]/70 text-sm mb-4 flex-grow line-clamp-3">
+                        {blog.summary}
+                      </p>
+
+                      <div className="mt-auto flex flex-wrap gap-2">
+                        {blog.tags?.map((tag) => (
+                          <span
+                            key={tag}
+                            className="bg-[#008080]/20 text-[#40E0D0] text-xs font-medium px-2 py-1 rounded-full"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                // ✅ EMPTY STATE
+                <div className="col-span-full text-center py-20">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-4">
+                    No articles found
+                  </h3>
+                  <p className="text-slate-600 mb-8">
+                    {searchTerm || activeCategory !== "All"
+                      ? "Try adjusting your search terms or browse different categories"
+                      : "New content is coming soon. Check back later"}
+                  </p>
+
+                  {(searchTerm || activeCategory !== "All") && (
                     <button
-                      onClick={() => handlePageChange(blogData.currentPage - 1)}
-                      className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200"
-                      aria-label="Previous page"
+                      onClick={() => {
+                        setSearchTerm("");
+                        setActiveCategory("All");
+                      }}
+                      className="bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white px-6 py-3 rounded-2xl font-semibold"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
+                      Clear Filters
                     </button>
                   )}
-                  
-                  {/* Page numbers */}
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Pagination */}
+          {blogData.totalPages > 1 && (
+            <div className="flex justify-center mt-10">
+              <nav className="bg-white rounded-2xl shadow-lg border p-2">
+                <div className="flex items-center space-x-1">
+                  {blogData.currentPage > 1 && (
+                    <button onClick={() => handlePageChange(blogData.currentPage - 1)}>
+                      Prev
+                    </button>
+                  )}
+
                   {[...Array(blogData.totalPages).keys()].map((i) => {
                     const page = i + 1;
                     return (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center w-10 h-10 rounded-xl font-semibold transition-all duration-200 ${
-                          page === blogData.currentPage
-                            ? "bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white shadow-lg"
-                            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                        }`}
-                        aria-label={`Page ${page}`}
-                        aria-current={page === blogData.currentPage ? "page" : undefined}
-                      >
+                      <button key={page} onClick={() => handlePageChange(page)}>
                         {page}
                       </button>
                     );
                   })}
-                  
-                  {/* Next button */}
+
                   {blogData.currentPage < blogData.totalPages && (
-                    <button
-                      onClick={() => handlePageChange(blogData.currentPage + 1)}
-                      className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200"
-                      aria-label="Next page"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
+                    <button onClick={() => handlePageChange(blogData.currentPage + 1)}>
+                      Next
                     </button>
                   )}
                 </div>
