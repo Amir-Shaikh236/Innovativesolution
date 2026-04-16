@@ -207,30 +207,6 @@ export default function AdminLayout({ children, admin, onLogout }) {
 
                     <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                         <OnlineStatus />
-
-                        {/* Theme Toggle Button */}
-                        {/* <button
-                            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                            className="relative p-2 sm:p-2.5 bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-full text-gray-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0"
-                        >
-                            <Sun className="h-4 w-4 transition-all scale-100 rotate-0 dark:scale-0 dark:-rotate-90" />
-                            <Moon className="absolute top-2 sm:top-2.5 left-2 sm:left-2.5 h-4 w-4 transition-all scale-0 rotate-90 dark:scale-100 dark:rotate-0" />
-                        </button> */}
-
-                        {/* <button className="hidden sm:flex p-2.5 bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-full text-gray-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0">
-                            <Mail className="h-4 w-4" />
-                        </button> */}
-
-                        {/* <button
-                            onClick={() => navigate("/admin/notifications")}
-                            className="relative p-2 sm:p-2.5 bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-full text-gray-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0"
-                        >
-                            <Bell className="h-4 w-4" />
-                            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900">
-                                <span className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-75" />
-                            </span>
-                        </button> */}
-
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button className="flex items-center gap-2 p-1 sm:p-1.5 sm:pr-3 bg-white dark:bg-slate-900 rounded-full outline-none hover:shadow-md transition-all shadow-sm cursor-pointer border border-gray-100 dark:border-slate-800 hover:border-emerald-100 dark:hover:border-emerald-500/50 shrink-0">
@@ -276,7 +252,6 @@ export default function AdminLayout({ children, admin, onLogout }) {
 
                 {/* ── Page content ── */}
                 <div className="px-3 sm:px-6 pb-6 pt-3 sm:pt-4 flex-1 flex flex-col w-full">
-                    {/* p-4 on mobile, p-8 on desktop */}
                     <div className="bg-white dark:bg-slate-900 flex-1 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-8 shadow-sm border border-gray-100/50 dark:border-slate-800 transition-colors w-full overflow-x-auto">
                         {children}
                     </div>

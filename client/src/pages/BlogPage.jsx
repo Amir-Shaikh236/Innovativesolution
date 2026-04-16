@@ -55,6 +55,7 @@ export default function BlogPage() {
 
   // LIVE SEARCH SUGGESTIONS EFFECT
   useEffect(() => {
+<<<<<<< feature/blogpage-update
     // Clear existing timeout
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
@@ -80,6 +81,26 @@ export default function BlogPage() {
           setSuggestions([]);
         } finally {
           setSuggestionLoading(false);
+=======
+    let timeoutId;
+
+    // If it's a search/category change, debounce it
+    if (currentPage === 1) {
+      timeoutId = setTimeout(() => {
+        fetchBlogs(currentPage, activeCategory, searchTerm);
+
+        // Update URL without causing re-render
+        const newParams = new URLSearchParams();
+        if (searchTerm) newParams.set("search", searchTerm);
+        if (activeCategory !== "All") newParams.set("category", activeCategory);
+        newParams.set("page", "1");
+
+        // Only update URL if it's different
+        const currentUrl = searchParams.toString();
+        const newUrl = newParams.toString();
+        if (currentUrl !== newUrl) {
+          setSearchParams(newParams, { replace: true });
+>>>>>>> main
         }
       }, 300); // Faster debounce for suggestions
     } else {
@@ -119,7 +140,8 @@ export default function BlogPage() {
     const fetchCategories = async () => {
       try {
         const res = await api.get("/blogs/categories");
-        setCategories(["All", ...res.data]);
+        const cats = Array.isArray(res.data) ? res.data : [];
+        setCategories(["All", ...cats]);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
         setCategories(["All"]);
@@ -358,8 +380,13 @@ export default function BlogPage() {
                   key={category}
                   onClick={() => handleCategoryChange(category)}
                   className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 ${activeCategory === category
+<<<<<<< feature/blogpage-update
                       ? "bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white shadow-lg shadow-emerald-500/25"
                       : "bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900"
+=======
+                    ? "bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white shadow-lg shadow-emerald-500/25"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900"
+>>>>>>> main
                     }`}
                 >
                   {category}
@@ -369,27 +396,30 @@ export default function BlogPage() {
           </div>
 
           {/* Blog Posts Grid */}
-          {blogData.blogs.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-16">
-              {blogData.blogs.map((blog, idx) => (
-                <motion.article
-                  key={`${blog._id}-${activeCategory}-${searchTerm}`}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-slate-200/50"
-                  initial={{ opacity: 0, y: 60 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: idx * 0.1 }}
-                >
-                  {/* Image Container */}
-                  <div className="relative overflow-hidden">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <AnimatePresence>
+              {blogData.blogs.length > 0 ? (
+                blogData.blogs.map((blog, idx) => (
+                  <motion.div
+                    key={blog._id}
+                    className="p-4 border rounded-xl bg-[#1a1a1a] hover:shadow-xl transition flex flex-col h-full"
+                    style={{ borderColor: "#008080" }}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 40 }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
                     <img
-                      src={blog.image ? `${BASE_URL}${blog.image}` : "https://via.placeholder.com/400x250/f1f5f9/64748b?text=Blog+Image"}
+                      src={
+                        blog.image
+                          ? `${BASE_URL}${blog.image}`
+                          : "https://via.placeholder.com/400x250/ffffff?text=Blog+Image"
+                      }
                       alt={blog.title}
-                      className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110"
-                      loading="lazy"
+                      className="h-48 w-full object-cover rounded-lg mb-4"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </div>
 
+<<<<<<< feature/blogpage-update
                   {/* Content */}
                   <div className="p-8">
                     <h3 className="font-bold text-xl mb-4 text-slate-800 line-clamp-2 group-hover:text-[#0F766E] transition-colors duration-300">
@@ -407,23 +437,51 @@ export default function BlogPage() {
                           <span
                             key={tag}
                             className="bg-gradient-to-r from-emerald-50 to-teal-50 text-[#0F766E] text-xs font-medium px-3 py-1.5 rounded-full border border-emerald-200/50"
+=======
+                    <div className="flex-1 flex flex-col justify-between">
+                      <h3 className="font-bold text-xl mb-2 text-[#008080]">
+                        {blog.title}
+                      </h3>
+
+                      <p className="text-[#F5F5F5]/70 text-sm mb-4 flex-grow line-clamp-3">
+                        {blog.summary}
+                      </p>
+
+                      <div className="mt-auto flex flex-wrap gap-2">
+                        {blog.tags?.map((tag) => (
+                          <span
+                            key={tag}
+                            className="bg-[#008080]/20 text-[#40E0D0] text-xs font-medium px-2 py-1 rounded-full"
+>>>>>>> main
                           >
                             #{tag}
                           </span>
                         ))}
-                        {blog.tags.length > 3 && (
-                          <span className="bg-slate-100 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-full">
-                            +{blog.tags.length - 3} more
-                          </span>
-                        )}
                       </div>
-                    )}
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                // ✅ EMPTY STATE
+                <div className="col-span-full text-center py-20">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-4">
+                    No articles found
+                  </h3>
+                  <p className="text-slate-600 mb-8">
+                    {searchTerm || activeCategory !== "All"
+                      ? "Try adjusting your search terms or browse different categories"
+                      : "New content is coming soon. Check back later"}
+                  </p>
 
-                    {/* Read More Link */}
-                    <Link
-                      to={`/blog/${blog.slug}`}
-                      className="inline-flex items-center font-semibold text-[#0F766E] hover:text-[#0D9488] transition-colors duration-300 group/link"
+                  {(searchTerm || activeCategory !== "All") && (
+                    <button
+                      onClick={() => {
+                        setSearchTerm("");
+                        setActiveCategory("All");
+                      }}
+                      className="bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white px-6 py-3 rounded-2xl font-semibold"
                     >
+<<<<<<< feature/blogpage-update
                       Read Full Article
                       <svg
                         className="ml-2 w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1"
@@ -465,25 +523,28 @@ export default function BlogPage() {
               </div>
             </div>
           )}
+=======
+                      Clear Filters
+                    </button>
+                  )}
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+>>>>>>> main
 
-          {/* Enhanced Pagination */}
+          {/* Pagination */}
           {blogData.totalPages > 1 && (
-            <div className="flex justify-center">
-              <nav className="bg-white rounded-2xl shadow-lg border border-slate-200/50 p-2" aria-label="Blog pagination">
+            <div className="flex justify-center mt-10">
+              <nav className="bg-white rounded-2xl shadow-lg border p-2">
                 <div className="flex items-center space-x-1">
-                  {/* Previous button */}
                   {blogData.currentPage > 1 && (
-                    <button
-                      onClick={() => handlePageChange(blogData.currentPage - 1)}
-                      className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200"
-                      aria-label="Previous page"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
+                    <button onClick={() => handlePageChange(blogData.currentPage - 1)}>
+                      Prev
                     </button>
                   )}
 
+<<<<<<< feature/blogpage-update
                   {/* Page numbers */}
                   {[...Array(blogData.totalPages).keys()].map((i) => {
                     const page = i + 1;
@@ -498,21 +559,24 @@ export default function BlogPage() {
                         aria-label={`Page ${page}`}
                         aria-current={page === blogData.currentPage ? "page" : undefined}
                       >
+=======
+                  {[...Array(blogData.totalPages).keys()].map((i) => {
+                    const page = i + 1;
+                    return (
+                      <button key={page} onClick={() => handlePageChange(page)}>
+>>>>>>> main
                         {page}
                       </button>
                     );
                   })}
 
+<<<<<<< feature/blogpage-update
                   {/* Next button */}
+=======
+>>>>>>> main
                   {blogData.currentPage < blogData.totalPages && (
-                    <button
-                      onClick={() => handlePageChange(blogData.currentPage + 1)}
-                      className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200"
-                      aria-label="Next page"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
+                    <button onClick={() => handlePageChange(blogData.currentPage + 1)}>
+                      Next
                     </button>
                   )}
                 </div>

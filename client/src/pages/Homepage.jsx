@@ -207,8 +207,8 @@ export default function HomePage() {
         const res = await api.get("/blogs");
         setBlogs(res.data.blogs || []);
       } catch (e) {
-        setBlogs([]);
         console.error("Failed to fetch blogs:", e);
+        setBlogs([]);
       } finally {
         setLoadingBlogs(false);
       }
