@@ -7,6 +7,8 @@ const adminAuth = require('./middleware/authMiddleware');
 const path = require('path');
 const userAuthRoutes = require('./routes/userAuth');
 const adminAuthRoutes = require('./routes/adminAuth');
+const dashboardRoutes = require('./routes/dashboard');
+const settingRoutes = require('./routes/settingRoutes');
 const categoryRoutes = require('./routes/categories');
 const subpageRoutes = require('./routes/subpages');
 const featuredSolutionsRoutes = require('./routes/featuredSolutions');
@@ -43,6 +45,7 @@ const corsOptions = {
     // Production allowed origins
     const allowedOrigins = [
       process.env.FRONTEND_URL,
+      process.env.ADMIN_FRONTEND_URL,
       'https://innovative-staffing.vercel.app',
       'https://innovativn:estaffing-v7jj.vercel.app'
     ].filter(Boolean); // Remove any undefined values
@@ -77,6 +80,8 @@ app.use("/api/blogs", blogRoutes);
 
 // Admin login route - public, no token required
 app.use('/api/admin', adminAuthRoutes);
+app.use('/api/admin/dashboard-stats', dashboardRoutes);
+app.use('/api/admin/settings', settingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use('/api/upload', uploadRoute);
