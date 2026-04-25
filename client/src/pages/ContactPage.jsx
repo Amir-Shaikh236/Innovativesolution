@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../api";
 import {
@@ -13,9 +13,11 @@ import {
   Sparkles,
   Briefcase,
   Handshake,
+  Lock,
 } from "lucide-react";
 
 export default function ContactPage({ user }) {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     emailAddress: "",
@@ -44,6 +46,13 @@ export default function ContactPage({ user }) {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    // Guard: must be logged in
+    if (!user) {
+      navigate("/login", { state: { from: "/contact" } });
+      return;
+    }
+
     setLoading(true);
     setSubmissionMessage("");
     setSubmissionError("");
@@ -52,11 +61,11 @@ export default function ContactPage({ user }) {
       const res = await api.post("/contact", formData);
       if (res.status === 201) {
         setSubmissionMessage(
-          "Thanks for reaching out! Our team will contact you within 24 hours.",
+          "Thanks for reaching out! Our team will contact you within 24 hours."
         );
         setFormData({
-          fullName: "",
-          emailAddress: "",
+          fullName: user.name || "",
+          emailAddress: user.email || "",
           inquiryType: "",
           message: "",
         });
@@ -81,7 +90,7 @@ export default function ContactPage({ user }) {
           Building stronger teams through strategic recruitment
         </h1>
         <p className="text-lg text-white/90">
-          Whether you have a question or a business inquiry, we’re here to
+          Whether you have a question or a business inquiry, we're here to
           listen.
         </p>
       </motion.section>
@@ -137,7 +146,7 @@ export default function ContactPage({ user }) {
           <div className="mt-12 p-6 border border-[#E3EAF2] rounded-xl">
             <div className="flex items-center space-x-2 mb-2 text-emerald-800">
               <Sparkles />
-              <h3 className="font-bold text-lg ">Quick Help</h3>
+              <h3 className="font-bold text-lg">Quick Help</h3>
             </div>
 
             <p className="text-sm text-[#374151] mb-4">
@@ -154,7 +163,7 @@ export default function ContactPage({ user }) {
             <div className="flex gap-4">
               <Link
                 to="/careers"
-                className="px-6 py-3 bg-[#0F766E]  text-white rounded-lg hover:bg-[#0F766E]/90  transition"
+                className="px-6 py-3 bg-[#0F766E] text-white rounded-lg hover:bg-[#0F766E]/90 transition"
               >
                 <Briefcase className="inline mr-2" size={18} />
                 Careers
@@ -162,7 +171,7 @@ export default function ContactPage({ user }) {
 
               <Link
                 to="/services"
-                className="px-6 py-3 border border-[#0F766E] text-[#0F766E] rounded-lg hover:bg-[#0F766E]  hover:text-white transition"
+                className="px-6 py-3 border border-[#0F766E] text-[#0F766E] rounded-lg hover:bg-[#0F766E] hover:text-white transition"
               >
                 <Handshake className="inline mr-2" size={18} />
                 Services
@@ -181,18 +190,44 @@ export default function ContactPage({ user }) {
             Send Us a Message
           </h2>
 
+          {/* Login gate — shown only when user is not logged in */}
+          {!user && (
+            <div className="mt-6 mb-4 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <Lock size={20} className="text-amber-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-amber-800">
+                You need to{" "}
+                <Link
+                  to="/login"
+                  className="font-semibold underline hover:text-amber-900"
+                >
+                  log in
+                </Link>{" "}
+                or{" "}
+                <Link
+                  to="/signup"
+                  className="font-semibold underline hover:text-amber-900"
+                >
+                  create an account
+                </Link>{" "}
+                to send us a message.
+              </p>
+            </div>
+          )}
+
           <form className="space-y-6" onSubmit={handleFormSubmit}>
             <Input
               label="Full Name"
               name="fullName"
               value={formData.fullName}
               onChange={handleInputChange}
+              disabled={!user}
             />
             <Input
               label="Email Address"
               name="emailAddress"
               value={formData.emailAddress}
               onChange={handleInputChange}
+              disabled={!user}
             />
 
             <div>
@@ -204,8 +239,8 @@ export default function ContactPage({ user }) {
                 required
                 value={formData.inquiryType}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-lg border border-black
-      focus:ring-2 focus:ring-[#2F6690] outline-none"
+                disabled={!user}
+                className="w-full p-3 rounded-lg border border-black focus:ring-2 focus:ring-[#2F6690] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select subject</option>
                 <option>General</option>
@@ -226,8 +261,8 @@ export default function ContactPage({ user }) {
                 required
                 value={formData.message}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-lg border border-black
-      focus:ring-2 focus:ring-[#2F6690] outline-none"
+                disabled={!user}
+                className="w-full p-3 rounded-lg border border-black focus:ring-2 focus:ring-[#2F6690] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -238,13 +273,24 @@ export default function ContactPage({ user }) {
               <p className="text-red-600 text-sm">{submissionError}</p>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-[#0F766E] text-white font-bold rounded-lg hover:bg-[#0F766E]/90  transition"
-            >
-              {loading ? "Sending..." : "Let’s Connect"}
-            </button>
+            {user ? (
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 bg-[#0F766E] text-white font-bold rounded-lg hover:bg-[#0F766E]/90 transition disabled:opacity-60"
+              >
+                {loading ? "Sending..." : "Let's Connect"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => navigate("/login", { state: { from: "/contact" } })}
+                className="w-full py-4 bg-[#0F766E] text-white font-bold rounded-lg hover:bg-[#0F766E]/90 transition flex items-center justify-center gap-2"
+              >
+                <Lock size={18} />
+                Log in to Send Message
+              </button>
+            )}
           </form>
         </motion.section>
       </div>
@@ -272,7 +318,7 @@ function Info({ icon, title, value, link }) {
   );
 }
 
-function Input({ label, name, value, onChange }) {
+function Input({ label, name, value, onChange, disabled }) {
   return (
     <div>
       <label className="block text-sm font-semibold mb-2">{label}</label>
@@ -281,8 +327,8 @@ function Input({ label, name, value, onChange }) {
         value={value}
         onChange={onChange}
         required
-        className="w-full p-3 rounded-lg border border-black
-        text-[#1F2937] focus:ring-2 focus:ring-[#2F6690] outline-none"
+        disabled={disabled}
+        className="w-full p-3 rounded-lg border border-black text-[#1F2937] focus:ring-2 focus:ring-[#2F6690] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
       />
     </div>
   );
