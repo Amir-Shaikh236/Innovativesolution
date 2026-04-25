@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import api from "./api";
 
@@ -56,11 +56,11 @@ function App() {
     verifyUser();
   }, []);
 
-  const handleVerified = (userData) => {
+  const handleVerified = (userData, from) => {
     setUser(userData);
     setIsLoggedIn(true);
     localStorage.setItem('isLoggedIn', 'true');
-    navigate('/');
+    navigate(from || '/', { replace: true });
   };
 
   const handleLogout = async () => {
@@ -86,10 +86,12 @@ function App() {
   };
 
   const RedirectIfAuth = ({ children }) => {
+    const location = useLocation();
     if (isLoading) return null;
-
     if (isLoggedIn) {
-      return <Navigate to="/" replace />;
+      // Respect the intended destination if set, otherwise go home
+      const destination = location.state?.from || '/';
+      return <Navigate to={destination} replace />;
     }
     return children;
   };
