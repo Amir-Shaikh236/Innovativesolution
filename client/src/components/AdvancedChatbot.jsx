@@ -372,7 +372,7 @@ const AdvancedChatbot = () => {
               <Bot size={20} className="text-teal-400" />
                <div>
                 <h2 className="text-lg font-semibold text-[#40E0D0] tracking-wide">ISAC</h2>
-                  <p className="text-xs text-gray-400">AI Assistant</p>
+                  <p className="text-xs text-gray-400">AI Assistantt</p>
               </div>
             </div>
 
