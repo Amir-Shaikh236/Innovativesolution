@@ -353,27 +353,31 @@ const AdvancedChatbot = () => {
       </motion.button>
 
       {/* Chat Window */}
-      <AnimatePresence>
+        <AnimatePresence>
         {isOpen && (
-          <motion.div
-            className="fixed bottom-8 right-8 max-w-md h-[75vh] max-h-[700px] flex flex-col rounded-2xl shadow-2xl z-50 backdrop-blur-md overflow-hidden"
-            style={{
-              background: "rgba(6, 0, 9, 0.95)",
-              boxShadow: "0 0 30px rgba(64, 224, 208, 0.5)",
-            }}
-            initial={{ opacity: 0, scale: 0.5, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.5, y: 50 }}
-            transition={{ duration: 0.3 }}
-          >
+        <motion.div
+         className="fixed bottom-8 right-8 w-[360px] h-[70vh] max-h-[600px] flex flex-col rounded-3xl shadow-2xl z-50 backdrop-blur-xl border border-[#1b1b2f]"
+         style={{
+         background: "linear-gradient(145deg, #060009, #09091b)",
+         boxShadow: "0 0 40px rgba(64, 224, 208, 0.3)",
+          }}
+              initial={{ opacity: 0, scale: 0.8, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 40 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+          >         
             {/* Header */}
-            <div className="flex justify-between items-center p-4 border-b border-gray-700 bg-gradient-to-r from-gray-900 to-gray-800">
-              <div>
-                <h2 className="text-xl font-bold" style={{ color: "#40E0D0" }}>ISAC AI Assistant</h2>
-                <p className="text-xs text-gray-400">Advanced NLP Chatbot</p>
+            <div className="flex justify-between items-center px-4 py-3 border-b bg-gray">
+             <div className="flex items-center gap-2">
+              <Bot size={20} className="text-teal-400" />
+               <div>
+                <h2 className="text-lg font-semibold text-[#40E0D0] tracking-wide">ISAC</h2>
+                  <p className="text-xs text-gray-400">AI Assistantt</p>
               </div>
-              <button onClick={handleClose} className="text-gray-400 hover:text-[#40E0D0] transition">
-                <X size={24} />
+            </div>
+
+             <button onClick={handleClose} className="text-gray-400 hover:text-gray-700">
+               <X size={20} />
               </button>
             </div>
 
@@ -426,7 +430,7 @@ const AdvancedChatbot = () => {
             ) : (
               <>
                 {/* Chat Messages */}
-                <div className="flex-1 p-4 overflow-y-auto space-y-4 text-[#F5F5F5]">
+                <div className="chat-scroll flex-1 p-4 overflow-y-auto space-y-4 text-sm text-[#F5F5F5]">
                   {messages.map((msg, index) => (
                     <motion.div
                       key={msg.id}
@@ -534,15 +538,15 @@ const AdvancedChatbot = () => {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="p-3 bg-gray-900 border-t border-gray-700 flex flex-wrap gap-2">
+                <div className="p-4 flex flex-wrap gap-2">
                   {quickActions.map((action) => (
                     <motion.button
                       key={action.label}
                       onClick={() => handleQuickAction(action.action)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-3 py-2 rounded-md font-semibold text-white text-sm transition-all"
-                      style={{ background: "#060640", boxShadow: "0 0 8px rgba(64, 224, 208, 0.4)" }}
+                      className="px-2 py-1 rounded-sm font-semibold text-white text-sm transition-all"
+                      style={{ background: "#061a40", boxShadow: "0 0 8px rgba(64, 224, 208, 0.4)" }}
                     >
                       {action.label}
                     </motion.button>
@@ -550,21 +554,21 @@ const AdvancedChatbot = () => {
                 </div>
 
                 {/* Input Area */}
-                <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-4 border-t border-gray-700 flex items-center gap-2 bg-gray-900">
+                <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-4 border-t border-black flex items-center gap-2 bg-gray-900">
                   <input
                     type="text"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Ask me anything..."
-                    className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#40E0D0] focus:border-transparent transition"
+                    className="flex-1 bg-[#060009] border border-[#068330] rounded-lg px-4 py-2 mr-2 text-white focus:outline-none focus:ring-1 focus:ring-[#068330]"
                   />
                   <motion.button
                     type="submit"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="p-2 rounded-lg text-white transition-all disabled:opacity-50"
-                    style={{ background: "#040620", boxShadow: "0 0 10px rgba(64, 224, 208, 0.5)" }}
+                    style={{ background: "#080683", boxShadow: "0 0 10px rgba(64, 224, 219, 0.5)" }}
                     disabled={isTyping || !userInput.trim()}
                   >
                     <Send size={20} />
