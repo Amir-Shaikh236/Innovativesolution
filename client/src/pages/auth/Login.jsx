@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import api from "../../api";
 import sideImg from "../../assets/side.png";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function Login({ onVerified }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -34,7 +35,8 @@ export default function Login({ onVerified }) {
 
     try {
       const { data } = await api.post("/auth/login", formData);
-      onVerified(data.user);
+      // data IS the user object (contains _id, name, email, token)
+      onVerified(data, location.state?.from);
     } catch (err) {
       setError(err.response?.data?.msg || "Login failed");
     } finally {

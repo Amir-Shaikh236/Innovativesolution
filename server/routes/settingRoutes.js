@@ -11,10 +11,6 @@ const Category = require("../models/Category");
 const Blog = require("../models/Blog");
 const Subscription = require("../models/Subscription");
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  PROFILE
-// ══════════════════════════════════════════════════════════════════════════════
-
 // GET  /api/admin/settings/profile
 router.get("/profile", adminAuth, async (req, res) => {
     try {
@@ -132,10 +128,6 @@ router.put("/security/password", adminAuth, async (req, res) => {
         return res.status(500).json({ msg: "Server error" });
     }
 });
-
-// ══════════════════════════════════════════════════════════════════════════════
-//  APPEARANCE  (light-only — dark theme not yet implemented)
-// ══════════════════════════════════════════════════════════════════════════════
 
 // GET  /api/admin/settings/appearance
 router.get("/appearance", (req, res) => {

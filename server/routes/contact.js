@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const contactController = require("../controllers/contactController");
 const rateLimit = require('express-rate-limit');
+const { protect } = require('../middleware/authMiddleware');
 
 // Rate limiter: 5 requests per 15 minutes per IP
 const contactLimiter = rateLimit({
@@ -15,7 +16,7 @@ const contactLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Define the route for your contact form
-router.post("/", contactLimiter, contactController.createContactRequest);
+// Only logged-in users can submit the contact form
+router.post("/", protect, contactLimiter, contactController.createContactRequest);
 
 module.exports = router;
