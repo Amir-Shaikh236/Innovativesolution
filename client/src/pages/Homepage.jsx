@@ -6,7 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   ArrowRight,
+  ArrowUpRight,
   Briefcase,
   Users,
   Sparkles,
@@ -80,93 +82,119 @@ const HowWeWorkFlashcard = ({ step }) => {
   );
 };
 
-const CategorySlider = ({ categories }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % categories.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide(
-      (prev) => (prev - 1 + categories.length) % categories.length
-    );
-  };
-
-  useEffect(() => {
-    if (categories.length > 1) {
-      const autoScroll = setInterval(nextSlide, 5000);
-      return () => clearInterval(autoScroll);
-    }
-  }, [categories.length]);
+const CategorySection = ({ categories }) => {
+  const [open, setOpen] = useState(0);
 
   if (!categories || categories.length === 0) return null;
 
-  const currentCategory = categories[currentSlide];
-
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-white/20 bg-[#D9F3F0] shadow-2xl">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentCategory._id}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.7 }}
-          className="relative h-[600px]"
-        >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${BASE_URL}${currentCategory.image})`,
-            }}
-          />
+    <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
 
-          <div className="absolute inset-0 bg-black/55" />
-
-          <div className="relative z-10 flex h-full items-end p-10 md:p-16">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/20 backdrop-blur-md px-4 py-2 text-sm text-white mb-6">
-                <Sparkles size={16} />
-                Featured Service Category
-              </div>
-
-              <h2 className="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
-                {currentCategory.name}
-              </h2>
-
-              <p className="text-lg text-white/90 leading-8 mb-8 max-w-xl">
-                {currentCategory.description}
-              </p>
-
-              <Link
-                to={`/category/${currentCategory.slug}`}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#40E0D0] px-8 py-4 font-semibold text-black transition hover:bg-white hover:text-[#0F766E]"
+      {/* LEFT — numbered accordion */}
+      <div className="w-full lg:w-1/2 flex flex-col divide-y divide-white/10">
+        {categories.map((cat, i) => {
+          const isOpen = open === i;
+          return (
+            <div key={cat._id}>
+              <button
+                onClick={() => setOpen(isOpen ? -1 : i)}
+                className="w-full flex items-center justify-between gap-4 py-4 sm:py-5 group focus:outline-none"
+                aria-expanded={isOpen}
               >
-                Explore Services
-                <ArrowRight size={18} />
-              </Link>
+                <div className="flex items-center gap-4 min-w-0">
+                  <span
+                    className={`flex-shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black transition-all duration-300 ${isOpen
+                      ? "bg-[#40E0D0] text-black"
+                      : "bg-white/10 text-white/50 group-hover:bg-white/20 group-hover:text-white"
+                      }`}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className={`text-left font-bold text-sm sm:text-base lg:text-lg truncate transition-colors duration-200 ${isOpen ? "text-white" : "text-white/65 group-hover:text-white"
+                      }`}
+                  >
+                    {cat.name}
+                  </span>
+                </div>
+                <ChevronDown
+                  size={16}
+                  className={`flex-shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-[#40E0D0]" : "text-white/30 group-hover:text-white/60"
+                    }`}
+                />
+              </button>
+
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    key="body"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pb-5 pl-[52px] sm:pl-[60px] pr-2">
+                      <p className="text-white/60 text-sm sm:text-base leading-7 mb-4">
+                        {cat.description}
+                      </p>
+                      <Link
+                        to={`/category/${cat.slug}`}
+                        className="inline-flex items-center gap-1.5 text-[#40E0D0] text-sm font-semibold hover:gap-3 transition-all duration-200"
+                      >
+                        Explore this service
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
+          );
+        })}
+      </div>
 
-      <button
-        onClick={prevSlide}
-        className="absolute left-5 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#0F766E] shadow-lg transition hover:bg-[#0F766E] hover:text-white"
-      >
-        <ChevronLeft />
-      </button>
-
-      <button
-        onClick={nextSlide}
-        className="absolute right-5 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#0F766E] shadow-lg transition hover:bg-[#0F766E] hover:text-white"
-      >
-        <ChevronRight />
-      </button>
-    </section>
+      {/* RIGHT — sticky spotlight card */}
+      <div className="w-full lg:w-1/2 lg:sticky lg:top-8">
+        <AnimatePresence mode="wait">
+          {open >= 0 && categories[open] ? (
+            <motion.div
+              key={categories[open]._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.35 }}
+              className="rounded-2xl sm:rounded-3xl bg-white/5 border border-white/20 shadow-xl p-6 sm:p-8 lg:p-10"
+            >
+              <div className="text-[72px] sm:text-[96px] font-black leading-none text-white/50 select-none mb-2">
+                {String(open + 1).padStart(2, "0")}
+              </div>
+              <div className="w-10 h-[3px] bg-[#40E0D0] rounded-full mb-5" />
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-snug mb-3 sm:mb-4">
+                {categories[open].name}
+              </h3>
+              <p className="text-white/60 text-sm sm:text-base leading-7 mb-6 sm:mb-8">
+                {categories[open].description}
+              </p>
+              <Link
+                to={`/category/${categories[open].slug}`}
+                className="inline-flex items-center gap-2 bg-[#40E0D0] text-black font-bold text-sm sm:text-base px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl hover:bg-white hover:text-[#0F766E] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#40E0D0]/50"
+              >
+                Explore Service
+                <ArrowUpRight size={16} />
+              </Link>
+            </motion.div>
+          ) : (
+            <div className="rounded-2xl sm:rounded-3xl border border-dashed border-white/15 p-8 text-center text-white/30 text-sm">
+              Select a service to learn more
+            </div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 };
+
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -387,20 +415,25 @@ export default function HomePage() {
 
         {/* CATEGORY SECTION */}
 
-        <section className="px-6 py-24">
+        <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="mx-auto max-w-7xl">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black mb-5 text-white">
-                Our Core Services
-              </h2>
-
-              <p className="text-white/80 max-w-2xl mx-auto text-lg">
-                Modern solutions designed to help businesses scale and talent
-                grow.
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-10 sm:mb-14">
+              <div>
+                <p className="text-[#40E0D0] text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mb-3">
+                  What We Offer
+                </p>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
+                  Our Core Services
+                </h2>
+              </div>
+              <Link
+                to="/services"
+                className="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white/50 hover:text-white transition-colors"
+              >
+                View all <ArrowRight size={14} />
+              </Link>
             </div>
-
-            <CategorySlider categories={categories} />
+            <CategorySection categories={categories} />
           </div>
         </section>
 

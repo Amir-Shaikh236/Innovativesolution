@@ -1,172 +1,181 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "../assets/generated-image (4).png"
-import api from "../api";
+import logo from "../assets/generated-image (4).png";
 
-// 1. ACCEPT THE PROPS FROM App.jsx
 export default function Header({ isLoggedIn, onLogout }) {
-  const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // REMOVED local isLoggedIn state and its corresponding useEffect
-  const [categories, setCategories] = useState([]);
-  const [logoHovered, setLogoHovered] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    // This effect for fetching categories is unchanged and correct.
-    if (isServicesOpen && categories.length === 0) {
-      (async () => {
-        try {
-          const [catsRes, subsRes] = await Promise.all([
-            api.get("/categories"),
-            api.get("/subpages"),
-          ]);
-          const cats = Array.isArray(catsRes.data) ? catsRes.data : [];
-          const subs = Array.isArray(subsRes.data) ? subsRes.data : [];
-          const catsWithSubs = cats.map((cat) => ({
-            ...cat,
-            subcategories: subs.filter((sub) => {
-              const subCat = sub.category;
-              if (!subCat) return false;
-              const catId = String(cat._id);
-              if (typeof subCat === "string") return subCat === catId;
-              if (typeof subCat === "object") return String(subCat._id) === catId || String(subCat.id) === catId;
-              return false;
-            }),
-          }));
-          setCategories(catsWithSubs);
-        } catch (err) {
-          console.error("Failed to load categories/subpages", err);
-        }
-      })();
-    }
-  }, [isServicesOpen, categories.length]);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  // Wrapper function for mobile to also close the menu
-  const handleMobileLogout = () => {
-    onLogout();
+  useEffect(() => {
     setIsMobileMenuOpen(false);
-  };
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isMobileMenuOpen]);
 
   const isActive = (path) =>
     path === "/services"
       ? location.pathname.startsWith(path)
       : location.pathname === path;
 
-  // Desktop NavLink and Mobile NavLink components remain the same
-  const DesktopNavLink = ({ to, label, isActive, children, showDropdown }) => (
-    <div className="relative" onMouseEnter={() => showDropdown && setIsServicesOpen(true)} onMouseLeave={() => setIsServicesOpen(false)}>
-      <Link to={to} className={`flex items-center gap-1 px-2 py-1 rounded transition ${isActive ? "text-[#40E0D0] font-semibold" : "text-white"} hover:text-[#40E0D0]`}>
-        {label}
-        {children}
-      </Link>
-    </div>
-  );
-
-  const MobileNavLink = ({ to, label, isActive, children }) => (
-    <Link to={to} onClick={() => setIsMobileMenuOpen(false)} className={`block w-full px-4 py-3 rounded transition ${isActive ? "text-[#40E0D0] font-semibold bg-white/10" : "text-white"} hover:bg-white/10`}>
-      <div className="flex justify-between items-center">
-        {label}
-        {children}
-      </div>
-    </Link>
-  );
+  const navLinks = [
+    { to: "/", label: "Home" },
+    { to: "/about", label: "About" },
+    { to: "/services", label: "Services" },
+    { to: "/careers", label: "Careers" },
+    { to: "/case-studies", label: "Case Studies" },
+    { to: "/industries", label: "Industries" },
+    { to: "/blogs", label: "Blog" },
+    { to: "/contact", label: "Contact" },
+  ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black md:bg-black/50 md:backdrop-blur-sm border-b border-[#008080]/20">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 h-[72px]">
-        <Link to="/" className="text-xl font-bold text-white flex items-center gap-2" onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)}>
-          <h4 className=" font-bold text-2xl mb-4 pt-4"><img className="h-20 w-20" src={logo} alt="" /></h4>
-        </Link>
+    <>
+      {/* ── Header bar ── */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${scrolled
+          ? "bg-black border-b border-white/10"
+          : "bg-black/80 border-b border-white/5"
+          }`}
+      >
+        <div className="max-w-screen-xl mx-auto px-6 lg:px-10 h-18 flex items-center justify-between gap-8">
 
-        <button className="md:hidden text-white z-50" onClick={() => setIsMobileMenuOpen((prev) => !prev)}>
-          <motion.div key={isMobileMenuOpen ? "x" : "menu"} initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.2 }}>
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </motion.div>
-        </button>
+          {/* ── Logo ── */}
+          <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-14 w-14 object-contain transition-transform duration-200 group-hover:scale-105"
+            />
+          </Link>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          <DesktopNavLink to="/" label="Home" isActive={isActive("/")} />
-          <DesktopNavLink to="/about" label="About" isActive={isActive("/about")} />
-          <DesktopNavLink to="/services" label="Services" isActive={isActive("/services")} showDropdown>
-            <ChevronDown size={14} />
-          </DesktopNavLink>
-          <DesktopNavLink to="/careers" label="Careers" isActive={isActive("/careers")} />
-          <DesktopNavLink to="/case-studies" label="Case Studies" isActive={isActive("/case-studies")} />
-          <DesktopNavLink to="/industries" label="Industries" isActive={isActive("/industries")} />
-          <DesktopNavLink to="/blogs" label="Blog" isActive={isActive("/blogs")} />
-          <DesktopNavLink to="/contact" label="Contact" isActive={isActive("/contact")} />
+          {/* ── Desktop nav ── */}
+          <nav className="hidden xl:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`relative px-4 py-2 rounded-md text-[15px] font-medium tracking-tight transition-colors duration-150 ${isActive(link.to)
+                  ? "text-[#40E0D0] bg-[#40E0D0]/8"
+                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  }`}
+              >
+                {link.label}
+                {isActive(link.to) && (
+                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#40E0D0]" />
+                )}
+              </Link>
+            ))}
+          </nav>
 
-          {/* 2. USE THE PROPS TO RENDER UI AND HANDLE CLICK */}
-          {isLoggedIn ? (
-            <button onClick={onLogout} className="text-red-500 font-semibold hover:underline">
-              Logout
-            </button>
-          ) : (
-            <Link to="/signup" className="px-4 py-2 bg-gradient-to-r from-[#008080] to-[#40E0D0] text-black font-semibold rounded-lg shadow hover:from-[#40E0D0] hover:to-[#2E8B57]">
-              Register Now
-            </Link>
-          )}
-        </nav>
-      </div>
+          {/* ── Desktop auth ── */}
+          <div className="hidden xl:flex items-center gap-3 flex-shrink-0">
+            {isLoggedIn ? (
+              <button
+                onClick={onLogout}
+                className="px-5 py-2.5 rounded-md text-[14px] font-semibold text-white/50 border border-white/10 hover:text-red-400 hover:border-red-400/30 hover:bg-red-400/5 transition-all duration-150"
+              >
+                Log out
+              </button>
+            ) : (
+              <Link
+                to="/signup"
+                className="px-5 py-2.5 rounded-md text-[14px] font-semibold text-black bg-[#40E0D0] hover:bg-[#5ee8d8] transition-colors duration-150"
+              >
+                Register Now
+              </Link>
+            )}
+          </div>
 
-      <AnimatePresence>
-        {isServicesOpen && (
-          // ... Desktop dropdown menu code is unchanged
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="absolute left-0 right-0 mt-2 bg-black text-white shadow-lg p-4 md:w-96 mx-auto rounded">
-            <ul>
-              {categories.map((cat) => (
-                <li key={cat._id} className="mb-2">
-                  <Link to={`/category/${cat.slug || cat._id}`} className="block px-3 py-1 font-semibold hover:text-[#40E0D0]" onClick={() => setIsServicesOpen(false)}>
-                    {cat.name}
-                  </Link>
-                  {cat.subcategories && (
-                    <ul className="pl-4 text-sm">
-                      {cat.subcategories.map((sub) => (
-                        <li key={sub._id}>
-                          <Link to={`/subpage/${sub.slug || sub._id}`} className="block hover:text-[#40E0D0] py-0.5" onClick={() => setIsServicesOpen(false)}>
-                            {sub.title || sub.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          {/* ── Mobile burger ── */}
+          <button
+            onClick={() => setIsMobileMenuOpen((p) => !p)}
+            className="xl:hidden flex flex-col justify-center items-center gap-[6px] w-10 h-10 rounded-md border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all duration-150 flex-shrink-0"
+            aria-label="Toggle menu"
+          >
+            <span
+              className={`block h-[1.5px] w-5 bg-white rounded transition-all duration-250 origin-center ${isMobileMenuOpen ? "translate-y-[7px] rotate-45" : ""
+                }`}
+            />
+            <span
+              className={`block h-[1.5px] w-5 bg-white rounded transition-all duration-250 ${isMobileMenuOpen ? "opacity-0 scale-x-0" : ""
+                }`}
+            />
+            <span
+              className={`block h-[1.5px] w-5 bg-white rounded transition-all duration-250 origin-center ${isMobileMenuOpen ? "-translate-y-[7px] -rotate-45" : ""
+                }`}
+            />
+          </button>
+        </div>
+      </header>
 
+      {/* ── Mobile menu ── */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "tween", duration: 0.3 }} className="fixed top-0 right-0 h-full w-full bg-black z-40 flex flex-col md:bg-black/50 md:backdrop-blur-sm">
-            <div className="flex-1 p-6 space-y-2 pt-24">
-              <MobileNavLink to="/" label="Home" isActive={isActive("/")} />
-              <MobileNavLink to="/about" label="About" isActive={isActive("/about")} />
-              <MobileNavLink to="/services" label="Services" isActive={isActive("/services")} />
-              <MobileNavLink to="/careers" label="Careers" isActive={isActive("/careers")} />
-              <MobileNavLink to="/case-studies" label="Case Studies" isActive={isActive("/case-studies")} />
-              <MobileNavLink to="/industries" label="Industries" isActive={isActive("/industries")} />
-              <MobileNavLink to="/blogs" label="Blog" isActive={isActive("/blogs")} />
-              <MobileNavLink to="/contact" label="Contact" isActive={isActive("/contact")} />
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.16, ease: "easeOut" }}
+            className="fixed top-20 left-0 right-0 z-40 bg-black border-b border-white/10 xl:hidden"
+          >
+            <div className="max-w-screen-xl mx-auto px-6 py-4 flex flex-col gap-1">
+              {navLinks.map((link, i) => (
+                <motion.div
+                  key={link.to}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.03, duration: 0.18 }}
+                >
+                  <Link
+                    to={link.to}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center justify-between px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-150 ${isActive(link.to)
+                      ? "text-[#40E0D0] bg-[#40E0D0]/8"
+                      : "text-white/60 hover:text-white hover:bg-white/5"
+                      }`}
+                  >
+                    {link.label}
+                    {isActive(link.to) && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#40E0D0]" />
+                    )}
+                  </Link>
+                </motion.div>
+              ))}
 
-              {/* 3. USE PROPS FOR MOBILE BUTTON AS WELL */}
-              {isLoggedIn ? (
-                <button onClick={handleMobileLogout} className="w-full text-left px-4 py-3 text-red-500 font-semibold hover:bg-white/10 rounded">
-                  Logout
-                </button>
-              ) : (
-                <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)} className="block text-center mt-4 px-4 py-3 bg-gradient-to-r from-[#008080] to-[#40E0D0] text-black font-semibold rounded-lg shadow hover:from-[#40E0D0] hover:to-[#2E8B57]">
-                  Register Now
-                </Link>
-              )}
+              {/* Mobile auth */}
+              <div className="pt-3 pb-2 border-t border-white/8 mt-2">
+                {isLoggedIn ? (
+                  <button
+                    onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}
+                    className="w-full px-4 py-3 rounded-lg text-[15px] font-semibold text-red-400/70 border border-red-400/15 hover:text-red-400 hover:bg-red-400/5 hover:border-red-400/25 transition-all duration-150"
+                  >
+                    Log out
+                  </button>
+                ) : (
+                  <Link
+                    to="/signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block w-full text-center px-4 py-3 rounded-lg text-[15px] font-semibold text-black bg-[#40E0D0] hover:bg-[#5ee8d8] transition-colors duration-150"
+                  >
+                    Register Now
+                  </Link>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
