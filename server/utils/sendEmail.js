@@ -23,7 +23,31 @@ const sendVerificationEmail = async (email, token) => {
         <p> This link will expire in 1 Hour. </p>
         `
   };
-  await transporter.sendMail(mailOptions);
+  // await transporter.sendMail(mailOptions);
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Message sent:", info.messageId);
+
+    if (info.rejected.length > 0) {
+      console.warn("Some recipients were rejected:", info.rejected);
+    }
+  } catch (err) {
+    switch (err.code) {
+      case "ECONNECTION":
+      case "ETIMEDOUT":
+        console.error("Network error - retry later:", err.message);
+        break;
+      case "EAUTH":
+        console.error("Authentication failed:", err.message);
+        break;
+      case "EENVELOPE":
+        console.error("Invalid recipients:", err.rejected);
+        break;
+      default:
+        console.error("Send failed:", err.message);
+    }
+  }
 }
 
 const sendEmail = async (options) => {
