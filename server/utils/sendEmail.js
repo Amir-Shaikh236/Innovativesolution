@@ -74,17 +74,12 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '465', 10),
-
-  // true  → implicit TLS (port 465) — recommended for Gmail
-  // false → STARTTLS upgrade (port 587) — required by most other providers
   secure: process.env.SMTP_SECURE !== 'false', // default true
-
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS, // App Password, not account password
   },
 
-  // Connection pool — keeps connections alive and reuses them
   pool: true,
   maxConnections: 5,
   maxMessages: 100,
@@ -95,9 +90,9 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 30_000,  // 30 s of socket inactivity
 
   // Improve deliverability — tell the server our real domain
-  tls: {
-    rejectUnauthorized: true, // always verify the cert in production
-  },
+  // tls: {
+  //   rejectUnauthorized: true, // always verify the cert in production
+  // },
   connectionTimeout: 10000, // 10 seconds — fail fast instead of hanging
   greetingTimeout: 10000,
   socketTimeout: 15000,
