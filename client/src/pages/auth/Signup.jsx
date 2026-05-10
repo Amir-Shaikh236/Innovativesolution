@@ -46,10 +46,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     setLoading(true);
     try {
       await api.post("/auth/register", formData);
-      setMessage("Verification email sent!");
-      
+      setMessage("Verification email sent! Please check your inbox.");
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed");
+      setError(err.response?.data?.message || "Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -73,11 +73,19 @@ exports.registerUser = async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    await sendVerificationEmail(sanitizedEmail, token);
+    try {
+      await sendVerificationEmail(sanitizedEmail, token);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError.message);
+      return res.status(500).json({
+        message: 'Account created but verification email could not be sent. Please contact support.'
+      });
+    }
 
-    res.status(200).json({ message: `Verification Link sent to email: ${sanitizedEmail}` });
+    res.status(200).json({ message: `Verification link sent to: ${sanitizedEmail}` });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Registration error:', error.message);
+    res.status(500).json({ message: 'Registration failed. Please try again.' });
   }
 };
 
