@@ -522,7 +522,7 @@ const AdvancedChatbot = () => {
                     >
                       <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-semibold">Need human assistance?</p>
+                        <p className="font-semibold">Need Human Assistance?</p>
                         <p className="text-xs mt-1">Our support team can help with your specific situation.</p>
                         <button
                           onClick={handleEscalate}
