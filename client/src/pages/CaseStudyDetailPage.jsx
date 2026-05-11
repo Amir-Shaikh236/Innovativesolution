@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { UserPlus, Handshake, Briefcase, CheckCircle, ArrowRight } from 'lucide-react';
+import { 
+  UserPlus, 
+  Handshake, 
+  Briefcase, 
+  CheckCircle, 
+  ArrowRight, 
+  GraduationCap, 
+  ShieldCheck, 
+  Users 
+} from 'lucide-react';
+
+// Keeping assets to avoid build breaks, though hero images are being replaced by icons
 import growth from "../assets/GrowthCase.jpeg"
 import safe from "../assets/SafeOpp.jpeg";
 import staffing from "../assets/StaffingSol.jpeg"
@@ -11,7 +22,13 @@ export default function CaseStudyDetailPage() {
   const [caseStudy, setCaseStudy] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // In a real app, you would fetch this from your backend
+  // Map slugs to specific Lucide icons for the hero section
+  const heroIcons = {
+    "career-growth-for-students": GraduationCap,
+    "safe-opportunities-for-students-and-women": ShieldCheck,
+    "staffing-solutions-for-businesses": Users,
+  };
+
   const mockCaseStudies = {
     "career-growth-for-students": {
       id: "1",
@@ -215,7 +232,6 @@ export default function CaseStudyDetailPage() {
   };
 
   useEffect(() => {
-    // Using mock data for demonstration
     const caseData = mockCaseStudies[slug];
     if (caseData) {
       setCaseStudy(caseData);
@@ -231,6 +247,8 @@ export default function CaseStudyDetailPage() {
     return <div className="flex items-center justify-center min-h-screen text-[#134E4A] bg-[#E6F7F5] font-medium">Case study not found.</div>;
   }
 
+  const HeroIcon = heroIcons[slug] || CheckCircle;
+
   return (
     <motion.main
       className="min-h-screen bg-[#E6F7F5] text-[#134E4A] font-sans selection:bg-[#B9F2EC] selection:text-[#134E4A]"
@@ -244,21 +262,49 @@ export default function CaseStudyDetailPage() {
         {/* Background Decorative Element */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/40 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
-        {/* Left Column: Image with "Frosted Glass" logic */}
+        {/* Left Column: Animated Icon replaces Image */}
         <div className="w-full lg:w-1/2 flex justify-center z-10">
             <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8 }}
-                className="relative"
+                initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 15,
+                  duration: 0.8 
+                }}
+                className="relative group"
             >
-                {/* The "Plate" behind the image */}
+                {/* The "Plate" behind the icon */}
                 <div className="absolute inset-0 bg-[#008080]/10 backdrop-blur-md rounded-3xl -rotate-6 translate-x-4 translate-y-4"></div>
-                <img 
-                    src={caseStudy.image}
-                    alt={caseStudy.title}
-                    className="relative rounded-3xl shadow-2xl w-full max-w-lg aspect-[4/5] lg:aspect-square object-cover border-8 border-white/50"
-                />
+                
+                {/* Icon Container */}
+                <div className="relative bg-white rounded-3xl shadow-2xl w-72 h-72 md:w-96 md:h-96 flex items-center justify-center border-8 border-white/50 overflow-hidden">
+                   <motion.div
+                    animate={{ 
+                      y: [0, -10, 0],
+                    }}
+                    transition={{ 
+                      duration: 4, 
+                      repeat: Infinity, 
+                      ease: "easeInOut" 
+                    }}
+                   >
+                    <HeroIcon className="w-32 h-32 md:w-48 md:h-48 text-[#008080] transition-transform duration-500 group-hover:scale-110" />
+                   </motion.div>
+
+                   {/* Floating accent elements */}
+                   <motion.div 
+                    className="absolute top-10 right-10 w-4 h-4 bg-[#86E0D6] rounded-full"
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                   />
+                   <motion.div 
+                    className="absolute bottom-12 left-12 w-6 h-6 bg-[#B9F2EC] rounded-lg rotate-12"
+                    animate={{ rotate: [12, 45, 12] }}
+                    transition={{ duration: 5, repeat: Infinity }}
+                   />
+                </div>
             </motion.div>
         </div>
 
