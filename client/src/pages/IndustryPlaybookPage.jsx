@@ -7,6 +7,7 @@ import EDU from "../assets/EDU.jpeg";
 import retail from "../assets/retail.jpeg";
 import finance from "../assets/finance.jpeg";
 import non from "../assets/non.jpeg";
+
 export default function IndustryPlaybookPage() {
   const { slug } = useParams();
   const [playbook, setPlaybook] = useState(null);
@@ -166,11 +167,11 @@ export default function IndustryPlaybookPage() {
   }, [slug]);
 
   if (loading) {
-    return <div className="text-center py-16 bg-black text-[#F5F5F5] min-h-screen">Loading playbook...</div>;
+    return <div className="text-center py-16 bg-[#E6F7F5] text-[#134E4A] min-h-screen">Loading playbook...</div>;
   }
 
   if (!playbook) {
-    return <div className="text-center py-16 bg-black text-[#F5F5F5] min-h-screen">Playbook not found.</div>;
+    return <div className="text-center py-16 bg-[#E6F7F5] text-[#134E4A] min-h-screen">Playbook not found.</div>;
   }
 
   // Helper function to capitalize and format the slug
@@ -181,22 +182,25 @@ export default function IndustryPlaybookPage() {
 
   return (
     <motion.main
-      className="min-h-screen bg-black text-[#F5F5F5] font-sans"
+      className="min-h-screen bg-[#E6F7F5] text-[#134E4A] font-sans"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Hero Section */}
-      <section className="w-full min-h-[70vh] flex flex-col md:flex-row items-center justify-center py-16 md:py-24 px-6 md:px-12">
-        {/* Left Column: Image */}
-        <div className="w-full md:w-1/2 flex justify-center p-4">
+      {/* Hero Section - Updated with Frosted Teal Glass Effect */}
+      <section className="relative w-full min-h-[70vh] flex flex-col md:flex-row items-center justify-center py-16 md:py-24 px-6 md:px-12 bg-[#B9F2EC]">
+        {/* Left Column: Image with Frosted Glass Background */}
+        <div className="relative w-full md:w-1/2 flex justify-center p-4">
+          {/* Solid Frosted Glass Plate */}
+          <div className="absolute inset-0 m-auto w-72 h-72 md:w-[450px] md:h-[450px] bg-teal-500/20 backdrop-blur-md border border-white/30 rounded-3xl -rotate-6" />
+          
           <motion.img
             src={playbook.heroImage}
             alt={`${formatSlug(slug)} industry solutions`}
-            className="rounded-2xl shadow-2xl w-full max-w-md h-auto object-cover"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
+            className="relative z-10 rounded-2xl shadow-2xl w-full max-w-md h-auto object-cover border-4 border-white/50"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
           />
         </div>
@@ -204,7 +208,7 @@ export default function IndustryPlaybookPage() {
         {/* Right Column: Content */}
         <div className="w-full md:w-1/2 text-center md:text-left p-4 mt-8 md:mt-0">
           <motion.h1
-            className="text-4xl md:text-6xl font-extrabold mb-4 text-[#008080]"
+            className="text-4xl md:text-6xl font-extrabold mb-4 text-[#0F766E]"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -212,7 +216,7 @@ export default function IndustryPlaybookPage() {
             {playbook.heroHeadline}
           </motion.h1>
           <motion.p
-            className="text-lg md:text-xl max-w-xl mx-auto md:mx-0"
+            className="text-lg md:text-xl max-w-xl mx-auto md:mx-0 text-[#145E59]"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -226,14 +230,14 @@ export default function IndustryPlaybookPage() {
         
         {/* The Challenges */}
         <motion.section
-          className="mb-12 p-8 rounded-2xl bg-gray-900/50 border border-l-4 border-[#40E0D0]"
+          className="mb-12 p-8 rounded-2xl bg-white shadow-sm border border-l-4 border-[#40E0D0]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl font-bold mb-4 text-[#008080]">Challenges</h2>
-          <ul className="list-disc list-inside space-y-2 text-slate-300">
+          <ul className="list-disc list-inside space-y-2 text-[#145E59]">
             {playbook.challenges.map((challenge, index) => (
               <li key={index}>{challenge}</li>
             ))}
@@ -242,14 +246,14 @@ export default function IndustryPlaybookPage() {
         
         {/* Our Approach */}
         <motion.section
-          className="mb-12 p-8 rounded-2xl bg-gray-900/50 border border-l-4 border-[#008080]"
+          className="mb-12 p-8 rounded-2xl bg-white shadow-sm border border-l-4 border-[#008080]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl font-bold mb-4 text-[#008080]">Our Approach</h2>
-          <p className="text-lg text-slate-300">{playbook.approach}</p>
+          <p className="text-lg text-[#145E59]">{playbook.approach}</p>
         </motion.section>
 
         {/* Use Cases / Applications */}
@@ -261,7 +265,7 @@ export default function IndustryPlaybookPage() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl font-bold mb-4 text-[#008080]">Use Cases / Applications</h2>
-          <ul className="list-disc list-inside space-y-2 text-slate-300">
+          <ul className="list-disc list-inside space-y-2 text-[#145E59]">
             {playbook.useCases.map((useCase, index) => (
               <li key={index}>{useCase}</li>
             ))}
@@ -270,14 +274,14 @@ export default function IndustryPlaybookPage() {
 
         {/* Stats & Insights */}
         <motion.section
-          className="mb-12 p-8 rounded-2xl bg-gray-900/50 border border-l-4 border-[#40E0D0]"
+          className="mb-12 p-8 rounded-2xl bg-white shadow-sm border border-l-4 border-[#40E0D0]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl font-bold mb-4 text-[#008080]">Stats & Insights</h2>
-          <ul className="list-disc list-inside space-y-2 text-slate-300">
+          <ul className="list-disc list-inside space-y-2 text-[#145E59]">
             {playbook.stats.map((stat, index) => (
               <li key={index}>{stat}</li>
             ))}
@@ -293,12 +297,12 @@ export default function IndustryPlaybookPage() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl font-bold mb-4 text-[#008080]">Future Outlook / Thought Leadership</h2>
-          <p className="text-lg text-slate-300">{playbook.futureOutlook}</p>
+          <p className="text-lg text-[#145E59]">{playbook.futureOutlook}</p>
         </motion.section>
 
         {/* Final Call-to-Action */}
         <motion.section
-          className="text-center p-8 bg-gray-900/50 rounded-2xl shadow-xl border border-[#008080]"
+          className="text-center p-8 bg-[#0F766E] rounded-2xl shadow-xl border border-[#008080]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -306,7 +310,7 @@ export default function IndustryPlaybookPage() {
         >
           <h2 className="text-2xl font-bold mb-4 text-white">Let’s Build for {formatSlug(slug)}</h2>
           <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center">
-            <Link to={playbook.ctaMainLink} className="inline-flex items-center justify-center px-8 py-4 bg-[#40E0D0] text-black rounded-full font-bold hover:bg-[#2E8B57] hover:text-white transition-colors duration-300">
+            <Link to={playbook.ctaMainLink} className="inline-flex items-center justify-center px-8 py-4 bg-[#86E0D6] text-[#134E4A] rounded-full font-bold hover:bg-white transition-colors duration-300">
               {playbook.ctaMainButton} <ArrowRight className="ml-2" />
             </Link>
             <Link to={playbook.ctaSecondaryLink} className="inline-flex items-center justify-center px-8 py-4 border border-white text-white rounded-full font-semibold hover:bg-white/10 transition">
