@@ -192,225 +192,223 @@ export default function BlogPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        Loading...
+      <div className="min-h-screen flex justify-center items-center bg-[#0F766E]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-white/20 border-t-[#40E0D0] rounded-full animate-spin" />
+          <span className="text-white/70 text-base font-medium">Loading articles…</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      {/* Hero */}
-      <section className="bg-gradient-to-r from-[#0F766E] to-[#0D9488] text-white py-20">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-5xl font-bold mb-4">
-            Insights & Ideas
-          </h1>
+    <main className="min-h-screen bg-[#0F766E]">
 
-          <p className="mb-8">
-            Discover expert perspectives on HR innovation
-          </p>
+      {/* ── Hero ── */}
+      <section className="relative pt-28 pb-8 px-6">
+        {/* Ambient blobs */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[#40E0D0]/20 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#86E0D6]/20 blur-3xl rounded-full pointer-events-none" />
 
-          {/* Search */}
-          <div className="max-w-2xl mx-auto relative">
-            <form onSubmit={handleSearchSubmit}>
-              <div className="bg-white/10 rounded-2xl p-2 flex items-center">
-                <Search className="ml-4" />
+        <div className="relative z-10 mx-auto max-w-7xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 backdrop-blur-md px-5 py-2 text-sm text-white mb-3">
+              <span className="w-2 h-2 rounded-full bg-[#40E0D0] animate-pulse" />
+              Our Blog
+            </div>
 
-                <input
-                  ref={searchInputRef}
-                  value={searchInput}
-                  onChange={(e) =>
-                    setSearchInput(e.target.value)
-                  }
-                  className="flex-1 bg-transparent px-4 py-3 outline-none"
-                  placeholder="Search..."
-                />
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight text-white mb-2">
+              Insights &amp; <span className="text-[#40E0D0]">Ideas</span>
+            </h1>
 
-                {searchInput && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchInput("");
-                      setShowSuggestions(false);
-                    }}
-                  >
-                    <X />
-                  </button>
-                )}
+            <p className="text-lg md:text-xl text-white/75 max-w-2xl mx-auto leading-8 mb-6">
+              Discover expert perspectives on HR innovation
+            </p>
 
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-white/20 rounded-xl"
-                >
-                  Search
-                </button>
-              </div>
-            </form>
-
-            {/* Suggestions */}
-            <AnimatePresence>
-              {showSuggestions && (
-                <motion.div
-                  ref={suggestionsRef}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl z-50 overflow-hidden"
-                >
-                  {suggestionLoading ? (
-                    <div className="p-4 text-center">
-                      Searching...
-                    </div>
-                  ) : suggestions.length > 0 ? (
-                    suggestions.map((item) => (
-                      <div
-                        key={item._id}
-                        onClick={() =>
-                          handleSuggestionClick(item)
-                        }
-                        className="p-4 hover:bg-slate-100 cursor-pointer border-b"
-                      >
-                        {item.title}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center">
-                      No suggestions found
-                    </div>
+            {/* Big search bar */}
+            <div className="max-w-2xl mx-auto relative">
+              <form onSubmit={handleSearchSubmit}>
+                <div className="relative flex items-center">
+                  <Search size={20} className="absolute left-5 text-white/50 pointer-events-none" />
+                  <input
+                    ref={searchInputRef}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    className="w-full pl-14 pr-32 py-4 rounded-2xl bg-white/10 border border-white/25 text-white placeholder-white/40 text-base font-medium focus:outline-none focus:border-[#40E0D0] focus:bg-white/15 transition-all shadow-lg"
+                    placeholder="Search articles…"
+                  />
+                  {searchInput && (
+                    <button
+                      type="button"
+                      onClick={() => { setSearchInput(""); setShowSuggestions(false); }}
+                      className="absolute right-24 text-white/40 hover:text-white transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
                   )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                  <button
+                    type="submit"
+                    className="absolute right-2 px-5 py-2.5 bg-[#40E0D0] text-black font-bold text-sm rounded-xl hover:bg-white transition-colors"
+                  >
+                    Search
+                  </button>
+                </div>
+              </form>
+
+              {/* Suggestions dropdown — z-50 so it floats above everything */}
+              <AnimatePresence>
+                {showSuggestions && (
+                  <motion.div
+                    ref={suggestionsRef}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute left-0 right-0 top-full mt-2 rounded-2xl shadow-2xl overflow-hidden"
+                    style={{ zIndex: 100, background: "#0a4f4a", border: "1px solid rgba(64,224,208,0.25)" }}
+                  >
+                    {suggestionLoading ? (
+                      <div className="p-4 text-center text-white/50 text-sm">Searching…</div>
+                    ) : suggestions.length > 0 ? (
+                      suggestions.map((item) => (
+                        <div
+                          key={item._id}
+                          onClick={() => handleSuggestionClick(item)}
+                          className="px-5 py-3 text-white/80 hover:bg-white/10 hover:text-white cursor-pointer border-b border-white/10 text-sm transition-colors"
+                        >
+                          {item.title}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-white/40 text-sm">No suggestions found</div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Content */}
-      <section className="-mt-10 relative z-10">
-        <div className="max-w-7xl mx-auto px-6">
-          {/* Categories */}
-          <div className="bg-white rounded-3xl p-8 shadow-xl mb-12">
-            <div className="flex flex-wrap gap-3 justify-center">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() =>
-                    setActiveCategory(cat)
-                  }
-                  className={`px-6 py-3 rounded-2xl ${activeCategory === cat
-                    ? "bg-[#0F766E] text-white"
-                    : "bg-slate-100"
-                    }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+      {/* ── Category filter bar — sits between hero and content ── */}
+      <div className="px-6 py-5">
+        <div className="mx-auto max-w-7xl flex justify-center">
+          <div className="inline-flex flex-wrap gap-2 justify-center bg-white/8 border border-white/15 rounded-2xl px-4 py-3 backdrop-blur-sm">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+                  activeCategory === cat
+                    ? "bg-[#40E0D0] text-black shadow-md"
+                    : "text-white/65 hover:text-white hover:bg-white/15"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
+        </div>
+      </div>
 
-          {/* Blogs */}
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+      {/* ── Content ── */}
+      <section className="px-6 pb-20">
+        <div className="mx-auto max-w-7xl">
+
+          {/* Blog grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogData.blogs.length > 0 ? (
               blogData.blogs.map((blog, idx) => (
                 <motion.div
                   key={blog._id}
                   initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: idx * 0.1,
-                  }}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden"
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08, duration: 0.5 }}
                 >
-                  <img
-                    src={
-                      blog.image
-                        ? `${BASE_URL}${blog.image}`
-                        : "https://via.placeholder.com/400x250"
-                    }
-                    alt={blog.title}
-                    className="h-48 w-full object-cover"
-                  />
-
-                  <div className="p-6">
-                    <h3 className="font-bold text-xl mb-3">
-                      {blog.title}
-                    </h3>
-
-                    <p className="text-slate-600 text-sm mb-4">
-                      {blog.summary}
-                    </p>
-
-                    {blog.tags?.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {blog.tags
-                          .slice(0, 3)
-                          .map((tag) => (
-                            <span
-                              key={tag}
-                              className="text-xs bg-slate-100 px-2 py-1 rounded-full"
-                            >
+                  <Link
+                    to={`/blog/${blog.slug || blog._id}`}
+                    className="group block overflow-hidden rounded-[24px] border border-white/20 bg-[#D9F3F0] transition hover:-translate-y-2 hover:shadow-2xl duration-300"
+                  >
+                    <div className="overflow-hidden">
+                      <img
+                        src={blog.image ? `${BASE_URL}${blog.image}` : "https://via.placeholder.com/400x250"}
+                        alt={blog.title}
+                        className="h-52 w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="p-6">
+                      {blog.tags?.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {blog.tags.slice(0, 3).map((tag) => (
+                            <span key={tag} className="text-xs bg-[#0F766E]/15 text-[#0F766E] px-2.5 py-1 rounded-full font-semibold">
                               #{tag}
                             </span>
                           ))}
-                      </div>
-                    )}
-
-                    <Link
-                      to={`/blog/${blog.slug || blog._id}`}
-                      className="text-[#0F766E] font-semibold"
-                    >
-                      Read Full Article
-                    </Link>
-                  </div>
+                        </div>
+                      )}
+                      <h3 className="font-black text-xl mb-3 text-emerald-900 group-hover:text-[#0F766E] transition leading-snug">
+                        {blog.title}
+                      </h3>
+                      <p className="text-black/60 text-sm leading-6 line-clamp-3 mb-4">
+                        {blog.summary}
+                      </p>
+                      <span className="inline-flex items-center gap-2 text-[#0F766E] font-bold text-sm">
+                        Read Article
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </span>
+                    </div>
+                  </Link>
                 </motion.div>
               ))
             ) : (
-              <div className="col-span-full text-center py-20">
-                <h3 className="text-2xl font-bold mb-4">
-                  No articles found
-                </h3>
-
-                <button
-                  onClick={() => {
-                    setSearchInput("");
-                    setSearchTerm("");
-                    setActiveCategory("All");
-                  }}
-                  className="px-6 py-3 bg-[#0F766E] text-white rounded-xl"
-                >
-                  Clear Filters
-                </button>
+              <div className="col-span-full">
+                <div className="rounded-2xl bg-white/5 border border-white/10 p-16 text-center">
+                  <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-5">
+                    <Search size={28} className="text-white/30" />
+                  </div>
+                  <h3 className="text-2xl font-black text-white mb-2">No articles found</h3>
+                  <p className="text-white/40 text-sm mb-6">Try a different search term or browse all categories.</p>
+                  <button
+                    onClick={() => { setSearchInput(""); setSearchTerm(""); setActiveCategory("All"); }}
+                    className="px-6 py-3 bg-[#40E0D0] text-black font-bold rounded-xl hover:bg-white transition-colors"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
               </div>
             )}
           </div>
 
           {/* Pagination */}
           {blogData.totalPages > 1 && (
-            <div className="flex justify-center mt-10 gap-2">
-              {[...Array(blogData.totalPages).keys()].map(
-                (_, i) => {
-                  const page = i + 1;
-
-                  return (
-                    <button
-                      key={page}
-                      onClick={() =>
-                        handlePageChange(page)
-                      }
-                      className={`w-10 h-10 rounded-xl ${page ===
-                        blogData.currentPage
-                        ? "bg-[#0F766E] text-white"
-                        : "bg-white"
-                        }`}
-                    >
-                      {page}
-                    </button>
-                  );
-                }
-              )}
+            <div className="flex justify-center mt-12 gap-2">
+              {[...Array(blogData.totalPages).keys()].map((_, i) => {
+                const page = i + 1;
+                return (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`w-10 h-10 rounded-xl font-bold text-sm transition-all duration-200 ${
+                      page === blogData.currentPage
+                        ? "bg-[#40E0D0] text-black shadow-md"
+                        : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/20"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
             </div>
           )}
+
         </div>
       </section>
     </main>
