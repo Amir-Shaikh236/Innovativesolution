@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String },
   age: { type: Number },
   isAdmin: { type: Boolean, default: false },
-});
+}, { timestamps: true });
 
 // Password comparison method
 userSchema.methods.matchPassword = async function (enteredPassword) {

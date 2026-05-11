@@ -12,6 +12,6 @@ const teamUpLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-router.post("/", createTeamUpRequest);
+router.post("/", teamUpLimiter, createTeamUpRequest);
 
 module.exports = router;

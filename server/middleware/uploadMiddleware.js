@@ -10,15 +10,27 @@ const storage = multer.diskStorage({
     }
 });
 
-// Modify this if you only want to accept specific types
+// Allowed MIME types mapped to their correct values
+const ALLOWED_MIME_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+];
+
+// Allowed extensions as a secondary check
+const ALLOWED_EXTENSIONS = /\.(jpg|jpeg|png|gif|pdf|doc|docx)$/i;
+
 function checkFileType(file, cb) {
-    const filetypes = /jpg|jpeg|png|gif|pdf|doc|docx/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-    if (extname && mimetype) {
+    const validMime = ALLOWED_MIME_TYPES.includes(file.mimetype);
+    const validExt = ALLOWED_EXTENSIONS.test(path.extname(file.originalname));
+
+    if (validMime && validExt) {
         return cb(null, true);
     } else {
-        cb('Images and documents only!');
+        cb(new Error('Only images (JPG, PNG, GIF) and documents (PDF, DOC, DOCX) are allowed'));
     }
 }
 
