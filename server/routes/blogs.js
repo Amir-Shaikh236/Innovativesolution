@@ -127,8 +127,6 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Add this to server/routes/blogs.js after the existing routes
-
 // Lightweight suggestions endpoint - optimized for autocomplete
 router.get("/suggestions", async (req, res) => {
   try {
@@ -138,7 +136,6 @@ router.get("/suggestions", async (req, res) => {
       return res.json([]);
     }
 
-    // Only select necessary fields for suggestions
     const suggestions = await Blog.find({
       published: true,
       $or: [
@@ -146,34 +143,7 @@ router.get("/suggestions", async (req, res) => {
         { summary: { $regex: searchTerm, $options: 'i' } }
       ]
     })
-    .select('title summary image slug') // Only fetch needed fields
-    .sort({ createdAt: -1 })
-    .limit(parseInt(limit));
-
-    res.json(suggestions);
-  } catch (err) {
-    res.status(500).json({ error: "Server error fetching suggestions" });
-  }
-});
-
-// Lightweight suggestions endpoint - optimized for autocomplete
-router.get("/suggestions", async (req, res) => {
-  try {
-    const { searchTerm, limit = 5 } = req.query;
-    
-    if (!searchTerm || searchTerm.trim().length < 2) {
-      return res.json([]);
-    }
-
-    // Only select necessary fields for suggestions
-    const suggestions = await Blog.find({
-      published: true,
-      $or: [
-        { title: { $regex: searchTerm, $options: 'i' } },
-        { summary: { $regex: searchTerm, $options: 'i' } }
-      ]
-    })
-    .select('title summary image slug') // Only fetch needed fields
+    .select('title summary image slug')
     .sort({ createdAt: -1 })
     .limit(parseInt(limit));
 
