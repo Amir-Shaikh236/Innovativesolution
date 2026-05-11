@@ -1,23 +1,12 @@
-const nodemailer = require("nodemailer");
 const TeamUpRequest = require("../models/TeamUpRequest");
 const Category = require("../models/Category");
 const Subpage = require("../models/Subpage");
 const Joi = require('joi');
 const xss = require('xss');
 const mongoose = require('mongoose');
+const { sendTeamUpEmail } = require('../utils/sendEmail');
 require("dotenv").config();
 
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// Validation schema
 const teamUpSchema = Joi.object({
   companyName: Joi.string().min(2).max(100).required().trim(),
   firstName: Joi.string().min(2).max(50).required().trim(),
@@ -90,26 +79,17 @@ exports.createTeamUpRequest = async (req, res) => {
       subCategory,
     });
 
-    // Create the email content with the names
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_USER,
-      subject: "New Team-Up Request Submission",
-      text: `
-        A new Team-Up request has been submitted.
-
-        Company Name: ${sanitizedData.companyName}
-        Contact Name: ${sanitizedData.firstName} ${sanitizedData.lastName}
-        Email: ${sanitizedData.email}
-        Phone: ${sanitizedData.phone}  
-        Main Category: ${mainCategoryName}
-        Sub Category: ${subCategoryName}
-        Description: ${sanitizedData.description}
-      `,
-    };
-
-    // Send the email
-    await transporter.sendMail(mailOptions);
+    // Send email via shared utility
+    await sendTeamUpEmail({
+      companyName: sanitizedData.companyName,
+      firstName: sanitizedData.firstName,
+      lastName: sanitizedData.lastName,
+      email: sanitizedData.email,
+      phone: sanitizedData.phone,
+      mainCategoryName,
+      subCategoryName,
+      description: sanitizedData.description,
+    });
 
     res.status(201).json({ success: true, message: "Team-Up request submitted successfully." });
   } catch (error) {
