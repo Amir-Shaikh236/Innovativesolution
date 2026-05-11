@@ -53,10 +53,17 @@ export default function OtpVerify({ onVerified }) {
     setError('');
     setMessage('');
     try {
-      await api.post('/users/signup/request-otp', { email: formData.email });
-      setMessage('OTP resent to your email.');
+      // Re-trigger registration to resend the verification email
+      await api.post('/auth/register', formData);
+      setMessage('Verification email resent. Please check your inbox.');
     } catch (err) {
-      setError(err.response?.data?.msg || 'Failed to resend OTP');
+      // If user already exists it means email was already sent — treat as success
+      const msg = err.response?.data?.message || '';
+      if (msg.toLowerCase().includes('already exists')) {
+        setMessage('Verification email already sent. Please check your inbox.');
+      } else {
+        setError(msg || 'Failed to resend verification email');
+      }
     } finally {
       setResending(false);
     }

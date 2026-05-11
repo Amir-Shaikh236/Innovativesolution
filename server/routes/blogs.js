@@ -62,11 +62,36 @@ router.get("/slug/:slug", async (req, res) => {
 // REFACTORED Public Route: Now only gets categories from PUBLISHED posts
 router.get("/categories", async (req, res) => {
   try {
-    // The second argument filters the documents from which to pull distinct values
     const categories = await Blog.distinct("category", { published: true });
-    res.json(categories.filter(c => c)); // Filter out any null/empty categories
+    res.json(categories.filter(c => c));
   } catch (err) {
     res.status(500).json({ error: "Server error fetching categories" });
+  }
+});
+
+// Lightweight suggestions endpoint - optimized for autocomplete
+router.get("/suggestions", async (req, res) => {
+  try {
+    const { searchTerm, limit = 5 } = req.query;
+
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      return res.json([]);
+    }
+
+    const suggestions = await Blog.find({
+      published: true,
+      $or: [
+        { title: { $regex: searchTerm, $options: 'i' } },
+        { summary: { $regex: searchTerm, $options: 'i' } }
+      ]
+    })
+    .select('title summary image slug')
+    .sort({ createdAt: -1 })
+    .limit(parseInt(limit));
+
+    res.json(suggestions);
+  } catch (err) {
+    res.status(500).json({ error: "Server error fetching suggestions" });
   }
 });
 
@@ -124,32 +149,6 @@ router.delete("/:id", adminAuth, async (req, res) => {
     res.json({ success: true, message: "Blog deleted successfully." });
   } catch (err) {
     res.status(500).json({ error: "Server error deleting blog" });
-  }
-});
-
-// Lightweight suggestions endpoint - optimized for autocomplete
-router.get("/suggestions", async (req, res) => {
-  try {
-    const { searchTerm, limit = 5 } = req.query;
-    
-    if (!searchTerm || searchTerm.trim().length < 2) {
-      return res.json([]);
-    }
-
-    const suggestions = await Blog.find({
-      published: true,
-      $or: [
-        { title: { $regex: searchTerm, $options: 'i' } },
-        { summary: { $regex: searchTerm, $options: 'i' } }
-      ]
-    })
-    .select('title summary image slug')
-    .sort({ createdAt: -1 })
-    .limit(parseInt(limit));
-
-    res.json(suggestions);
-  } catch (err) {
-    res.status(500).json({ error: "Server error fetching suggestions" });
   }
 });
 
