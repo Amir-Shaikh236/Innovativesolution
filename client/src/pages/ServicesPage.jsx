@@ -118,9 +118,11 @@ function FilterBar({ categories, selectedCats, onToggle, search, onSearch, onCle
 }
 
 /* ─────────────────────────────────────────────
-   Service Card (CSS flip)
+   Service Card — tap/click flip (works on mobile)
 ───────────────────────────────────────────── */
 function ServiceCard({ service, navigate }) {
+  const [flipped, setFlipped] = useState(false);
+
   const imageUrl = service.image
     ? `${BASE_URL}${service.image}`
     : service.img
@@ -132,32 +134,79 @@ function ServiceCard({ service, navigate }) {
       ? service.category?.name
       : service.category;
 
+  const cardStyle = {
+    height: "380px",
+    width: "100%",
+    perspective: "1200px",
+    cursor: "pointer",
+    flexShrink: 0,
+  };
+
+  const innerStyle = {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    transformStyle: "preserve-3d",
+    transition: "transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1)",
+    transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+    borderRadius: "16px",
+  };
+
+  const faceBase = {
+    position: "absolute",
+    top: 0, left: 0,
+    width: "100%", height: "100%",
+    borderRadius: "16px",
+    WebkitBackfaceVisibility: "hidden",
+    backfaceVisibility: "hidden",
+    overflow: "hidden",
+  };
+
+  const frontStyle = {
+    ...faceBase,
+    background: "#D9F3F0",
+    border: "1px solid rgba(255,255,255,0.4)",
+    boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
+    display: "flex",
+    flexDirection: "column",
+    transform: "rotateY(0deg)",
+  };
+
+  const backStyle = {
+    ...faceBase,
+    background: "linear-gradient(145deg, #0a4f4a 0%, #0F766E 45%, #14b8a6 100%)",
+    border: "1px solid rgba(64,224,208,0.4)",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)",
+    padding: "24px 22px 22px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    transform: "rotateY(180deg)",
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.45 }}
-      className="flip-card w-full cursor-pointer"
-      style={{ height: "380px" }}
+      style={cardStyle}
       tabIndex={0}
-      onClick={() => navigate(`/subpage/${service.slug}`)}
-      onKeyDown={(e) => e.key === "Enter" && navigate(`/subpage/${service.slug}`)}
       role="button"
       aria-label={`View details for ${service.title || service.name}`}
+      /* Toggle flip on tap/click; navigate on double-tap is handled by the button */
+      onClick={() => setFlipped((f) => !f)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") setFlipped((f) => !f);
+      }}
+      /* Desktop hover */
+      onMouseEnter={() => setFlipped(true)}
+      onMouseLeave={() => setFlipped(false)}
     >
-      <div className="flip-card-inner" style={{ borderRadius: "16px" }}>
+      <div style={innerStyle}>
 
         {/* ── FRONT ── */}
-        <div
-          className="flip-card-front flex flex-col"
-          style={{
-            borderRadius: "16px",
-            background: "#D9F3F0",
-            border: "1px solid rgba(255,255,255,0.4)",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
-          }}
-        >
+        <div style={frontStyle}>
           <div style={{ height: "200px", flexShrink: 0, overflow: "hidden", borderRadius: "16px 16px 0 0" }}>
             <img
               src={imageUrl}
@@ -180,7 +229,7 @@ function ServiceCard({ service, navigate }) {
               {service.title || service.name}
             </h3>
             <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#0F766E", fontSize: "12px", fontWeight: 600, marginTop: "10px" }}>
-              Hover to learn more
+              Tap to learn more
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
@@ -189,102 +238,42 @@ function ServiceCard({ service, navigate }) {
         </div>
 
         {/* ── BACK ── */}
-        <div
-          className="flip-card-back flex flex-col"
-          style={{
-            borderRadius: "16px",
-            background: "linear-gradient(145deg, #0a4f4a 0%, #0F766E 45%, #14b8a6 100%)",
-            border: "1px solid rgba(64,224,208,0.4)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)",
-            padding: "24px 22px 22px",
-            justifyContent: "space-between",
-          }}
-        >
+        <div style={backStyle}>
           {/* Top accent bar */}
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", borderRadius: "16px 16px 0 0", background: "linear-gradient(90deg, #40E0D0, #86E0D6, #40E0D0)" }} />
+          {/* Decorative blobs */}
+          <div style={{ position: "absolute", bottom: "60px", right: "-20px", width: "120px", height: "120px", borderRadius: "50%", background: "rgba(64,224,208,0.08)", pointerEvents: "none" }} />
+          <div style={{ position: "absolute", top: "40px", left: "-30px", width: "90px", height: "90px", borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
 
-          {/* Decorative circle blob */}
-          <div style={{
-            position: "absolute", bottom: "60px", right: "-20px",
-            width: "120px", height: "120px", borderRadius: "50%",
-            background: "rgba(64,224,208,0.08)", pointerEvents: "none",
-          }} />
-          <div style={{
-            position: "absolute", top: "40px", left: "-30px",
-            width: "90px", height: "90px", borderRadius: "50%",
-            background: "rgba(255,255,255,0.04)", pointerEvents: "none",
-          }} />
-
-          {/* Content */}
           <div style={{ position: "relative", zIndex: 1 }}>
-            {/* Category badge */}
             {categoryName && (
-              <span style={{
-                display: "inline-block",
-                fontSize: "9px", fontWeight: 800, textTransform: "uppercase",
-                letterSpacing: "0.15em", color: "#40E0D0",
-                background: "rgba(64,224,208,0.15)",
-                border: "1px solid rgba(64,224,208,0.35)",
-                borderRadius: "20px", padding: "3px 10px", marginBottom: "14px",
-              }}>
+              <span style={{ display: "inline-block", fontSize: "9px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.15em", color: "#40E0D0", background: "rgba(64,224,208,0.15)", border: "1px solid rgba(64,224,208,0.35)", borderRadius: "20px", padding: "3px 10px", marginBottom: "14px" }}>
                 {categoryName}
               </span>
             )}
-
-            {/* Big bold title */}
-            <h3 style={{
-              fontWeight: 900,
-              fontSize: "24px",
-              color: "#fff",
-              lineHeight: 1.2,
-              marginBottom: "12px",
-              letterSpacing: "-0.5px",
-            }}>
+            <h3 style={{ fontWeight: 900, fontSize: "22px", color: "#fff", lineHeight: 1.2, marginBottom: "10px", letterSpacing: "-0.5px" }}>
               {service.title || service.name}
             </h3>
-
-            {/* Teal divider line */}
-            <div style={{ width: "36px", height: "3px", borderRadius: "2px", background: "#40E0D0", marginBottom: "12px" }} />
-
-            {/* Description */}
-            <p style={{
-              color: "rgba(255,255,255,0.82)",
-              fontSize: "13.5px",
-              lineHeight: 1.7,
-              fontWeight: 400,
-            }}>
+            <div style={{ width: "36px", height: "3px", borderRadius: "2px", background: "#40E0D0", marginBottom: "10px" }} />
+            <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "13px", lineHeight: 1.7, fontWeight: 400 }}>
               {service.description || service.desc || "Explore this service to learn how we can help your business grow."}
             </p>
           </div>
 
-          {/* CTA button */}
           <button
             onClick={(e) => { e.stopPropagation(); navigate(`/subpage/${service.slug}`); }}
             style={{
               position: "relative", zIndex: 1,
               display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-              width: "100%", padding: "14px 16px", borderRadius: "12px",
+              width: "100%", padding: "13px 16px", borderRadius: "12px",
               background: "linear-gradient(135deg, #40E0D0 0%, #2dd4bf 100%)",
               color: "#064e3b", fontWeight: 800, fontSize: "15px",
-              letterSpacing: "-0.2px",
               border: "none", cursor: "pointer",
               boxShadow: "0 4px 20px rgba(64,224,208,0.5)",
-              transition: "all 0.2s",
-              marginTop: "18px",
-              flexShrink: 0,
+              transition: "all 0.2s", marginTop: "14px", flexShrink: 0,
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#fff";
-              e.currentTarget.style.color = "#0F766E";
-              e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,255,255,0.35)";
-              e.currentTarget.style.transform = "translateY(-1px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "linear-gradient(135deg, #40E0D0 0%, #2dd4bf 100%)";
-              e.currentTarget.style.color = "#064e3b";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(64,224,208,0.5)";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.color = "#0F766E"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, #40E0D0 0%, #2dd4bf 100%)"; e.currentTarget.style.color = "#064e3b"; }}
             aria-label={`Learn more about ${service.title || service.name}`}
           >
             Learn More
@@ -382,17 +371,15 @@ function CategorySpotlight({ categories, subpages, navigate }) {
             </div>
 
             {/* ── Cards row ── */}
-            <div style={{ padding: "24px 28px" }}>
+            <div style={{ padding: "20px 20px" }} className="sm:p-7">
               {cat.description && (
                 <p className="lg:hidden" style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", marginBottom: "20px", lineHeight: 1.6 }}>
                   {cat.description}
                 </p>
               )}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "flex-start" }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 {catServices.map((service) => (
-                  <div key={service._id} style={{ width: "260px", flexShrink: 0 }}>
-                    <ServiceCard service={service} navigate={navigate} />
-                  </div>
+                  <ServiceCard key={service._id} service={service} navigate={navigate} />
                 ))}
               </div>
             </div>
@@ -419,11 +406,9 @@ function FlatGrid({ services, navigate }) {
   }
 
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "flex-start" }}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
       {services.map((service) => (
-        <div key={service._id} style={{ width: "260px", flexShrink: 0 }}>
-          <ServiceCard service={service} navigate={navigate} />
-        </div>
+        <ServiceCard key={service._id} service={service} navigate={navigate} />
       ))}
     </div>
   );
