@@ -1,18 +1,8 @@
 const JoinTalent = require("../models/JoinTalent");
-const nodemailer = require("nodemailer");
 const Joi = require('joi');
 const xss = require('xss');
+const { sendJoinTalentEmail } = require('../utils/sendEmail');
 require("dotenv").config();
-
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
 
 // Validation schema
 const joinTalentSchema = Joi.object({
@@ -79,28 +69,16 @@ exports.createRequest = async (req, res) => {
       originalFileName: req.file.originalname,
     });
 
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_USER,
-      subject: "New JoinTalent Request Submission",
-      text: `
-New submission:
-First Name: ${sanitizedData.firstName}
-Last Name: ${sanitizedData.lastName}
-Email: ${sanitizedData.email}
-Phone: ${sanitizedData.phone}
-Location: ${sanitizedData.location}
-Anything Else: ${sanitizedData.anythingElse}
-      `,
-      attachments: [
-        {
-          filename: req.file.originalname,
-          path: req.file.path,
-        },
-      ],
-    };
-
-    await transporter.sendMail(mailOptions);
+    // Send email via shared utility
+    await sendJoinTalentEmail({
+      firstName: sanitizedData.firstName,
+      lastName: sanitizedData.lastName,
+      email: sanitizedData.email,
+      phone: sanitizedData.phone,
+      location: sanitizedData.location,
+      anythingElse: sanitizedData.anythingElse,
+      file: req.file,
+    });
 
     res.status(201).json({ success: true, message: "Request submitted successfully" });
   } catch (error) {
