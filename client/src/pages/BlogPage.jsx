@@ -205,7 +205,7 @@ export default function BlogPage() {
     <main className="min-h-screen bg-[#0F766E]">
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden pt-28 pb-8 px-6">
+      <section className="relative pt-28 pb-8 px-6">
         {/* Ambient blobs */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#40E0D0]/20 blur-3xl rounded-full pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#86E0D6]/20 blur-3xl rounded-full pointer-events-none" />
@@ -260,7 +260,7 @@ export default function BlogPage() {
                 </div>
               </form>
 
-              {/* Suggestions dropdown */}
+              {/* Suggestions dropdown — z-50 so it floats above everything */}
               <AnimatePresence>
                 {showSuggestions && (
                   <motion.div
@@ -269,8 +269,8 @@ export default function BlogPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute left-0 right-0 top-full mt-2 rounded-2xl shadow-2xl z-50 overflow-hidden"
-                    style={{ background: "#0a4f4a", border: "1px solid rgba(64,224,208,0.25)" }}
+                    className="absolute left-0 right-0 top-full mt-2 rounded-2xl shadow-2xl overflow-hidden"
+                    style={{ zIndex: 100, background: "#0a4f4a", border: "1px solid rgba(64,224,208,0.25)" }}
                   >
                     {suggestionLoading ? (
                       <div className="p-4 text-center text-white/50 text-sm">Searching…</div>
@@ -295,28 +295,30 @@ export default function BlogPage() {
         </div>
       </section>
 
+      {/* ── Category filter bar — sits between hero and content ── */}
+      <div className="px-6 py-5">
+        <div className="mx-auto max-w-7xl flex justify-center">
+          <div className="inline-flex flex-wrap gap-2 justify-center bg-white/8 border border-white/15 rounded-2xl px-4 py-3 backdrop-blur-sm">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+                  activeCategory === cat
+                    ? "bg-[#40E0D0] text-black shadow-md"
+                    : "text-white/65 hover:text-white hover:bg-white/15"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ── Content ── */}
       <section className="px-6 pb-20">
         <div className="mx-auto max-w-7xl">
-
-          {/* Category pills — styled filter bar */}
-          <div className="flex justify-center mb-8">
-            <div className="inline-flex flex-wrap gap-2 justify-center bg-white/8 border border-white/15 rounded-2xl px-4 py-3 backdrop-blur-sm">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
-                    activeCategory === cat
-                      ? "bg-[#40E0D0] text-black shadow-md"
-                      : "text-white/65 hover:text-white hover:bg-white/15"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* Blog grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
