@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Bot, ThumbsUp, ThumbsDown, Star, AlertCircle, MessageSquare, Copy, Check } from "lucide-react";
+import { X, Send, Bot, ThumbsUp, ThumbsDown, AlertCircle, MessageSquare, Copy, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import chatbotData from "../assets/chatbotData";
 
@@ -22,10 +22,6 @@ const AdvancedChatbot = () => {
   const [userInput, setUserInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [sessionId, setSessionId] = useState(null);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [feedbackRating, setFeedbackRating] = useState(0);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [shouldEscalate, setShouldEscalate] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -102,7 +98,6 @@ const AdvancedChatbot = () => {
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => {
     setIsOpen(false);
-    setShowFeedback(false);
     setShowHistory(false);
   };
 
@@ -184,7 +179,7 @@ const AdvancedChatbot = () => {
             break;
           case 'FAQs':
             response = {
-              text: 'I can help with FAQs about verification, payments, NDAs, support, and more. What category are you interested in?',
+              text: 'I can help with FAQs about verification, payments, NDAs, support, and moree. What category are you interested in?',
               cta: { label: 'View All FAQs', link: '/faqs' },
               suggestions: [
                 { question: 'How to verify my account?' },
@@ -232,10 +227,6 @@ const AdvancedChatbot = () => {
       setMessages(prev => [...prev, botMsg]);
       setIsTyping(false);
       
-      // Auto-show feedback after 3 bot messages
-      if (messages.filter(m => m.sender === 'bot').length >= 3 && !feedbackSubmitted) {
-        setTimeout(() => setShowFeedback(true), 1000);
-      }
     }, 800 + Math.random() * 200);
   };
 
@@ -246,43 +237,7 @@ const AdvancedChatbot = () => {
       handleSend(label, true);
     }
   };
-
-  // Handle feedback submission
-  const handleSubmitFeedback = async () => {
-    if (feedbackRating === 0) return;
-
-    try {
-      const res = await fetch('/api/chatbot/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId,
-          rating: feedbackRating,
-          feedback: feedbackText,
-          wasHelpful: feedbackRating >= 4
-        })
-      });
-
-      if (res.ok) {
-        setFeedbackSubmitted(true);
-        setShowFeedback(false);
-        setFeedbackRating(0);
-        setFeedbackText('');
         
-        // Add confirmation message
-        const confirmMsg = {
-          id: messages.length + 1,
-          sender: 'bot',
-          text: 'Thank you for your feedback! It helps us improve ISAC. Is there anything else I can help you with?',
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, confirmMsg]);
-      }
-    } catch (err) {
-      console.error('Error submitting feedback:', err);
-    }
-  };
-
   // Handle escalation
   const handleEscalate = async () => {
     try {
@@ -377,57 +332,10 @@ const AdvancedChatbot = () => {
             </div>
 
              <button onClick={handleClose} className="text-gray-400 hover:text-gray-700">
-               <X size={20} />
+               <X size={30} />
               </button>
             </div>
-
-            {/* Main Content Area */}
-            {showFeedback ? (
-              // Feedback Form
-              <div className="flex-1 p-4 flex flex-col justify-between text-white">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: "#40E0D0" }}>How helpful was this conversation?</h3>
-                  <div className="flex gap-2 mb-6 justify-center">
-                    {[1, 2, 3, 4, 5].map((rating) => (
-                      <button
-                        key={rating}
-                        onClick={() => setFeedbackRating(rating)}
-                        className="transition-transform hover:scale-110"
-                      >
-                        <Star
-                          size={32}
-                          fill={rating <= feedbackRating ? "#40E0D0" : "none"}
-                          color={rating <= feedbackRating ? "#40E0D0" : "#666"}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                  <textarea
-                    value={feedbackText}
-                    onChange={(e) => setFeedbackText(e.target.value)}
-                    placeholder="Any additional feedback? (optional)"
-                    className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-[#40E0D0] resize-none"
-                    rows="3"
-                  />
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => setShowFeedback(false)}
-                    className="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSubmitFeedback}
-                    disabled={feedbackRating === 0}
-                    className="flex-1 px-4 py-2 rounded-lg text-black font-semibold transition disabled:opacity-50"
-                    style={{ background: "#40E0D0" }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </div>
-            ) : (
+            
               <>
                 {/* Chat Messages */}
                 <div className="chat-scroll flex-1 p-4 overflow-y-auto space-y-4 text-sm text-[#F5F5F5]">
@@ -575,7 +483,7 @@ const AdvancedChatbot = () => {
                   </motion.button>
                 </form>
               </>
-            )}
+
           </motion.div>
         )}
       </AnimatePresence>

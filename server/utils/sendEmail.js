@@ -1,3 +1,4 @@
+'use strict';
 const nodemailer = require('nodemailer');
 
 // Single shared transporter for the entire application
