@@ -1,28 +1,19 @@
 'use strict';
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Single shared transporter for the entire application
-// Created as a function so it always reads fresh env vars
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-  });
-};
+// Single Resend client — reads API key from env at call time
+const getClient = () => new Resend(process.env.RESEND_API_KEY);
 
-// Send email verification link after signup
+// Default sender address (must be a verified domain in your Resend account)
+const FROM = process.env.EMAIL_FROM || '"INNOVATIVE STAFFING SOLUTION" <no-reply@innovativestaffing.com>';
+
+// ─── Send email verification link after signup ────────────────────────────────
 const sendVerificationEmail = async (email, token) => {
   const link = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${token}`;
 
-  await createTransporter().sendMail({
-    from: process.env.EMAIL_FROM || '"INNOVATIVE STAFFING SOLUTION" <no-reply@innovativestaffing.com>',
-    to: email,
+  const { error } = await getClient().emails.send({
+    from: FROM,
+    to: [email],
     subject: 'Verify Your Email - INNOVATIVE STAFFING SOLUTION',
     html: `
       <h2>Email Verification</h2>
@@ -33,23 +24,27 @@ const sendVerificationEmail = async (email, token) => {
       <p>This link will expire in 1 hour.</p>
     `,
   });
+
+  if (error) throw new Error(`sendVerificationEmail failed: ${error.message}`);
 };
 
-// Generic send — used for password reset and any other emails
+// ─── Generic send — used for password reset and any other emails ──────────────
 const sendEmail = async ({ to, subject, text }) => {
-  await createTransporter().sendMail({
-    from: process.env.EMAIL_FROM || '"INNOVATIVE STAFFING SOLUTION" <no-reply@innovativestaffing.com>',
-    to,
+  const { error } = await getClient().emails.send({
+    from: FROM,
+    to: [to],
     subject,
     html: text,
   });
+
+  if (error) throw new Error(`sendEmail failed: ${error.message}`);
 };
 
-// Send contact form notification to admin
+// ─── Send contact form notification to admin ─────────────────────────────────
 const sendContactEmail = async ({ fullName, emailAddress, inquiryType, message }) => {
-  await createTransporter().sendMail({
-    from: process.env.EMAIL_FROM || '"INNOVATIVE STAFFING SOLUTION" <no-reply@innovativestaffing.com>',
-    to: process.env.EMAIL_USER,
+  const { error } = await getClient().emails.send({
+    from: FROM,
+    to: [process.env.EMAIL_USER],
     subject: `New Contact Form Submission: ${inquiryType}`,
     html: `
       <h2>New Contact Form Submission</h2>
@@ -60,13 +55,15 @@ const sendContactEmail = async ({ fullName, emailAddress, inquiryType, message }
       <p>${message}</p>
     `,
   });
+
+  if (error) throw new Error(`sendContactEmail failed: ${error.message}`);
 };
 
-// Send team-up request notification to admin
+// ─── Send team-up request notification to admin ───────────────────────────────
 const sendTeamUpEmail = async ({ companyName, firstName, lastName, email, phone, mainCategoryName, subCategoryName, description }) => {
-  await createTransporter().sendMail({
-    from: process.env.EMAIL_FROM || '"INNOVATIVE STAFFING SOLUTION" <no-reply@innovativestaffing.com>',
-    to: process.env.EMAIL_USER,
+  const { error } = await getClient().emails.send({
+    from: FROM,
+    to: [process.env.EMAIL_USER],
     subject: 'New Team-Up Request Submission',
     html: `
       <h2>New Team-Up Request</h2>
@@ -79,13 +76,23 @@ const sendTeamUpEmail = async ({ companyName, firstName, lastName, email, phone,
       <p><strong>Description:</strong> ${description}</p>
     `,
   });
+
+  if (error) throw new Error(`sendTeamUpEmail failed: ${error.message}`);
 };
 
-// Send join talent notification to admin (with resume attachment)
+// ─── Send join talent notification to admin (with resume attachment) ──────────
 const sendJoinTalentEmail = async ({ firstName, lastName, email, phone, location, anythingElse, file }) => {
-  await createTransporter().sendMail({
-    from: process.env.EMAIL_FROM || '"INNOVATIVE STAFFING SOLUTION" <no-reply@innovativestaffing.com>',
-    to: process.env.EMAIL_USER,
+  const fs = require('fs');
+
+  // Build attachments array only if a file was uploaded
+  // Resend expects: { filename, content } where content is a Buffer or base64 string
+  const attachments = file
+    ? [{ filename: file.originalname, content: fs.readFileSync(file.path) }]
+    : [];
+
+  const { error } = await getClient().emails.send({
+    from: FROM,
+    to: [process.env.EMAIL_USER],
     subject: 'New Join Talent Request Submission',
     html: `
       <h2>New Join Talent Submission</h2>
@@ -96,8 +103,10 @@ const sendJoinTalentEmail = async ({ firstName, lastName, email, phone, location
       <p><strong>Location:</strong> ${location}</p>
       <p><strong>Additional Info:</strong> ${anythingElse || 'N/A'}</p>
     `,
-    attachments: file ? [{ filename: file.originalname, path: file.path }] : [],
+    attachments,
   });
+
+  if (error) throw new Error(`sendJoinTalentEmail failed: ${error.message}`);
 };
 
 module.exports = {
