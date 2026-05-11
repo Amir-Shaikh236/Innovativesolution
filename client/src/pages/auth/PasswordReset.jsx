@@ -29,7 +29,7 @@ const PasswordReset = () => {
 
     try {
       // Make the API call
-      await api.put(`/auth/resetpassword/${resetToken}`, { password });
+      await api.put(`/auth/resetPassword/${resetToken}`, { password });
 
       setMessage("Password reset successful! Redirecting to login...");
 

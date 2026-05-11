@@ -136,7 +136,7 @@ exports.loginUser = async (req, res) => {
     if (user && (await user.matchPassword(password))) {
 
       // Generate the token
-      const token = generateToken(user._id, user.role);
+      const token = generateToken(user._id, user.isAdmin ? 'admin' : 'user');
 
       // Define Cookie Options (Crucial for Localhost)
       const options = {
@@ -152,7 +152,7 @@ exports.loginUser = async (req, res) => {
           _id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role,
+          role: user.isAdmin ? 'admin' : 'user',
           token
         });
 
