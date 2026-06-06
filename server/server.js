@@ -49,7 +49,8 @@ const corsOptions = {
       process.env.FRONTEND_URL,
       process.env.ADMIN_FRONTEND_URL,
       'https://innovative-staffing.vercel.app',
-      'https://innovativn:estaffing-v7jj.vercel.app'
+      'https://innovativn:estaffing-v7jj.vercel.app',
+      'https://www.innovativestaffing.info'
     ].filter(Boolean); // Remove any undefined values
 
     if (allowedOrigins.includes(origin)) {
